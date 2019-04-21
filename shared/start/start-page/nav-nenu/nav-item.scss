@@ -1,0 +1,32 @@
+@import "../../../scss/_constants";
+.nav-menu-item {
+  @include flex();
+  background: none;
+  max-width: 1000px;
+  text-transform: uppercase;
+  color: $nav-item-color;
+  border-bottom: solid 4px transparent;
+  font: 2rem/1  'Calibri', sans-serif;
+  font-weight: 500;
+  &:hover,
+  &:focus,
+  &:active {
+    border-bottom: solid 4px $nav-item-color;
+  }
+  &:hover{
+    cursor: pointer;
+  }
+  &:active {
+    cursor: none;
+  }
+  &.logout {
+    display: block;
+    height: 2rem;
+    margin-left: 2rem;
+  }
+}
+.nav-icon {
+  color: darken($nav-item-color, 10%);
+  height: 1.3rem;
+  margin-left: 5px;
+}

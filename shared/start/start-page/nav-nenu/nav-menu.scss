@@ -1,0 +1,26 @@
+.nav-wrapper {
+  position: relative;
+  width: 80%;
+  display: flex;
+  justify-content: flex-start;
+  .nav-menu {
+    width: 100%;
+    max-width: 650px;
+    display: none
+  }
+  .nav-dropdown-button {
+    display: flex;
+  }
+  @media (min-width: 960px) {
+    justify-content: center;
+    .nav-dropdown-button {
+      display: none;
+    }
+    .nav-menu {
+      display: flex;
+      justify-content: space-around;
+      // max-width: 700px;
+    }
+  }
+  // align-self: flex-start;
+}

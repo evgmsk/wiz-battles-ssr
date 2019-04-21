@@ -1,0 +1,43 @@
+@import "../../../scss/constants";
+$imgPath: '../../../assets/images';
+
+.header {
+  background: url('#{$imgPath}/header_bg.jpg') no-repeat center;
+  background-size: 100% 100%;
+  box-sizing: border-box;
+  height: 120px;
+  padding: 20px 5rem 0;
+  position: relative;
+  @include flex( center, center);
+  .right-bar {
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    width: 5rem;
+    height: 100%;
+    padding: 1rem 0 0;
+    @include flex(space-between, flex-start);
+    .lang-setter {
+      @each $l in $lang {
+        &.lang-#{$l} {
+          background: url('#{$imgPath}/lang/#{$l}.png') no-repeat center;
+          background-size: 100% 100%;
+        }
+      }
+      position: relative;
+      color: #e6b827;
+      cursor: pointer;
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+    }
+  }
+  .wb-logo {
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-30%);
+    color: $nav-item-color;
+    font-size: 2.5rem;
+  }
+}

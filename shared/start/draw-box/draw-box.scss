@@ -1,0 +1,104 @@
+@import "../../scss/_constants";
+
+.draw-box {
+  height: calc(100vh - 120px);
+  background: url('#{$imgPath}/start_page_bg.jpg') no-repeat;
+  background-size: 100% 100%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 3rem 0 0;
+  box-sizing: border-box;
+  h2 {
+    font: $font-main;
+    font-size: 4rem;
+    color: $ice;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  @media (max-height: 500px) and (orientation: landscape) {
+    height: auto;
+  }
+}
+
+.draw-stage-wrapper {
+  background: #fefefe;
+  width: 90%;
+  height: calc(100vh - 400px);
+  margin: 0 auto;
+  border: solid 5px #64964c;
+  .draw-stage {
+    width: 100%;
+  }
+}
+
+.draw-box-instruments {
+  background: #fefefe;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 90%;
+  margin: 0 auto;
+  border: solid 3px #64964c;
+  padding: 3px;
+}
+
+.input-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 1px;
+  padding: 2px;
+  background: #ecf4f6;
+  input,
+  select{
+    padding: 3px;
+    margin: 3px;
+    width: 80px;
+  }
+  svg {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 8px;
+    padding: 2px;
+    color: #999999;
+  }
+  [type="color"] {
+    width: 30px;
+    padding: 2px;
+  }
+  select,
+  [type="text"]{
+    width: 150px;
+  }
+  .range-wrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+}
+
+form.input-wrapper {
+  border: solid 1px #acacac;
+}
+
+.input-wrapper label,
+.input-wrapper p {
+    font: 1.4rem/1 Helvetica, 'sans-serif';
+    color: #64964c;
+    padding: 0 1rem;
+}
+
+.input-wrapper span {
+
+  width: 20px;
+  font: 1.4rem/1 Helvetica, 'sans-serif';
+  color: #64964c;
+  padding: 0 1rem;
+}
+
+[type="color"] {
+  padding: 0 5px;
+
+}
+

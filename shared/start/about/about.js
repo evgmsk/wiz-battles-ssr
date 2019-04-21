@@ -1,0 +1,33 @@
+import React from 'react';
+/*
+import FirstScreen from '../../../assets/images/screenshots/scr1.jpg';
+import SecondScreen from '../../../assets/images/screenshots/scr2.jpg';
+import ThirdScreen from '../../../assets/images/screenshots/scr3.jpg';
+import ForthScreen from '../../../assets/images/screenshots/scr4.jpg';
+*/
+// import {DynamicImportNear} from '../../common/dynamic-component';
+
+import Screenshot from './screensot';
+import {captions} from '../../common/constants/constants';
+
+import './about.scss';
+
+
+
+function About() {
+    return (
+        <section className="about">
+            <h2>Cкриншоты игры</h2>
+            <div className="screenshots-wrapper">
+                {captions.map((cap, i) => {
+                    return <Screenshot key={i} order={i + 1} caption={cap} />
+                })}
+            </div>
+        </section>
+    );
+}
+
+// export default About;
+
+
+export default About;

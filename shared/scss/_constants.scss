@@ -1,0 +1,133 @@
+$task-panel: #E8F5E9;
+$task-wrapper: #edeaed;
+$task-section: #b2ebf2;
+$nav-item-color: #ffd600;
+$bg-popup: #2b65f0;
+$border-main: darken(#F57F17, 23%);
+$font-main: 2.4rem/1 'Rubic', 'Arial', 'sans-serif';
+$task-text-color: #64964c;
+$input-text-color: #212121;
+$error-color: #dd2C00;
+$water: #3e9bee;
+$ice: #eaf9fe;
+$fire: #db4210;
+$life: #23aa39;
+$menu-item-color: #ffffff;
+$imgPath: '../../assets/images';
+$health: #be2b37;
+$experience: #ddbd49;
+$game-menu-btn: #f0e4bc;
+$game-menu-border: #6e220b;
+$submit-btn: #1f750d;
+$progress-bar-width: 150px;
+$progress-bar-height: 20px;
+
+$lang: 'en' 'ru';
+
+@mixin flex($justify: space-between, $align: center, $row: row) {
+  display: flex;
+  justify-content: $justify;
+  align-items: $align;
+  flex-direction: $row;
+}
+
+/*@mixin grid($col) {
+  display: grid;
+  grid-template-columns: repeat($col, 1fr);
+  grid-auto-rows: 1fr;
+  align-content: space-around;
+  justify-items:  center;
+}
+
+@mixin recordGrid() {
+  display: grid;
+  grid-template-columns: 30% repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+  align-content: center;
+  justify-items:  center;
+}*/
+
+@mixin set-colors($main-color: #fff, $focus-color: #fff, $active-color: #fff) {
+  $main-color: $main-color !global;
+  $focus-color: $focus-color !global;
+  $active-color: $active-color !global;
+}
+
+@mixin spinner($circle-size: 50px, $circle-width: 12px, $gradient-colors: #eaeff5 #90b0cc, $background: '') {
+  .spinner-circle {
+    position: relative;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //transform: rotate(45deg);
+    animation: spinner 3s linear infinite;
+    width: $circle-size;
+    height: $circle-size;
+    z-index: 1000;
+    &:before {
+      content: '';
+      width: $circle-size * .5;
+      height: $circle-size;
+      position: absolute;
+      top: 0;
+      left: 0;
+      @if ($background != '') {
+        background: $background;
+      }
+      @else {
+        background: linear-gradient(nth($gradient-colors, 2), nth($gradient-colors, 1));
+      }
+      border-top-left-radius: $circle-size * .5;
+      border-bottom-left-radius: $circle-size * .5;
+    }
+    &:after {
+      content: '';
+      width: $circle-size * .5;
+      height: $circle-size;
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: linear-gradient(nth($gradient-colors, 1), nth($gradient-colors, 2));
+      border-top-right-radius: $circle-size * .5;
+      border-bottom-right-radius: $circle-size * .5;
+    }
+  }
+  .spinner-circle-center {
+    display: block;
+    height: $circle-size - $circle-width;
+    width: $circle-size - $circle-width;
+    border-radius: 50%;
+    background: green;
+    z-index: 1001;
+  }
+}
+
+@keyframes spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg)
+  }
+}
+
+/*%inset-shadow {
+  box-shadow: inset 0 0 1.5rem rgba(10, 10, 10, .7);
+}*/
+
+@keyframes hover {
+  from {
+    width: 95%;
+    height: 95%;
+  }
+  to {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@keyframes animateTop {
+  from {top: -1000px; opacity: 0}
+  to {top: 0; opacity: 1}
+}

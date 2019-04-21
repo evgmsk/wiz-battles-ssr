@@ -1,0 +1,43 @@
+@import "../../scss/_constants";
+
+.home-section{
+  height: calc(100vh - 120px);
+  @media (max-height: 500px) and (orientation: landscape) {
+    height: auto;
+  }
+  background: url('#{$imgPath}/start_page_bg.jpg') no-repeat center;
+  background-size: 100% 100%;
+  color: $ice;
+  padding: 6rem 0 0;
+  box-sizing: border-box;
+  .home-img {
+    background: url('#{$imgPath}/title.png') no-repeat center;
+    background-size: 100% 100%;
+    display: block;
+    height: 25%;
+    width: 60%;
+    max-width: 900px;
+    margin: 0 auto 0;
+  }
+  .home-wrapper {
+    h2 {
+      margin: 4rem auto;
+      font: $font-main;
+      text-align: center;
+      font-size: 3rem;
+    }
+    .game-description {
+      @include flex(center, center, column);
+      margin: 5rem;
+      font: $font-main;
+      color: $ice;
+      svg {
+        width: 2rem;
+        height: 2rem;
+        color: $ice;
+        margin: 1rem;
+      }
+    }
+  }
+
+}

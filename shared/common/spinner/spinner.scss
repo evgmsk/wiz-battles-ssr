@@ -1,0 +1,12 @@
+ @import "../../scss/_constants";
+
+.spinner {
+  height: 100%;
+  width: 100%;
+  &.whole-page {
+    height: calc(100vh - 100px);
+  }
+  @include flex(center, center);
+  @include spinner();
+  background: transparent;
+}
