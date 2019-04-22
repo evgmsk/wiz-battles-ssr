@@ -12,7 +12,6 @@ $water: #3e9bee;
 $ice: #eaf9fe;
 $fire: #db4210;
 $life: #23aa39;
-$menu-item-color: #ffffff;
 $imgPath: '../../assets/images';
 $health: #be2b37;
 $experience: #ddbd49;
@@ -31,22 +30,6 @@ $lang: 'en' 'ru';
   flex-direction: $row;
 }
 
-/*@mixin grid($col) {
-  display: grid;
-  grid-template-columns: repeat($col, 1fr);
-  grid-auto-rows: 1fr;
-  align-content: space-around;
-  justify-items:  center;
-}
-
-@mixin recordGrid() {
-  display: grid;
-  grid-template-columns: 30% repeat(4, 1fr);
-  grid-auto-rows: 1fr;
-  align-content: center;
-  justify-items:  center;
-}*/
-
 @mixin set-colors($main-color: #fff, $focus-color: #fff, $active-color: #fff) {
   $main-color: $main-color !global;
   $focus-color: $focus-color !global;
@@ -60,7 +43,6 @@ $lang: 'en' 'ru';
     display: flex;
     justify-content: center;
     align-items: center;
-    //transform: rotate(45deg);
     animation: spinner 3s linear infinite;
     width: $circle-size;
     height: $circle-size;
@@ -111,10 +93,6 @@ $lang: 'en' 'ru';
     transform: rotate(360deg)
   }
 }
-
-/*%inset-shadow {
-  box-shadow: inset 0 0 1.5rem rgba(10, 10, 10, .7);
-}*/
 
 @keyframes hover {
   from {

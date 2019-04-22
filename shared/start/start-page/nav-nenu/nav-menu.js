@@ -30,12 +30,12 @@ export const Login = props => {
     return (
         <React.Fragment>
             {userName
-                ?   <div className={`${className} logout-external`} onClick={logout} >
+                ?   <div className={`${className} external-item`} onClick={logout} >
                         <FaSignOutAlt className="nav-icon"/>
                     </div>
                 :   <NavItem
                         to={path}
-                        className={className}
+                        className={`${className} external-item`}
                         icon={Icons.login}
                     >
                         {children || <T keys={'nav_menu.login'} />}

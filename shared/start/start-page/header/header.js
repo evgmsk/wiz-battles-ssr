@@ -19,11 +19,13 @@ const Header = props => {
 
     return (
         <header className="header">
-            <Logo>WB</Logo>
-            <NavMenu {...navProps} />
-            <div className="right-bar">
-                <DuoLanguageSwitcher lang={lang} setLanguage={setLanguage} langs={Langs} />
-                <Login {...navProps}><span/></Login>
+            <div className="header__content-wrapper">
+                <Logo>WB</Logo>
+                <NavMenu {...navProps} />
+                <div className="header__right-bar">
+                    <DuoLanguageSwitcher lang={lang} setLanguage={setLanguage} langs={Langs} />
+                    <Login {...navProps}><span/></Login>
+                </div>
             </div>
         </header>
     );

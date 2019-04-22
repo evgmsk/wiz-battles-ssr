@@ -5,7 +5,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import { MainRoutes } from '../../common/constants/constants';
 
-import Spinner from '../../common/spinner/spinner';
+// import Spinner from '../../common/spinner/spinner';
 import DrawBox from '../draw-box/draw-box';
 import Home from '../home/home-page';
 import About from '../about/about';
