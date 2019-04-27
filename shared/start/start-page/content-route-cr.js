@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {Suspense, lazy} from 'react';
 import { Route, Switch } from 'react-router-dom';
 import loadable from '@loadable/component';
 
+import Spinner from '../../common/spinner/spinner';
 import { MainRoutes } from '../../common/constants/constants';
 
 /*import Spinner from '../shared/common/spinner/spinner';
@@ -10,21 +11,23 @@ import Home from '../shared/initial/home/home-page';
 import About from '../shared/initial/about/about';
 import LogPage from '../shared/initial/login/login-page';*/
 
- const Home = loadable(() => import(/*webpackPreload: true */ '../home/home-page'));
+ const Home = lazy(() => import(/*webpackPreload: true */ '../home/home-page'));
 
- const About = loadable(() => import('../about/about'));
+ const About = lazy(() => import(/*webpackPreload: true */ '../about/about'));
 
- const DrawBox = loadable(() => import('../draw-box/draw-box'));
+ const DrawBox = lazy(() => import(/*webpackPreload: true */ '../draw-box/draw-box'));
 
- const LogPage = loadable(() => import('../login/login-page'));
+ const LogPage = lazy(() => import(/*webpackPreload: true */ '../login/login-page'));
 
 const StartPageRouteCl = () => (
-    <Switch>
-        <Route exact path={MainRoutes.home.path} component={Home} />
-        <Route exact path={MainRoutes.drawbox.path} component={DrawBox} />
-        <Route exact path={MainRoutes.login.path} component={LogPage} />
-        <Route exact path={MainRoutes.about.path} component={About} />
-    </Switch>
+    <Suspense fallback={<Spinner />}>
+        <Switch>
+            <Route exact path={MainRoutes.home.path} component={Home} />
+            <Route exact path={MainRoutes.drawbox.path} component={DrawBox} />
+            <Route exact path={MainRoutes.login.path} component={LogPage} />
+            <Route exact path={MainRoutes.about.path} component={About} />
+        </Switch>
+    </Suspense>
 );
 
 export default StartPageRouteCl;

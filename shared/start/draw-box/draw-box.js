@@ -5,8 +5,7 @@ import React from 'react';
 import { Stage, Layer } from 'react-konva';
 import _ from 'lodash';
 
-import Wrapper from '../../common/component-wrapper';
-import ControlsPanel from './controls-panel';
+import ControlsPanel from './controls-panel/controls-panel';
 import ShapeClass from '../../common/shape-classes/shape-class';
 import { oddIndexes, evenIndexes } from '../../common/helper-functions/indexFilters';
 import idGen from '../../common/helper-functions/idGen';
@@ -61,8 +60,6 @@ class DrawBox extends React.Component {
     componentDidMount() {
         window.addEventListener('resize', this.canvasResize);
         this.setInitialSize();
-        // const container = this.container.current;
-        // setTimeout(() => window.addEventListener('resize', this.canvasResize), 0);
     }
 
     canvasResize(e) {

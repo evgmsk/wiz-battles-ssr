@@ -1,9 +1,13 @@
-function translator (lang, path, log = 0) {
+import PropTypes from 'prop-types';
+
+function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
+    if (arguments.length < 3)
+        throw new Error("Function 'translator' require at least three arguments. The first one must be default language. The second one must be language key in the store - the same as passed with 'connect'. The third one must be path from the root of the project (directory contained node-modules) to 'i18n' directory (directory contained 'json' language files)");
     class Language {
-        constructor(defaultLang, path = 'assets/i18n/') {
-            this.lang = defaultLang;
+        constructor(defaultLanguage, path) {
+            this.lang = defaultLanguage;
             this.path = path;
-            this.defineSource(defaultLang);
+            this.defineSource(defaultLanguage);
             if (log) console.log(this);
         }
 
@@ -13,13 +17,13 @@ function translator (lang, path, log = 0) {
         }
     }
 
-    const i18nLang = new Language(lang, path);
+    const i18nLang = new Language(defaultLanguage, path);
 
     return function translate(props) {
         let source;
         let string = i18nLang.langSource;
-        let {lang, language, keys, insertions = []} = props;
-        lang = lang || language;
+        let {keys, insertions = []} = props;
+        let lang = props[storeLanguageKey];
         if (!lang) {
             throw new Error('Property "language" is undefined')
         }
@@ -37,6 +41,7 @@ function translator (lang, path, log = 0) {
         if (!source || (source && typeof source !== 'object' && !source[Keys[0]])) {
             throw new Error("Obtained language source is not valid.")
         }
+
         try {
             string = Keys.reduce((acc, key) => acc[key], source);
         }catch(err) {

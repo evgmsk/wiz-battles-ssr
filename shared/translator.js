@@ -1,14 +1,11 @@
 /**
  * project new-wiz-bat
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import translate from './common/react-redux-translate';
 
-const la = 'en';
-
-let T = translate(la);
+let T = translate('en', 'lang', 'assets/i18n/');
 
 T = connect( state => ({lang: state.app.lang}))(T);
 

@@ -10,6 +10,20 @@ import Input from './input/input';
 import './form.scss';
 
 class SmartForm extends React.Component {
+    static compare(newState, oldState) {
+        for (let key in newState) {
+            if (newState.hasOwnProperty(key)) {
+                if(typeof oldState[key] === 'object' && oldState[key] !== null)
+                    return compare(oldState[key], newState[key]);
+                else {
+                    if (oldState[key] !== newState[key]) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     static findInput(node) {
         if (node.tagName === 'INPUT' || node.tagName === 'TEXTAREA' || node.tagName === 'SELECT')
@@ -64,25 +78,11 @@ class SmartForm extends React.Component {
         this.removeChild = this.removeChild.bind(this);
         this.handleOnEnter = this.handleOnEnter.bind(this);
         this.refToForm = React.createRef();
-        console.log(this.props)
     }
 
     shouldComponentUpdate(props, newState) {
-        const compare = (newState, oldState) => {
-            for (let key in newState) {
-                if (newState.hasOwnProperty(key)) {
-                    if(typeof oldState[key] === 'object' && oldState[key] !== null)
-                        return compare(oldState[key], newState[key]);
-                    else {
-                        if (oldState[key] !== newState[key]) {
-                            return true
-                        }
-                    }
-                }
-            }
-            return false;
-        };
-        return !((newState.isValidating !== this.state.isValidating) && !compare(newState.errors, this.state.errors));
+        return !((newState.isValidating !== this.state.isValidating)
+            && !SmartForm.compare(newState.errors, this.state.errors));
     }
 
     addChild(e, name, child) {
