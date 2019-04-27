@@ -36,11 +36,12 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use(favicon(path.resolve(__dirname, faviconPath)));
 app.use(express.static(path.resolve(__dirname, dist)));
+
 if (mode === 'prodSSR') {
     const start = require('./routes/home');
     const game = require('./routes/game');
+    app.use(favicon(path.resolve(__dirname, faviconPath)));
     app.use(game);
     app.use(start);
 }

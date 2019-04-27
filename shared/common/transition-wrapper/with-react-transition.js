@@ -6,18 +6,17 @@ import {CSSTransition} from 'react-transition-group';
 
 import './with-transition.scss';
 
-const WithTransition = ({Component, props, inProp}) => {
+const WithTransition = ({Component, inProp, timeout , ...props}) => {
     return function ComponentWrapper() {
-        console.log( props, inProp)
         return (
             <CSSTransition
                 in={inProp}
-                timeout={500}
-                classNames="trans-form"
+                timeout={timeout || 300}
+                classNames="transition-wrapper"
                 unmountOnExit
                 appear
             >
-                <Component {...props} />
+                {Component ? <Component {...props} /> : props.children}
             </CSSTransition>
 
         )

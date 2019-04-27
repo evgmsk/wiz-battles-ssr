@@ -1,0 +1,24 @@
+@import "../../../scss/constants";
+
+$imgPath: '../../../assets/images';
+
+.lang-setter {
+  @each $l in $lang {
+    &.lang-#{$l} {
+      background: url('#{$imgPath}/lang/#{$l}.png') no-repeat center;
+      background-size: 100% 100%;
+    }
+  }
+  position: relative;
+  cursor: pointer;
+  height: 24px;
+  width: 24px;
+  border: none;
+  border-radius: 12px;
+  box-sizing: border-box;
+  transition: all .2s;
+  &:focus,
+  &:hover {
+    transform: scale(1.1);
+  }
+}

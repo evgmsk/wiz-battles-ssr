@@ -15,33 +15,36 @@ const SmartInput = props => {
         inputStyle = 'check-input';
         labelStyle = labelStyle === 'like-placeholder' ? 'in-row' : labelStyle;
     }
+    const inputClassName = `smart-input__input${error ? " invalid-input" : ""}${value ? " dirty-input" : ""}`;
     const ClassName = `
                 smart-input
                 ${className}
                 ${labelStyle} 
                 ${inputStyle}
                 ${error ? " invalid-input" : ""}
-            `;
+            `.replace(/\s{2,}/g, " ");
     return (
-        <label className={ClassName.replace(/\s{2,}/g, " ")}>
-            {labelStyle === 'in-row'
+        <label className={ClassName}>
+            {labelStyle === 'in-row' || labelStyle === 'in-col'
                 ? <React.Fragment>
                         <div className="smart-input__error-wrapper">
                             <props.tag
-                                className={`smart-input__input${error ? " invalid-input" : ""}${value ? " dirty-input" : ""}`}
+                                className={inputClassName}
                                 {...restProps}
                                 value={value}
                                 onChange={e => onChange(e, ...argsForHandlers)}
                                 onBlur={e => onBlur(e, ...argsForHandlers)}
                             >
                                 {
-                                    props.fieldoptions
-                                    && props.fieldoptions.map((option, i) => <option key={`${option.value}${i}`} value={option.value}>{option.text}</option>)
+                                    props.fieldoptions && props.fieldoptions.map((option, i) =>
+                                        <option key={`${option.value}${i}`} value={option.value}>{option.text}</option>)
                                 }
                             </props.tag>
                             {error && <div className="input-error-msg">{error.msg}</div>}
                         </div>
-                        <div className={`smart-input__label${error ? " invalid-input" : ""}${value ? " dirty-input" : ""}`}>{labelText}</div>
+                        <div className={`smart-input__label${error ? " invalid-input" : ""}`}>
+                            {labelText}
+                        </div>
                   </React.Fragment>
                 : <React.Fragment>
                     <props.tag
@@ -52,11 +55,13 @@ const SmartInput = props => {
                         onBlur={e => onBlur(e, ...argsForHandlers)}
                     >
                         {
-                            props.fieldoptions
-                            && props.fieldoptions.map((option, i) => <option key={`${option.value}${i}`} value={option.value}>{option.text}</option>)
+                            props.fieldoptions && props.fieldoptions.map((option, i) =>
+                                <option key={`${option.value}${i}`} value={option.value}>{option.text}</option>)
                         }
                     </props.tag>
-                    <div className={`smart-input__label${error ? " invalid-input" : ""}${value ? " dirty-input" : ""}`}  >{labelText}</div>
+                    <div className={`smart-input__label${error ? " invalid-input" : ""}${value ? " dirty-input" : ""}`}>
+                        {labelText}
+                    </div>
                     {error && <div className='input-error-msg'>{error.msg}</div>}
                   </React.Fragment>
             }

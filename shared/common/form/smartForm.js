@@ -64,6 +64,7 @@ class SmartForm extends React.Component {
         this.removeChild = this.removeChild.bind(this);
         this.handleOnEnter = this.handleOnEnter.bind(this);
         this.refToForm = React.createRef();
+        console.log(this.props)
     }
 
     shouldComponentUpdate(props, newState) {
@@ -249,6 +250,7 @@ class SmartForm extends React.Component {
     }
 
     validateAndFetch() {
+        console.log('fetch')
         const {invalidForm, values} = this.validateForm();
         if (invalidForm)
             return;
@@ -266,6 +268,7 @@ class SmartForm extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
+        console.log('submit')
         const {successfullySubmitted, isValidating} = this.state;
         if (successfullySubmitted || isValidating) {
             return;

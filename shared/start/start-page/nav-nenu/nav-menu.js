@@ -1,10 +1,11 @@
 import {FaHome, FaInfo, FaSignInAlt, FaSignOutAlt, FaPaintBrush, FaGamepad} from 'react-icons/fa';
 import React, {useState} from 'react';
+// import {withRouter} from 'react-router-dom';
 // import PropTypes from 'prop-types';
 
 import { MainRoutes } from '../../../common/constants/constants';
 import NavItem, {SpecialLink} from './nav-item';
-import T from '../../../assets/i18n/translator';
+import T from '../../../translator';
 import NavDropDownButton from '../nav-dropdown-button/nav-dropdown-button';
 
 import './nav-menu.scss';
@@ -17,6 +18,14 @@ const Game = props => (
         <FaGamepad className="nav-icon" />
     </SpecialLink>
 );
+
+export const CustomLogin = ({className = 'nav-menu-item', userName, logout, toggle}) => {
+    return (
+            <button className={`${className} external-item`} onClick={userName ? logout : toggle}>
+                {userName ? <FaSignOutAlt className="nav-icon"/> : <FaSignInAlt className="nav-icon"/>}
+            </button>
+        )
+};
 
 export const Login = props => {
     const {
@@ -75,11 +84,10 @@ class MainMenu extends React.Component {
         this.setState(({isOpen}) => !isOpen);
     }
     render() {
-        const {userName, dropdownButton, routes} = this.props;
+        const {userName, routes = MainRoutes} = this.props;
         const {isOpen} = this.state;
-        const { game, login, ...restRouts } = MainRoutes;
-
-        const className = isOpen ? 'nav-menu' : 'nav-menu';
+        const { game, login, ...restRouts } = routes;
+        const className = isOpen ? 'nav-menu' : 'nav-menu nav-hidden';
         return (
             <div className="nav-wrapper">
                 <NavDropDownButton onClick={this.onClick} />

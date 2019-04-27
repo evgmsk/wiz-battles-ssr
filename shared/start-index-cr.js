@@ -14,11 +14,14 @@ import {Provider} from 'react-redux';
 import StartPage from './start/start-page-cr'
 import storeFactory from './store/index';
 import {initialStateStart} from './store/initialState';
+import {authenticateUser} from './store/actions/appActions';
+
 import './assets/favicon.ico'
 
 import '../shared/scss/reset.scss';
 
 const store = storeFactory(window, initialStateStart());
+store.dispatch(authenticateUser());
 
 const target = document.getElementById('root');
 

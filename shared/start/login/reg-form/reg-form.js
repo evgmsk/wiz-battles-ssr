@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import validators from '../../../common/validators';
 import SmartForm, { SmartInput } from '../../../common/form/smartForm';
+import T from '../../../translator';
 
 const SpecifiedInput = props => {
     const [shown, setShown] = useState(false);
@@ -22,7 +23,7 @@ const SpecifiedInput = props => {
             </div>
 };
 
-const RegForm = ({ className, submitButtonValue, onResponse = f => f }) => {
+const RegForm = ({ className, onResponse = f => f }) => {
     const [inProp, setInProp] = useState(false);
     useEffect(() => {
         if (!inProp) {
@@ -127,7 +128,9 @@ const RegForm = ({ className, submitButtonValue, onResponse = f => f }) => {
                                 value={values.repeatPassword}
                                 {...restProps}
                             />
-                            <button type="submit" className="btn btn-success btn-large">{submitButtonValue}</button>
+                            <button type="submit" className="btn  btn-filled btn-success btn-large">
+                                <T keys="log_forms_fields.login_button" />
+                            </button>
                         </React.Fragment>
                     )
                 }

@@ -74,12 +74,12 @@ export function checkRefreshToken (req, res, next) {
                 return res.json({userName: userData.name, token, refreshToken})
             } else {
                 res.status(401);
-                res.statusMessage = "expired_token";
+                res.statusMessage = "invalid_token";
                 res.end();
             }
         } else {
             res.status(401);
-            res.statusMessage = "expired_token";
+            res.statusMessage = "invalid_token";
             res.end();
         }
     }).catch(error => next(error));

@@ -5,6 +5,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+export const DefaultCloseButton = props => {
+    const {toggle, external} = props;
+    className = `close-modal-button-default${external ? '-external' : ''}`;
+    return (
+        <button className={className} onClick={toggle}>
+            &times;
+        </button>
+        );
+};
+
 export const DefaultOpenButton = ({label, toggle, className}) => (
     <button className={"open-modal-button" + (className && className)} onClick={toggle}>{label}</button>
 );
@@ -15,11 +25,14 @@ DefaultOpenButton.propTypes = {
     className: PropTypes.string
 };
 
-export const DefaultModalHeader = ({title, toggle}) => {
+export const DefaultModalHeader = ({title, toggle, external, CustomCloseButton}) => {
     return (
         <div className="modal-header-default">
             <span className="modal-title">{title}</span>
-            <button className="close-modal-button-default" onClick={toggle}>&times;</button>
+            {CustomCloseButton
+                ? <CustomCloseButton onClick={toggle} />
+                : <DefaultCloseButton toggle={toggle} external={external} />
+            }
         </div>
     )
 };
@@ -27,28 +40,29 @@ export const DefaultModalHeader = ({title, toggle}) => {
 DefaultModalHeader.propTypes = {
     toggle: PropTypes.func.isRequired,
     title: PropTypes.any.isRequired,
+    external: PropTypes.bool,
+    customHeaderButton: PropTypes.func,
 };
 
 export const DefaultModalFooter = ({toggle, label='close'}) => (
     <div className="modal-footer-default">
-        <button className="footer-modal-button-default">{label}</button>
+        <button className="footer-modal-button-default" onClick={toggle}>{label}</button>
     </div>
 );
 
 DefaultModalFooter.propTypes = {
     toggle: PropTypes.func.isRequired,
-    label: PropTypes.any.isRequired,
+    label: PropTypes.string.isRequired,
 };
 
-export const ModalHeader = props => {
-    const {children, defaultHeader, ...restProps} = props;
+export const ModalHeader = ({children, ...props}) => {
     return (
         <React.Fragment>
-            {defaultHeader
-                ?   <DefaultModalHeader {...restProps} />
-                :   <div className="modal-header">
+            {children
+                ?   <div className="modal-footer-custom">
                         {children}
                     </div>
+                :   <DefaultModalHeader {...props} />
             }
         </React.Fragment>
     )
@@ -60,15 +74,14 @@ export const ModalBody = ({children}) => (
     </div>
 );
 
-export const ModalFooter = props => {
-    const {defaultFooter, children, ...restProps} = props;
+export const ModalFooter = ({children, ...props}) => {
     return (
         <React.Fragment>
-            {defaultFooter
-                ?   <DefaultModalFooter {...restProps} />
-                :   <div className="modal-footer">
+            {children
+                ?   <div className="modal-footer-custom">
                         {children}
                     </div>
+                :   <DefaultModalFooter {...props} />
             }
         </React.Fragment>
     )

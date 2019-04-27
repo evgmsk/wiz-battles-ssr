@@ -1,4 +1,4 @@
-@import "constant";
+@import "form-constant";
 
 @mixin smart-form($direction: column, $justify: flex-start, $width: 80%, $max-width: 800px, $margin: auto) {
   display: flex;
@@ -9,19 +9,22 @@
   margin: $margin;
 }
 
-@mixin smart-input(
+@mixin smart-input-flex(
     $direction: row-reverse,
     $justify: space-between,
-    $align: center,
-    $background: white,
-    $margin: .9rem .5rem,
-    $padding: 1.3rem .5rem,
-    $border-rad: 5px) {
-  position: relative;
+    $align: center) {
   display: flex;
   flex-direction: $direction;
   justify-content: $justify;
   align-items: $align;
+}
+
+@mixin smart-input(
+    $margin:  0 0 1rem 0,
+    $padding: 1.3rem .5rem,
+    $border-rad: 5px,
+    $background: white) {
+  position: relative;
   margin: $margin;
   padding: $padding;
   background: $background;
@@ -51,21 +54,24 @@
   }
 }
 
-@mixin smart-input-input(
-    $width: 100%,
-    $height: $height-input,
-    $font-size: 1rem,
-    $color: $text-color,
-    $padding: $input-padding-top $input-padding-left,
+@mixin smart-input-input-size(
     $border-rad: 5px,
-    $background: transparent,
-    $transition: $transition) {
+    $padding: $input-padding-top $input-padding-left,
+    $width: 100%,
+    $height: $height-input) {
   width: $width;
   height: $height;
+  padding: $padding;
+  border-radius: $border-rad;
+}
+
+@mixin smart-input-input-color(
+    $font-size: 1rem,
+    $color: $text-color,
+    $background: transparent,
+    $transition: $transition) {
   font-size: $font-size;
   color: $color;
-  border-radius: $border-rad;
-  padding: $padding;
   transition: $transition;
 }
 
@@ -73,7 +79,7 @@
   font-size: $font-size;
   width: $width;
   @if($label-style == 'in-row') {
-    margin: nth($margin, 1) nth($margin, 2)
+    margin: nth($margin, 1)
   }
   @else {
     margin: $margin;
@@ -167,7 +173,7 @@
   transform: translateY(-$translate);
 }
 
-@mixin error-msg($color: $error-color, $left: 1rem, $bottom: 0, $font-size: .9rem) {
+@mixin error-msg($color: $error-color, $left: 1.5rem, $bottom: 0, $font-size: .9rem) {
   position: absolute;
   left: $left;
   bottom: $bottom;
@@ -175,21 +181,53 @@
   font-size: $font-size;
 }
 
+@mixin like-placeholder-label-colors($colors: $placeholder-color $error-color) {
+  color: nth($colors, 1);
+  &.invalid-input {
+    color: nth($colors, 2);
+  }
+}
+
+@mixin like-placeholder-label-position(
+    $left: 1.5rem,
+    $background: inherit,
+    $transition: $transition,
+    $padding: 1px 3px){
+  left: $left;
+  padding: $padding;
+  background: $background;
+  border-radius: 2px;
+  transition: $transition;
+}
+
+@mixin like-placeholder-label-size(
+    $font-size: 1.3rem,
+    $resize: .3rem,
+    $translate: .8rem,
+    $input-height: $height-input) {
+  $label-translate: $input-height * .5 + $translate;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: $font-size;
+  &.dirty-input {
+    font-size: $font-size - $resize;
+    transform: translateY(-$label-translate);
+    z-index: 11;
+  }
+}
+
 @mixin like-placeholder-label(
-    $input-style: 'outlined',
-    $left: 1.2rem,
+    $left: 1.5rem,
     $font-size: 1.3rem,
     $resize: .3rem,
     $translate: .8rem,
     $input-height: $height-input,
-    $colors: $placeholder-color $focus-color $error-color,
+    $colors: $placeholder-color $error-color,
     $transition: $transition,
     $background: inherit,
     $padding: 1px 3px) {
   $label-translate: $input-height * .5 + $translate !default;
-  @if($input-style == 'shadowed') {
-    $label-translate: calc(#{$label-translate} + .2rem) !global;
-  }
   background: $background;
   position: absolute;
   left: $left;
@@ -201,7 +239,7 @@
   border-radius: 2px;
   transition: $transition;
   &.invalid-input {
-    color: nth($colors, 3);
+    color: nth($colors, 2);
   }
   &.dirty-input {
     font-size: $font-size - $resize;
@@ -210,16 +248,27 @@
   }
 }
 
+@mixin like-placeholder-input-border(
+    $border-rad: 5px,
+    $input-style: 'underlined'){
+  @if($input-style == 'underlined') {
+    border-radius: $border-rad $border-rad 0 0;
+  }
+  @else {
+    border-radius: $border-rad;
+  }
+}
+
 @mixin like-placeholder-input(
-      $input-style: 'underlined',
-      $label-font-size: 1rem,
-      $translate: .5rem,
-      $colors: $input-colors,
-      $height: $height-input,
-      $border-rad: 5px,
-      $width: 100%,
-      $padding: $input-padding-top $input-padding-left,
-      $background: transparent) {
+    $input-style: 'underlined',
+    $label-font-size: 1.3rem,
+    $translate: .8rem,
+    $colors: $input-colors,
+    $height: $height-input,
+    $border-rad: 5px,
+    $width: 100%,
+    $padding: $input-padding-top $input-padding-left,
+    $background: transparent) {
   $label-translate: $height * .5 + $translate;
   background: $background;
   position: relative;
@@ -253,40 +302,95 @@
   @include error(nth($colors, 4), $input-style)
 }
 
-@mixin set-button ($color, $outlined: false, $background: white, $border-width: 1px, $darken: 20%){
-  @if ($outlined == true) {
-    border: $border-width solid $color;
-    background: white;
-    color: $color;
-    box-shadow: 0 0 1px 1px darken($color, $darken);
-    &:hover:not([disabled]) {
-      box-shadow: 1px 1px 1px 1px darken($color, $darken);
-    }
-    &:active:not([disabled]) {
-      box-shadow: inset 1px 1px 1px 1px darken($color, $darken);
-    }
-    &[disabled] {
-      @extend %disable;
-    }
+@mixin button-size($font: $font-btn, $padding: $btn-padding, $size: 2.6rem 1rem, $margin: .5rem, $border-rad: 5px) {
+  font: $font;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $padding;
+  min-height: nth($size, 1);
+  min-width: nth($size, 2);
+  box-sizing: border-box;
+  border: solid 1px transparent;
+  margin: $margin;
+  border-radius: $border-rad;
+  outline: none;
+  color: #fff;
+  align-self: center;
+  justify-self: center;
+  transition: all .3s;
+  &-small {
+    font-size: 1rem;
+    min-height: 2rem;
   }
-  @else {
-    background-color: $color;
-    background-size: 75% 100%;
+  &-large {
+    min-height: 3.5rem;
+    padding: nth($btn-padding, 1) nth($btn-padding, 2) + .4rem;
+    font-size: 1.6rem;
+  }
+  &-medium {
+    min-height: 2.6rem;
+  }
+}
+
+@mixin button-outlined ($color, $darken: 20%, $background: white, $border-width: 1px){
+  border: $border-width solid $color;
+  background: $background;
+  color: $color;
+  box-shadow: 0 0 1px 1px darken($color, $darken);
+  &:hover:not([disabled]) {
+    box-shadow: 1px 1px 1px 1px darken($color, $darken);
+  }
+  &:active:not([disabled]) {
+    box-shadow: inset 1px 1px 1px 1px darken($color, $darken);
+  }
+  &[disabled] {
+    @extend %disable;
+  }
+}
+
+@mixin button-label($color, $darken: 20%, $background: transparent) {
+  background: $background;
+ /* background-size: 75% 100%;
+  background-position: 50% 0;*/
+  border: none;
+  color: $color;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  &:hover:not([disabled]),
+  &:focus:not([disabled]) {
+    // background-image: none;
+    background-image: linear-gradient(to left, $color, darken($color, 15%));
+  }
+  &:active:not([disabled]) {
+    background-image: linear-gradient(to left $color, $color, darken($color, 15%), darken($color, 15%), darken($color, 15%));
+    background-size: 500% 100%;
+    background-position: 100% 0;
+    transition: background ease-out .4s;
+  }
+  &[disabled] {
+    @extend %disable;
+  }
+}
+
+@mixin button-filled ($color, $darken: 20%, $background: white, $border-width: 1px){
+  background-color: $color;
+  background-size: 75% 100%;
+  background-position: 50% 0;
+  color: white;
+  &:hover:not([disabled]),
+  &:focus:not([disabled]) {
+    // background-image: none;
+    background-color: darken($color, 10%);
+  }
+  &:active:not([disabled]) {
+    background-image: linear-gradient(to left, darken($color, 15%), darken($color, 15%), darken($color, 15%), $color, $color, darken($color, 15%), darken($color, 15%), darken($color, 15%));
+    background-size: 900% 100%;
     background-position: 50% 0;
-    color: white;
-    &:hover:not([disabled]) {
-      background-image: none;
-      background-color: darken($color, 10%)
-    }
-    &:active:not([disabled]) {
-      background-image: linear-gradient(to left, darken($color, 15%), darken($color, 15%), darken($color, 15%), $color, $color, darken($color, 15%), darken($color, 15%), darken($color, 15%));
-      background-size: 900% 100%;
-      background-position: 50% 0;
-      transition: background ease-out .4s;
-    }
-    &[disabled] {
-      @extend %disable;
-    }
+    transition: background ease-out .4s;
+  }
+  &[disabled] {
+    @extend %disable;
   }
 }
 

@@ -7,6 +7,7 @@ import  ReactDom, { hydrate, render } from 'react-dom';
 import { BrowserRouter }  from 'react-router-dom'
 import 'typeface-roboto';
 import {Provider} from 'react-redux';
+import {authenticateUser} from './store/actions/appActions'
 
 // import './GameFunctions/TaskGenerators/langaugeTaskGenerator';
 /*import { onSaveMonster } from '../src/actions/actions/gameDataActions';
@@ -26,6 +27,8 @@ const initialState = SSR ? window.REDUX_DATA : initialStateStart();
 const store = storeFactory(window, initialState);
 
 window.REDUX_DATA = null;
+
+store.dispatch(authenticateUser());
 
 const target = document.getElementById('root');
 

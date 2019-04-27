@@ -1,9 +1,13 @@
 @import "../mixin";
 
+$input-style: "outlined" "underlined" "shadowed";
+
 .smart-input {
   @include smart-input();
+  @include smart-input-flex();
   .smart-input__input {
-    @include smart-input-input();
+    @include smart-input-input-size();
+    @include smart-input-input-color();
   }
   .input-error-msg {
     @include error-msg();
@@ -43,18 +47,7 @@
       @include smart-input-label('in-row', 1.6rem, 50%);
     }
   }
-  &.like-placeholder.underlined {
-    .smart-input__input {
-      @include like-placeholder-input('underlined');
-      &.invalid-input {
-        @include error('underlined');
-      }
-    }
-    .smart-input__label {
-      @include like-placeholder-label(.5rem);
-    }
-  }
-  &.like-placeholder.outlined {
+ /* &.like-placeholder.outlined {
     .smart-input__input {
       @include like-placeholder-input('outlined');
       &.invalid-input {
@@ -75,11 +68,32 @@
     .smart-input__label {
       @include like-placeholder-label();
     }
-  }
+  }*/
   &.reset-input {
    @include reset-input()
   }
   &.check-input{
     @include check-input();
+  }
+}
+
+.like-placeholder {
+  @each $style in $input-style {
+    &.#{$style} {
+      .smart-input__input {
+        @include like-placeholder-input($style);
+        &.invalid-input {
+          @include error($style);
+        }
+      }
+      .smart-input__label {
+        @if($style != "underlined") {
+          @include like-placeholder-label();
+        }
+        @else {
+          @include like-placeholder-label(.5rem);
+        }
+      }
+    }
   }
 }

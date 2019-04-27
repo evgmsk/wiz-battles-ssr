@@ -1,0 +1,26 @@
+.draw-box-controls {
+  box-sizing: border-box;
+  background: #fefefe;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  border: solid 5px #64964c;
+  padding: 3px;
+  .shape-controls-wrapper {
+    display: flex;
+    align-items: center;
+  }
+}
+
+form.input-wrapper {
+  border: solid 1px #acacac;
+}
+
+[type="color"] {
+  padding: 0 5px;
+
+}

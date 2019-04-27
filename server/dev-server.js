@@ -25,7 +25,6 @@ const compiler = webpack(config);
 const app = express();
 
 const index = mode === 'devCR';
-console.log(process.env.NODE_ENV);
 
 app.use((req, res, next) => {
     console.log('logger', req.url, req.body, req.method, req.query, req.params);
@@ -71,7 +70,8 @@ const listen = (port) => {
             return;
         }
         const url = `${SC.protocol}${SC.host}:${port}`;
-        open(url);
+        if (index)
+            open(url);
         console.log(`Listening at ${url}`);
     });
 };

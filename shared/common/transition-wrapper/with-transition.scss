@@ -8,19 +8,19 @@
   transition: opacity 0.5s ease-out;
 }
 
-.trans-form-appear {
+.transition-wrapper-appear {
   opacity: 0;
   height: 100px;
 }
-.trans-form-appear-active {
+.transition-wrapper-appear-active {
   opacity: 1;
   height: auto;
   transition: all 0.5s ease-out;
 }
-.trans-form-exit {
+.transition-wrapper-exit {
   opacity: 1;
 }
-.trans-form-exit-active {
+.transition-wrapper-exit-active {
   opacity: 0;
   height: 100px;
   transition: all 0.5s ease-out;

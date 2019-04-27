@@ -55,7 +55,7 @@ export const setLanguage = payload => {
     };
 };
 
-export const checkRefreshToken = () => {
+export const authenticateUser = () => {
     return {
         type: AT.CHECK_REFRESH_TOKEN,
     };

@@ -1,28 +1,3 @@
-/*
-@import "../../../common/form/mixin";
-
-
-
-.my-smart-form[name=smart-form] {
-  margin: auto;
-  width: 100%;
-  align-self: center;
-  $colors: #999999 $hover-color #11aa11 #dc3545;
-  .smart-input.like-placeholder {
-    &.outlined {
-      .smart-input__input {
-        @include like-placeholder-input('outlined', 1.2rem, .7rem, $colors)
-      }
-      .smart-input__label {
-        @include like-placeholder-label('outlined', 1.2rem, 1.7rem, 0.5rem, .7rem, 3.8rem, $placeholder-color #11aa11 #dc3545)
-      }
-      .input-error-msg {
-        @include error-msg(#dc3545)
-      }
-
-    }
-  }
-}*/
 .email-wrapper {
   display: flex;
   flex-direction: row;

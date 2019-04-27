@@ -14,6 +14,24 @@
     "email_used": "Указанный Вами e-mail уже успользуется! Выберите другой.",
     "invalid_email": "Введите правильный e-mail",
     "invalid_password": "Введите правильный пароль",
-    "expired_token": "Срок действий токена истек. Залогинтесь."
+    "invalid_token": "Срок действий токена истек. Залогинтесь."
+  },
+  "log_forms_fields": {
+    "email": "E-mail",
+    "password": "Пороль",
+    "re_password": "Повторите пороль",
+    "name": "Имя",
+    "email_placeholder": "example@email.com",
+    "password_placeholder": "Ваш пороль",
+    "re_password_placeholder": "Повторите пороль",
+    "reset_password_msg": "Для смены пороля, введите e-mail адрес испльзованный при регистрации и нажмите отправить. Посьмо с инструкциями будет оправлено на указанный адрес",
+    "login_button": "Залогиниться",
+    "signup_button": "Зарегистрироваться",
+    "reset_pass_button": "Сменить пороль",
+    "forgot_password": "Забыли пороль?"
+  },
+  "home_page": {
+    "title": "Учеба как незабываемое приключение",
+    "developer": "Разработчик - Евгений Москвич"
   }
 }

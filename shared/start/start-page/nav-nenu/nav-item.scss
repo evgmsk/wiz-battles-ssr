@@ -1,4 +1,5 @@
 @import "../../../scss/_constants";
+
 .nav-menu-item {
   @include flex();
   background: none;
@@ -9,25 +10,43 @@
   font: 2rem/1  'Calibri', sans-serif;
   font-weight: 500;
   transition: all .5s;
-  &:hover,
+  .nav-icon {
+    color: darken($nav-item-color, 10%);
+    height: 1.3rem;
+    margin-left: 5px;
+    transition: all .3s;
+  }
   &:focus,
-  &:active {
+  &:hover,
+  &.active {
+    outline: none;
     border-bottom: solid 4px $nav-item-color;
+    color: darken($nav-item-color, 10%);
+    .nav-icon {
+      color: $nav-item-color;
+      height: 1.3rem;
+      margin-left: 5px;
+    }
   }
   &:hover{
     cursor: pointer;
   }
-  &:active {
+  &.active {
     cursor: none;
   }
-  &.logout {
-    display: block;
-    height: 2rem;
-    margin-left: 2rem;
+  &.external-item {
+    height: 24px;
+    border: none;
+    .nav-icon {
+      height: 24px;
+    }
+    &:focus,
+    &:hover {
+      border: none;
+      .nav-icon {
+        color: $nav-item-color;
+      }
+    }
   }
 }
-.nav-icon {
-  color: darken($nav-item-color, 10%);
-  height: 1.3rem;
-  margin-left: 5px;
-}
+

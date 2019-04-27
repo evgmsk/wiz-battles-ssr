@@ -23,8 +23,11 @@ class DrawBox extends React.Component {
         this.container = React.createRef();
         this.hero = React.createRef();
         this.sh = React.createRef();
+        const [width, height] = [window.innerWidth * 0.8, window.innerHeight * 0.6];
+        const [initialWidth, initialHeight] = [...[width, height]];
         this.state = {
-            stageProps: {width: 100, height: 100, scaleX: 1, scaleY: 1},
+            stageProps: {width: window.innerWidth * .8, height: window.innerHeight - 400, scaleX: 1, scaleY: 1},
+            // stageProps: { width, height, initialWidth, initialHeight, scaleX: 1, scaleY: 1 },
             shapes: [],
             linePath: [],
             lineType: props.lineType,
@@ -43,7 +46,7 @@ class DrawBox extends React.Component {
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
-        this.onChangePanelInput = this.onChangePanelInput.bind(this);
+        this.selectShape = this.selectShape.bind(this);
         this.selectAction = this.selectAction.bind(this);
         this.undo = this.undo.bind(this);
         this.onSave = this.onSave.bind(this);
@@ -52,23 +55,22 @@ class DrawBox extends React.Component {
         this.canvasResize = this.canvasResize.bind(this);
         this.changeLayer = this.changeLayer.bind(this);
         this.setDraggable = this.setDraggable.bind(this);
+        this.onChangeShapeProps = this.onChangeShapeProps.bind(this);
     }
 
     componentDidMount() {
-        const container = this.container.current;
-        this.setState(({stageProps}) => {
-            const [width, height] = [container.offsetWidth, container.offsetHeight];
-            const newStageProps = {...stageProps, width, height};
-            return {stageProps: newStageProps}
-        });
-        setTimeout(() => window.addEventListener('resize', this.canvasResize), 0);
+        window.addEventListener('resize', this.canvasResize);
+        this.setInitialSize();
+        // const container = this.container.current;
+        // setTimeout(() => window.addEventListener('resize', this.canvasResize), 0);
     }
 
     canvasResize(e) {
         e.cancelBubble = true;
+        console.log('resize')
         this.setState(({ stageProps }) => {
             const container = this.container.current;
-            const [width, height] = [container.offsetWidth, container.offsetHeight];
+            const [width, height] = [container.offsetWidth  - 10, container.offsetHeight  - 10];
             const [scaleX, scaleY] = [width / stageProps.width, height / stageProps.height];
             return {...stageProps, width, height, scaleX, scaleY };
         });
@@ -76,11 +78,8 @@ class DrawBox extends React.Component {
 
     setInitialSize() {
         const container = this.container.current;
-        const [width, height] = [container.offsetWidth, container.offsetHeight];
-        const [initialWidth, initialHeight] = [...[width, height]];
-        let { stageProps } = this.state;
-        stageProps = { ...stageProps, width, height, initialWidth, initialHeight };
-        this.setState({ stageProps });
+        const [width, height] = [container.offsetWidth - 10, container.offsetHeight - 10];
+        this.setState(({ stageProps }) => ({stageProps: {...stageProps, width, height}}));
     }
 
     componentWillUnmount() {
@@ -106,6 +105,7 @@ class DrawBox extends React.Component {
         if (!this.state.drawing || e.target.nodeType !== 'Stage') {
             return;
         }
+
         const { shapeType, shapeProps, draggable } = this.state;
         const { stroke, strokeWidth, fill, offsetX, offsetY } = shapeProps;
         const { tweenType, animationType, layerUp } = shapeProps;
@@ -114,6 +114,7 @@ class DrawBox extends React.Component {
         shape.name = `${shapeType}${idGen()}`;
         const [x, y] = [e.evt.layerX, e.evt.layerY];
         shape.props = { ...initialProps, animationType, tweenType, draggable, layerUp };
+        console.log(e, shape);
         if (shapeType === Shapes.Line) {
             this.resolveLineDown(x, y, shape);
         } else {
@@ -123,6 +124,7 @@ class DrawBox extends React.Component {
     }
 
     onMouseUp(e) {
+        console.log(e)
         e.cancelBubble = true;
         if (!this.state.drawing) {
             return;
@@ -137,6 +139,7 @@ class DrawBox extends React.Component {
         e.cancelBubble = true;
         if (!this.state.mouseDown || !this.state.drawing)
             return;
+        // console.log(e);
         const { lineType } = this.state;
         let { interval } = this.state;
         const [x, y] = [e.evt.layerX, e.evt.layerY];
@@ -262,6 +265,7 @@ class DrawBox extends React.Component {
         }
         this.setState({ shapes });
     }
+
     resolveAnimationChange(data) {
         const { selectedShape, shapes } = this.state;
         const shape = selectedShape ? _.find(shapes, s => s.name === selectedShape.name) : null;
@@ -283,6 +287,7 @@ class DrawBox extends React.Component {
        // console.log(selectedShape, shapes, shape);
         this.setState({ shapeProps });
     }
+
     resolveSkewChange(data) {
         const { selectedShape, shapes } = this.state;
         const shape = selectedShape
@@ -294,6 +299,7 @@ class DrawBox extends React.Component {
             shape[data[0]] = data[1];
         this.setState({ shapes });
     }
+
     resolveOffsetChange(data) {
         const { selectedShape, shapes } = this.state;
         const shape = selectedShape
@@ -304,7 +310,19 @@ class DrawBox extends React.Component {
         this.setState({ shapes });
     }
 
-    onChangePanelInput(data) {
+    onChangeShapeProps(e) {
+        const {id, value} = e.target;
+        const { selectedShape, shapes } = this.state;
+        if ([id] in this.state.shapeProps) {
+            this.setState(({shapeProps }) => {
+                return ({shapeProps: {...shapeProps, [id]: value}})
+            });
+        } else {
+            throw new Error("Invalid arguments passed to 'onChangeShapeProps'" )
+        }
+    }
+
+    selectShape(data) {
         if (!data)
             return;
         let { shapeProps, selectedShape } = this.state;
@@ -319,17 +337,9 @@ class DrawBox extends React.Component {
                 selectedShape = chosenShape.image[0];
             }
             this.setState({ shapes, selectedShape });
-        } else if (data.shapeProps) {
-            const newData = data.shapeProps;
-            shapeProps = { ...shapeProps, ...newData };
-            this.setState({ shapeProps });
         } else if (data.animation)
             this.resolveAnimationChange(data);
-        else if (data.skew) {
-            this.resolveSkewChange(data.skew);
-        } else if (data.offset) {
-            this.resolveOffsetChange(data.offset);
-        } else
+        else
             this.setState(data);
     }
 
@@ -356,55 +366,60 @@ class DrawBox extends React.Component {
             data = { name, nodeType: 'Shape', image: shapes };
         action(data);
     }
+
     selectAction(e) {
         e.stopPropagation();
         e.preventDefault();
-        this.setState({ drawing: !this.state.drawing });
+        this.setState(({drawing})=> ({ drawing: !drawing }));
     }
+
     setDraggable(e) {
         e.stopPropagation();
         e.preventDefault();
-        const { selectedShape, shapes } = this.state;
-        const shape = selectedShape
-            ? _.find(shapes, s => s.name === selectedShape.name)
-            : null;
-        if (shape && shape.shapeType) {
-            shape.props.draggable = !this.state.draggable;
-        } else if (shape)
-            shape.draggable = !this.state.draggable;
-        this.setState({ draggable: !this.state.draggable, shapes });
+        this.setState(({draggable, shapes, selectedShape}) => {
+            const shape = selectedShape
+                ? _.find(shapes, s => s.name === selectedShape.name)
+                : null;
+            if (shape) {
+                const updatedShape = {...shape, props: {...shape.props, draggable: !draggable}};
+                const updatedShapes = [...shapes.filter(s => s.name !== shape.name), updatedShape];
+                return ({ draggable: !draggable, shapes: updatedShapes })
+            }
+            return ({draggable: !draggable})
+        });
     }
+
     startAnimation(e) {
         e.stopPropagation();
         e.preventDefault();
-        this.setState({ animate: !this.state.animate });
+        this.setState(({animate}) => ({ animate: !animate }));
     }
-    changeLayer(e, data) {
-        e.stopPropagation();
-        e.preventDefault();
-       const { shapes, selectedShape } = this.state;
-       if (!selectedShape)
-           return;
-       const shape = _.find(shapes, s => s.name === selectedShape.name);
-       if (shape.shapeType) {
-           shape.props.layerUp = shape.props.layerUp ? shape.props.layerUp : 0;
-           shape.props.layerUp += data;
-       } else {
-           shape.layerUp = shape.layerUp ? shape.layerUp : 0;
-           shape.layerUp += data;
-       }
-       this.forceUpdate();
+
+    changeLayer(data) {
+        if (!this.state.selectedShape)
+            return;
+        this.setState(({shapes, selectedShape}) => {
+            const shape = _.find(shapes, s => s.name === selectedShape.name);
+            if (shape.shapeType) {
+                const layerUp = (shape.props.layerUp || 0) + data;
+                const upShape = {...shape, props: {...shape.props, layerUp}};
+                return ({shapes: [shapes.filter(s => s.name !== selectedShape.name), upShape]})
+            } else {
+                const layerUp = (shape.layerUp || 0) + data;
+                const upShape = {...shape, layerUp};
+                return ({shapes: [shapes.filter(s => s.name !== selectedShape.name), upShape]})
+            }
+        });
     }
+
     undo(e) {
         e.stopPropagation();
         e.preventDefault();
-        let { shapes, selectedShape } = this.state;
-        if (!selectedShape)
-            shapes.pop();
-        else
-            shapes = shapes.filter(s => selectedShape.name !== s.name);
-        selectedShape = null;
-        this.setState({ selectedShape, shapes });
+        this.setState(({ selectedShape, shapes }) => {
+            if (!selectedShape)
+                return ({shapes: shapes.slice(0, shapes.length - 1)});
+            return ({shapes: shapes.filter(s => selectedShape.name !== s.name)})
+        });
     }
 
     render() {
@@ -413,13 +428,14 @@ class DrawBox extends React.Component {
         const savedShapes = this.props.savedShapes;
         const [stage, layer] = [this.stage, this.layer];
         const panelProps = {
-            ...shapeProps,
+            shapeProps,
             animate,
             drawing,
             savedShapes,
             categories,
             draggable,
-            onChange: this.onChangePanelInput,
+            onChangeShapeProps: this.onChangeShapeProps,
+            onChangeInput: this.selectShape,
             selectAction: this.selectAction,
             startAnimation: this.startAnimation,
             undo: this.undo,
@@ -427,6 +443,7 @@ class DrawBox extends React.Component {
             changeLayer: this.changeLayer,
             setDraggable: this.setDraggable,
         };
+
         const StageProps = {
             ...stageProps,
             onMouseMove: this.onMouseMove,
@@ -434,6 +451,7 @@ class DrawBox extends React.Component {
             onMouseUp: this.onMouseUp,
             onDragEnd: this.onDragEnd,
         };
+
         const Images = shapes.reduce((acc, Image, i) => {
             if (Image.shapeType) {
                 const [type, props] = [Image.shapeType, Image.props];
@@ -452,6 +470,7 @@ class DrawBox extends React.Component {
             }
             return acc;
         }, []);
+        // console.log(Images, this.state);
         return (
             <section className="draw-box">
                 <h2>Создай своего монстра</h2>
@@ -470,20 +489,16 @@ class DrawBox extends React.Component {
 
 DrawBox.defaultProps = {
     saveShape: f => f,
-    saveMonster: f => f,
-    savePlayer: f => f,
-    saveSprite: f => f,
-    saveEffect: f => f,
     overwriteShape: f => f,
     shapeProps: {
         id: '',
-        strokeWidth: 0,
+        strokeWidth: 1,
         stroke: '#d2d5cb',
         fill: '#aaa56f',
         animationType: 0,
         tweenType: 0,
         size: 20,
-        tips: 5,
+        tips: 3,
         offsetX: 0,
         offsetY: 0,
         skewX: 0,
@@ -495,11 +510,5 @@ DrawBox.defaultProps = {
     shapeType: 'Line',
     lineType: 'simple',
 };
-
-const DrawBoxWrapped = () => (
-    <Wrapper>
-        <DrawBox/>
-    </Wrapper>
-)
 
 export default DrawBox;

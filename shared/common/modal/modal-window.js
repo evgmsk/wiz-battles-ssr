@@ -4,76 +4,83 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
-import {ModalBody, ModalHeader, ModalFooter, DefaultOpenButton} from './modal-window-components';
+import {ModalBody, ModalHeader, ModalFooter, DefaultOpenButton, DefaultCloseButton} from './modal-window-components';
+import ReactTransition from '../transition-wrapper/with-react-transition';
 
 import './modal-window.scss';
 
 class Modal extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
             isOpen: false,
-            className: "modal-window" + (props.className && props.className),
+            className: "modal-window" + (props.className ? props.className : ''),
         };
-        if (!(props.openButton || props.openButtonLabel)) {
+        if (!(props.CustomOpenButton || props.openButtonLabel)) {
             throw new Error("Invalid props passed to 'modal-window'. One the ['openButton', 'openButtonLabel'] is required")
         }
         this.toggle = this.toggle.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     toggle(e) {
-        console.log(e.target);
         this.setState(({isOpen}) => ({isOpen: !isOpen}))
     }
 
     handleClick(e) {
         e.preventDefault();
         e.stopPropagation();
-        if (this.props.closeOnClick && e.target.classList.contains('modal-window__fade') )
+        const {closeOnClickOnFade, withoutHeader, withoutFooter} = this.props;
+        if ((closeOnClickOnFade || (withoutFooter && withoutHeader)) && e.target.classList.contains('modal-window__fade') )
             this.toggle()
     }
 
     render() {
         const {
-            modalBodyContent,
-            modalHeaderContent,
-            modalFooterContent,
-            headerButton = DefaultHeaderButton,
-            openButton = DefaultOpenButton,
-            openButtonLabel = '',
+            modalContent,
+            CustomHeader,
+            CustomFooter,
             modalTitle = '',
+            openButtonLabel = '',
+            closeButtonLabel = '',
+            CustomCloseButton = DefaultCloseButton,
+            CustomOpenButton = DefaultOpenButton,
             fade,
-            defaultHeader,
-            defaultFooter,
+            withoutHeader,
+            withoutFooter,
         } = this.props;
 
         const {
             isOpen,
             className
         } = this.state;
-
-        const fadeClassName = `modal-window__fade ${fade ? 'fade-on' : 'fade-off'}`;
-        const contentWrapperClassName = `modal-window__content-wrapper ${isOpen ? 'is-open' : 'is-hidden'}`;
-
+        // console.log(this.props, className);
+        const containerClassName = `modal-window__container${isOpen ? ' is-open' : ''}`;
+        const contentWrapperClassName = `modal-window__content-wrapper${isOpen ? ' is-open' : ''}`;
+        const fadeClassName = `modal-window__fade${fade ? ' fade-on' : ''}${isOpen ? ' is-open' : ''}`;
         return (
             <div className={className}>
-                {openButton
-                    ? <openButton toggle={this.toggle} />
+                {CustomOpenButton
+                    ? <CustomOpenButton toggle={this.toggle} />
                     : <DefaultOpenButton toggle={this.toggle} label={openButtonLabel} />
                 }
-                <div className={fadeClassName} onClick={this.handleClick}>
+                <div className={containerClassName}>
                     <div className={contentWrapperClassName} hidden={isOpen}>
-                        <ModalHeader defaultHeader={defaultHeader} toggle={this.toggle} >
-                            {modalHeaderContent ? <modalHeaderContent toggle={this.toggle} /> : null}
-                        </ModalHeader>
+                        {!withoutHeader
+                        &&  <ModalHeader toggle={this.toggle} title={modalTitle} CustomCloseButton={CustomCloseButton} >
+                                {CustomHeader ? <CustomHeader toggle={this.toggle} /> : null}
+                            </ModalHeader>
+                        }
                         <ModalBody>
-                            <modalBodyContent/>
+                            {modalContent}
                         </ModalBody>
-                        <ModalFooter defaultFooter={defaultFooter} toggle={this.toggle} >
-                            {modalFooterContent ? <modalFooterContent toggle={this.toggle} /> : null}
-                        </ModalFooter>
+                        {!withoutFooter
+                        &&  <ModalFooter toggle={this.toggle} label={closeButtonLabel} >
+                                {CustomFooter ? <CustomFooter toggle={this.toggle} /> : null}
+                            </ModalFooter>
+                        }
                     </div>
+                    <div className={fadeClassName} onClick={this.handleClick} />
                 </div>
             </div>
         )
@@ -81,9 +88,16 @@ class Modal extends React.Component {
 }
 
 Modal.propTypes = {
-    modalHeaderContent: PropTypes.func,
-    modalFooterContent: PropTypes.func,
-    modalBodyContent: PropTypes.func,
+    CustomHeader: PropTypes.func,
+    CustomFooter: PropTypes.func,
+    modalContent: PropTypes.element,
+    CustomOpenButton: PropTypes.func,
+    CustomCloseButton: PropTypes.func,
+    withoutHeader: PropTypes.bool,
+    withoutFooter: PropTypes.bool,
+    openButtonLabel: PropTypes.string,
+    modalTitle: PropTypes.string,
+    fade: PropTypes.bool
 };
 
 export default Modal;

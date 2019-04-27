@@ -5,22 +5,13 @@ import React from 'react';
 
 import NavItem from '../nav-nenu/nav-item';
 import Modal from '../../../common/modal/modal-window';
+import FormsContainer from '../../login/forms-container/forms-container';
+import '../../../common/modal/modal-window';
+import {CustomLogin} from '../nav-nenu/nav-menu';
 
-export const Login = props => {
-    const {onClick, label, className} = props;
-    return ;
-};
 
-export const DuoLanguageSwitcher = props => {
-    const { lang, setLanguage, langs } = props;
-    const handleClick = (e) => {
-        if (lang === langs[0]) {
-            setLanguage(langs[1])
-        } else {
-            setLanguage(langs[0])
-        }
-    };
-    return <div className={`lang-setter lang-${lang}`} onClick={handleClick} />
+export const LoginModal = props => {
+    return <Modal modalContent={<FormsContainer />} CustomOpenButton={CustomLogin} {...props} />
 };
 
 export const Logo = props => (

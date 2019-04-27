@@ -21,6 +21,10 @@ $submit-btn: #1f750d;
 $progress-bar-width: 150px;
 $progress-bar-height: 20px;
 
+$device-width: 480px;
+$pad-width: 960px;
+$desktop-width: 1200px;
+
 $lang: 'en' 'ru';
 
 @mixin flex($justify: space-between, $align: center, $row: row) {

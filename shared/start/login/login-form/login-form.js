@@ -6,14 +6,9 @@ import axios from 'axios';
 
 import validators from '../../../common/validators';
 import SmartForm, { SmartInput } from '../../../common/form/smartForm';
+import T from '../../../translator'
 
-const LoginForm = ({className, submitButtonValue, onResponse = f => f, forgotPassword = f => f}) => {
-   /* const [inProp, setInProp] = useState(false);
-    useEffect(() => {
-        if (!inProp) {
-            setInProp(true)
-        }
-    });*/
+const LoginForm = ({className, onResponse = f => f, forgotPassword = f => f}) => {
 
     const validationSchema = {
         email: validators.email,
@@ -66,8 +61,12 @@ const LoginForm = ({className, submitButtonValue, onResponse = f => f, forgotPas
                                 value={values.password}
                                 {...restProps}
                             />
-                            <a href="#" onClick={forgotPassword} className="forgot-password">Forgot your password?</a>
-                            <button type="submit" className="btn btn-success btn-large">{submitButtonValue}</button>
+                            <a href="#" onClick={forgotPassword} className="forgot-password">
+                                <T keys="log_forms_fields.forgot_password" />
+                            </a>
+                            <button type="submit" className="btn btn-filled btn-success btn-large">
+                                <T keys="log_forms_fields.login_button" />
+                            </button>
                         </React.Fragment>
                     )
                 }

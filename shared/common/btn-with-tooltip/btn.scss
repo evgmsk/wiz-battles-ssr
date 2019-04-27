@@ -1,0 +1,93 @@
+//@import "../../../common/form/mixin";
+
+@mixin tooltip-color ($color: orange, $font: 1rem/1 'Helvetica', $background: #fff, $border: false) {
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  font: $font;
+  padding: .2rem .3rem;
+  border-radius: 2px;
+  background: $background;
+  @if ($border != false) {
+    border: $border;
+  }
+  color: $color;
+  transition: all .3s;
+}
+
+@mixin tooltip-variant($away: 1.6rem) {
+  &.up {
+    left: 0;
+    top: -$away;
+  }
+  &.down {
+    left: 0;
+    bottom: -$away;
+  }
+  &.left {
+    left: -$away;
+    top: 0;
+  }
+  &.right {
+    right: -$away;
+    top: 0;
+  }
+}
+
+@mixin btn-size($size: 1.6rem 1.6rem, $padding: .1rem, $margin: 0 .5rem) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $padding;
+  height: nth($size, 2);
+  min-width: nth($size, 1);
+  margin: $margin;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+@mixin btn-colors($colors: #64964c false, $background: transparent, $border: none, $border-radius: 0) {
+  border: $border;
+  background: $background;
+  color: nth($colors, 1);
+  border-radius: $border-radius;
+  svg {
+    height: 100%;
+  }
+  & + .btn-tooltip {
+    @include tooltip-variant();
+    @include tooltip-color();
+  }
+  &:hover,
+  &:focus {
+    $color: nth($colors, 1);
+    & + .btn-tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+    @if(nth($colors, 2) == false) {
+      color: darken($color, 15%);
+    }
+    @else {
+      color: nth($colors, 2)
+    }
+  }
+  &:active {
+    @if(nth($colors, 2) == false) {
+      $color: nth($colors, 1);
+      color: darken($color, 15%);
+    }
+    @else {
+      color: nth($colors, 2)
+    }
+  }
+}
+.button-wrapper {
+  position: relative;
+  .btn-with-tooltip {
+    @include btn-size();
+    @include btn-colors();
+  }
+}
+

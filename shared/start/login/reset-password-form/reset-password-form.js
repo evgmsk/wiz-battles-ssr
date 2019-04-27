@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import validators from '../../../common/validators';
 import SmartForm, { SmartInput } from '../../../common/form/smartForm';
+import {funcT} from '../../../translator'
 
 const SpecifiedInput = props => {
     const [shown, setShown] = useState(false);
@@ -22,7 +23,7 @@ const SpecifiedInput = props => {
     </div>
 };
 
-const ResetForm = ({ className, submitButtonValue, onResponse = f => f }) => {
+const ResetForm = ({ className, onResponse = f => f }) => {
     const values = {
         email: "",
     };
@@ -41,7 +42,7 @@ const ResetForm = ({ className, submitButtonValue, onResponse = f => f }) => {
     return (
         <data className={className}>
             <div className="reset-password-title">
-                To reset your password, enter your email address used for registration and submit. An email will be sent to you with instructions about how to complete the process.
+                {funcT({keys: "log_forms_fields.reset_password_msg"})}
             </div>
             <SmartForm
                 className="my-reset-form"
@@ -60,13 +61,15 @@ const ResetForm = ({ className, submitButtonValue, onResponse = f => f }) => {
                                     inputStyle="outlined"
                                     labelStyle="like-placeholder"
                                     placeholder="example@email.com"
-                                    labelText='Email'
+                                    labelText='E-mail'
                                     argsForHandlers={['email']}
                                     value={values.email}
                                     error={errors.email}
                                     {...restProps}
                                 />
-                                <button type="submit" className="btn btn-success btn-large">Reset password</button>
+                                <button type="submit" className="btn btn-filled btn-success btn-large">
+                                    {funcT({keys: "log_forms_fields.reset_pass_button"})}
+                                </button>
                             </React.Fragment>
                         )
                     }

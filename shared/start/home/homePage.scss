@@ -2,6 +2,7 @@
 
 .home-section{
   height: calc(100vh - 120px);
+  min-height: 650px;
   @media (max-height: 500px) and (orientation: landscape) {
     height: auto;
   }
@@ -20,17 +21,25 @@
     margin: 0 auto 0;
   }
   .home-wrapper {
-    h2 {
-      margin: 4rem auto;
+    width: 80%;
+    max-width: 1100px;
+    margin: 0 auto;
+    @include flex(space-around, center, column);
+    .page-title {
+      margin-top: 6rem;
       font: $font-main;
       text-align: center;
       font-size: 3rem;
+
     }
     .game-description {
       @include flex(center, center, column);
-      margin: 5rem;
       font: $font-main;
       color: $ice;
+      margin-top: 6rem;
+      span {
+        text-align: center;
+      }
       svg {
         width: 2rem;
         height: 2rem;
@@ -39,5 +48,4 @@
       }
     }
   }
-
 }

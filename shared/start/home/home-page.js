@@ -3,8 +3,8 @@
  */
 import React from 'react';
 import {FaGithubSquare as Git} from 'react-icons/fa';
-// import HeadImage from '../../../assets/images/title.png';
-// import Spinner from '../../common/spinner/spinner'
+import T from '../../translator';
+
 import './homePage.scss';
 
 
@@ -13,9 +13,9 @@ function HomePage(props) {
         <section className="home-section">
             <div className="home-img" />
             <div className="home-wrapper">
-                <h2>WizBattles - Учеба как незабываемое приключение</h2>
+                <h2 className="page-title">WizBattles - <T keys="home_page.title" /></h2>
                 <div className="game-description">
-                    Разработчик: Евгений Москвич
+                    <span><T keys="home_page.developer"/></span>
                     <a href="https://github.com/evgmsk/" rel="noopener noreferrer" target="_blank" ><Git /></a>
                 </div>
             </div>

@@ -18,9 +18,10 @@ function translator (lang, path, log = 0) {
     return function translate(props) {
         let source;
         let string = i18nLang.langSource;
-        const {lang, keys, insertions = []} = props;
+        let {lang, language, keys, insertions = []} = props;
+        lang = lang || language;
         if (!lang) {
-            throw new Error('Property "lang" is undefined')
+            throw new Error('Property "language" is undefined')
         }
         if (!keys) {
             throw new Error('Property "keys" (path to value) is undefined')
@@ -32,13 +33,15 @@ function translator (lang, path, log = 0) {
             i18nLang.defineSource(lang)
         }
         source = i18nLang.langSource;
+
         if (!source || (source && typeof source !== 'object' && !source[Keys[0]])) {
-            throw new Error("Obtained language source not valid.")
+            throw new Error("Obtained language source is not valid.")
         }
         try {
             string = Keys.reduce((acc, key) => acc[key], source);
         }catch(err) {
-            throw new Error(err)
+            console.error(err);
+            throw new Error("Invalid props passed to react-redux-translate. Obtained language source is not valid.")
         }
 
         if (typeof string !== 'string') {

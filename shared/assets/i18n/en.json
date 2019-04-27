@@ -10,22 +10,28 @@
   "res_messages": {
     "success_signin": "Your successfully logged",
     "success_signup": "Your successfully signed up",
-    "success_pass_reset": "Instructions to restore password send to your e-mail address",
+    "success_pass_reset": "Instructions send to your address",
     "email_used": "Email being used! Choose another one.",
     "invalid_email": "Please enter correct e-mail",
     "invalid_password": "Please enter correct password",
-    "invalid_token": "Your token expired. Login please.",
-    "expired_token": "Your token expired. Login please."
+    "invalid_token": "Your token expired. Login please."
   },
-  "log_from_fields": {
-    "email": "Email",
+  "log_forms_fields": {
+    "email": "E-mail",
     "password": "Password",
     "re_password": "Repeat password",
     "name": "Name",
     "email_placeholder": "example@email.com",
-    "password_placeholder": ""
+    "password_placeholder": "Your password",
+    "re_password_placeholder": "Repeat your password",
+    "reset_password_msg": "To reset your password, enter your e-mail address used for registration and submit. An email will be sent to you with instructions about how to complete the process",
+    "login_button": "Submit / Login",
+    "signup_button": "Submit / Signup",
+    "reset_pass_button": "Reset password",
+    "forgot_password": "Forgot your password?"
   },
-  "log_forms": {
-    "reset_password": "To reset your password, enter your e-mail address used for registration and submit. An email will be sent to you with instructions about how to complete the process"
+  "home_page": {
+    "title": "Studies as unforgettable adventure",
+    "developer": "Developer - Evgeni Moskvich"
   }
 }

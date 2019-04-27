@@ -9,13 +9,13 @@ import ForthScreen from '../../../assets/images/screenshots/scr4.jpg';
 
 import Screenshot from './screensot';
 import {captions} from '../../common/constants/constants';
+import Page from '../../common/page-content-wrapper/page-content-wrapper'
 
 import './about.scss';
 
-
-
 function About() {
     return (
+    <Page>
         <section className="about">
             <h2>Cкриншоты игры</h2>
             <div className="screenshots-wrapper">
@@ -24,6 +24,7 @@ function About() {
                 })}
             </div>
         </section>
+    </Page>
     );
 }
 
