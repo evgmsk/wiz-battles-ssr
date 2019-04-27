@@ -1,6 +1,5 @@
 import {FaHome, FaInfo, FaSignInAlt, FaSignOutAlt, FaPaintBrush, FaGamepad} from 'react-icons/fa';
 import React, {useState} from 'react';
-// import {withRouter} from 'react-router-dom';
 // import PropTypes from 'prop-types';
 
 import { MainRoutes } from '../../../common/constants/constants';

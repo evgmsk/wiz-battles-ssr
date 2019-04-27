@@ -11,7 +11,7 @@ import {
     FaAsterisk,
 } from 'react-icons/fa';
 
-import BtnWT from '../../common/btn-with-tooltip/btn';
+import BtnWT from '../../../common/btn-with-tooltip/btn';
 
 const ShapeControlsWrapper = props => {
     const {onClick, shapePropsInput, input} = props;

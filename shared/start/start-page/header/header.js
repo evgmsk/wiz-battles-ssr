@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 
 import NavMenu, {Login} from '../nav-nenu/nav-menu';
-import { checkRefreshToken, logout, setLanguage } from '../../../store/actions/appActions';
+import { logout, setLanguage } from '../../../store/actions/appActions';
 import {Langs} from '../../../common/constants/constants';
 import {Logo, LoginModal} from './header-components';
 import {DuoLanguageSwitcher} from '../lang-menu/lang-menu';

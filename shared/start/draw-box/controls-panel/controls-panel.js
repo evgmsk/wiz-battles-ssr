@@ -29,8 +29,8 @@ import {
 
 
 
-import { AnimationTypes, TweenTypes } from '../../common/constants/game-constants';
-import { ShapeTypes } from '../../common/constants/constants';
+import { AnimationTypes, TweenTypes } from '../../../common/constants/game-constants';
+import { ShapeTypes } from '../../../common/constants/constants';
 // import SmartInput from '../../common/form/input/input';
 import InputWrapper from './control-input-wrapper';
 
