@@ -11,35 +11,94 @@ import {
     FaAsterisk,
 } from 'react-icons/fa';
 
+import ShapePropsControl from './control-input-wrapper';
 import BtnWT from '../../../common/btn-with-tooltip/btn';
 
+// console.log(typeof ShapePropsInput)
+
 const ShapeControlsWrapper = props => {
-    const {onClick, shapePropsInput, input} = props;
+    const {onClick, onChange, shapeProps, input} = props;
+    const inputRef = React.createRef();
+    const handleClick = input => {
+        onClick(input)
+        inputRef.current.focus();
+    }
     return (
         <div className="shape-controls-wrapper">
-            <BtnWT variant="up" onClick={() => onClick('stroke-color')} tooltip={'Stroke color'} >
+            <BtnWT
+                variant="right"
+                onClick={() => handleClick('stroke-color')}
+                tooltip={`Stroke color.\n
+                        Current value ${shapeProps.stroke}.\n
+                        Click to change`}
+            >
                 <FaPalette/>
             </BtnWT>
-            <BtnWT variant="up" onClick={() => onClick('stroke-width')} tooltip={'Stroke width'} >
+            <BtnWT
+                variant="up"
+                onClick={() => handleClick('stroke-width')}
+                tooltip={`Stroke width.\n
+                        Current value ${shapeProps.strokeWidth}.\n
+                        Click to change`}
+            >
                 <FaArrowsAltH/>
             </BtnWT>
-            <BtnWT variant="up" onClick={() => onClick('fill-color')} tooltip={'Shape color'} >
+            <BtnWT
+                variant="up"
+                onClick={() => handleClick('fill-color')}
+                tooltip={`Shape color.\n
+                        Current value ${shapeProps.fill}.\n
+                        Click to change`}
+            >
                 <FaFillDrip/>
             </BtnWT>
-            <BtnWT variant="up" onClick={() => onClick('tips')} tooltip={'Shape tips'} >
+            <BtnWT
+                variant="up"
+                onClick={() => handleClick('tips')}
+                tooltip={`Shape tips.\n
+                        Current value ${shapeProps.tips}.\n
+                        Click to change`}
+            >
                 <FaAsterisk/>
             </BtnWT>
-            <BtnWT variant="up" onClick={() => onClick('shape-size')} tooltip={'Shape default size'} >
+            <BtnWT
+                variant="up"
+                onClick={() => handleClick('shape-size')}
+                tooltip={`Shape default size.\n
+                        Current value ${shapeProps.size}.\n
+                        Click to change`}
+            >
                 <FaExpand/>
             </BtnWT>
-            <BtnWT variant="up" onClick={() => onClick('skew')} tooltip={'Shape skew'} >
+            <BtnWT
+                variant="up"
+                onClick={() => handleClick('skew')}
+                tooltip={`Shape skew. \n
+                        Current values \n
+                        skewX: ${shapeProps.skewX} \n
+                        skewY: ${shapeProps.skewY}. \n
+                        Click to change`} 
+            >
                 Skew
             </BtnWT>
-            <BtnWT variant="up" onClick={() => onClick('offset')} tooltip={'Shape offset'} >
+            <BtnWT
+             variant="up"
+              onClick={() => handleClick('offset')}
+               tooltip={`Shape offset. \n
+                        Current values \n
+                        offsetX: ${shapeProps.offsetX} \n
+                        offsetY: ${shapeProps.offsetY}. \n
+                        Click to change`} 
+            >
                 Offset
             </BtnWT>
             <div className="shape-control-input">
-                {shapePropsInput(input)}
+                <ShapePropsControl
+                    onChange={onChange}
+                    input={input}
+                    shapeProps={shapeProps}
+                    ref={inputRef}
+                />
             </div>
         </div>
     )

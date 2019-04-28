@@ -7,15 +7,29 @@ import './btn.scss';
 
 const variants = {up: 'up', down: 'down', left: 'left', right: 'right'};
 
+export const Tooltip = ({text, className}) => {
+    const textArray = text.split('\n');
+    return (
+        <div className={className}>
+            {textArray.map((t, i) => <p key={i}>{t}</p>)}
+        </div>
+    )
+};
+
 const ButtonWithTooltip = props => {
     const { className, tooltip, onClick, children, icon, variant, ...restProps } = props;
-    // console.log(props, children);
+    
     return (
         <div className="button-wrapper">
-            <button className={className || 'btn-with-tooltip'} onClick={props.onClick} {...restProps}>
+            <button
+                className={className || 'btn-with-tooltip'}
+                onClick={props.onClick}
+                {...restProps}
+            >
                 {icon || children}
             </button>
-            {tooltip && <span className={`btn-tooltip ${variants[variant]}`}>{tooltip}</span>}
+            {tooltip 
+                && <Tooltip className={`btn-tooltip ${variants[variant]}`} text={tooltip}/>}
         </div>
     )
 };
