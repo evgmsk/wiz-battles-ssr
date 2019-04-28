@@ -285,35 +285,32 @@ class DrawBox extends React.Component {
         this.setState({ shapeProps });
     }
 
-    resolveSkewChange(data) {
-        const { selectedShape, shapes } = this.state;
-        const shape = selectedShape
-            ? _.find(shapes, s => s.name === selectedShape.name)
-            : _.last(shapes);
-        if (shape && shape.shapeType) {
-            shape.props[data[0]] = data[1];
-        } else if (shape)
-            shape[data[0]] = data[1];
-        this.setState({ shapes });
-    }
-
-    resolveOffsetChange(data) {
-        const { selectedShape, shapes } = this.state;
-        const shape = selectedShape
-            ? _.find(shapes, s => s.name === selectedShape.name)
-            : _.last(shapes);
-        if (shape)
-            shape.props[data[0]] = data[1];
-        this.setState({ shapes });
-    }
-
     onChangeShapeProps(e) {
-        const {id, value} = e.target;
+        let {id, value} = e.target;
+        console.log(id, value, id !== 'fill' && id !== 'stroke')
+        if (id !== 'fill' && id !== 'stroke') {
+            value = --value;
+        }
         const { selectedShape, shapes } = this.state;
         if ([id] in this.state.shapeProps) {
-            this.setState(({shapeProps }) => {
-                return ({shapeProps: {...shapeProps, [id]: value}})
-            });
+            console.log(selectedShape)
+            if (((id === 'skewX' || id === 'skewY') 
+                || (id === 'offsetX' || id === 'offsetY'))
+                && selectedShape) {              
+                this.setState(({shapes, shapeProps}) => {
+                    const shape = [...shapes].filter(s => 
+                        s.name === selectedShape.name)[0];
+                    shape.props = (shape.props || {}) && {...shape.props, [id]: value};
+                    return ({
+                        shapes: [...shapes.filter(s => s.name !== shape.name), shape],
+                        shapeProps: {...shapeProps, [id]: --value}
+                    });
+                })
+            } else {
+                this.setState(({shapeProps }) => {
+                    return ({shapeProps: {...shapeProps, [id]: value}})
+                });                  
+            }
         } else {
             throw new Error("Invalid arguments passed to 'onChangeShapeProps'" )
         }
@@ -432,7 +429,7 @@ class DrawBox extends React.Component {
             categories,
             draggable,
             onChangeShapeProps: this.onChangeShapeProps,
-            onChangeInput: this.selectShape,
+            // onChangeInput: this.selectShape,
             selectAction: this.selectAction,
             startAnimation: this.startAnimation,
             undo: this.undo,

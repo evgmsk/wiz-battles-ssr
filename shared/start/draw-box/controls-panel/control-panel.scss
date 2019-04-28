@@ -6,13 +6,17 @@
   align-items: center;
   flex-wrap: wrap;
   width: 90%;
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   border: solid 5px #64964c;
   padding: 3px;
   .shape-controls-wrapper {
     display: flex;
     align-items: center;
+    .shape-control-input {
+      min-width: 10rem;
+      border: solid 1px #64964c;
+    }
   }
 }
 
@@ -20,7 +24,3 @@ form.input-wrapper {
   border: solid 1px #acacac;
 }
 
-[type="color"] {
-  padding: 0 5px;
-
-}

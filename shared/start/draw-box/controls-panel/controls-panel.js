@@ -10,29 +10,35 @@ import {
     FaLock,
     FaUnlock,
     FaArrowUp as ArrowUp,
-    FaArrowDown as ArrowDown
-} from 'react-icons/fa/';
+    FaArrowDown as ArrowDown,
+    FaHandPaper,
+    FaHandSpock,
+    FaHandHolding,
+    FaGrin,
+    FaSketch
+} from 'react-icons/fa';
 
 import {
     GiSave,
     GiStarFormation,
     GiTransform,
+    GiHandOfGod
 } from 'react-icons/gi';
 
 import {
-    Fi,
-} from 'react-icons/io';/**/
+    MdArtTrack,
+    MdLayers,  
+} from 'react-icons/md';/**/
 
 import {
     FiMove as Grab,
+    FiFilm,
+    FiSave,
+    FiLayers,
 } from 'react-icons/fi';
-
-
 
 import { AnimationTypes, TweenTypes } from '../../../common/constants/game-constants';
 import { ShapeTypes } from '../../../common/constants/constants';
-// import SmartInput from '../../common/form/input/input';
-import InputWrapper from './control-input-wrapper';
 
 import ShapeControlsWrapper from './shape-controls-wrapper';
 
@@ -96,132 +102,16 @@ function ControlsPanel(props) {
         onSave(name.value, category.value, saveAs.value);*/
     };
 
-    const shapePropsInput = input => {
-        switch (input) {
-            case 'stroke-color':
-                return (
-                    <InputWrapper
-                        id="stroke"
-                        type="color"
-                        value={shapeProps.stroke}
-                        label={'Stroke color'}
-                        onChange={onChangeShapeProps}
-                    />
-                );
-            case "stroke-width":
-                return (
-                    <InputWrapper
-                        id="strokeWidth"
-                        type="range"
-                        min="0"
-                        max="50"
-                        step="1"
-                        value={shapeProps.strokeWidth}
-                        label={'Stroke width'}
-                        indicator
-                        onChange={onChangeShapeProps}
-                    />
-                );
-            case "fill-color":
-                return (
-                    <InputWrapper
-                        id="fill"
-                        type="color"
-                        value={shapeProps.fill}
-                        label={'Shape color'}
-                        onChange={onChangeShapeProps}
-                    />
-                );
-            case "tips":
-                return (
-                    <InputWrapper
-                        id="tips"
-                        type="range"
-                        min="3"
-                        max="100"
-                        step="1"
-                        value={shapeProps.tips}
-                        indicator
-                        label={'Tips number'}
-                        onChange={onChangeShapeProps}
-                    />
-                );
-            case 'shape-size':
-                return (
-                    <InputWrapper
-                        id="size"
-                        type="range"
-                        min="0"
-                        max="150"
-                        step="1"
-                        value={shapeProps.size}
-                        indicator
-                        label={'Shape size'}
-                        onChange={onChangeShapeProps}
-                    />
-                );
-            case 'skew':
-                return (
-                    <div className="inputs-container">
-                        <InputWrapper
-                            id="skewX"
-                            type="range"
-                            min="-10"
-                            max="10"
-                            step="0.1"
-                            value={shapeProps.skewX}
-                            label={'SkewX'}
-                            indicator
-                            onChange={onChangeShapeProps}
-                        />
-                        <InputWrapper
-                            id="skewY"
-                            type="range"
-                            min="-10"
-                            max="10"
-                            step="0.1"
-                            value={shapeProps.skewY}
-                            label={'SkewY'}
-                            indicator
-                            onChange={onChangeShapeProps}
-                        />
-                    </div>
-                );
-            case 'offset':
-                return (
-                    <div className="inputs-container">
-                        <InputWrapper
-                            id="offsetX"
-                            type="range"
-                            min="-200"
-                            max="200"
-                            step="1"
-                            value={shapeProps.offsetX}
-                            label={'OffsetX'}
-                            indicator
-                            onChange={onChangeShapeProps}
-                        />
-                        <InputWrapper
-                            id="offsetY"
-                            type="range"
-                            min="-200"
-                            max="200"
-                            step="1"
-                            value={shapeProps.offsetY}
-                            label={'OffsetY'}
-                            indicator
-                            onChange={onChangeShapeProps}
-                        />
-                    </div>
-                );
-            default:
-                return <div/>
-        }
-    };
     // console.log(input, shapePropsInput(input));
     return (
         <div className="draw-box-controls">
-            <ShapeControlsWrapper onClick={setInput} shapePropsInput={shapePropsInput} input={input} />
+            <MdArtTrack/>
+            <ShapeControlsWrapper
+                onClick={setInput}
+                onChange={onChangeShapeProps}
+                shapeProps={shapeProps}
+                input={input}
+            />
             <div className="inputs-container">
                 <select id="select-shape">
                     <option value="">Тип фигуры</option>
