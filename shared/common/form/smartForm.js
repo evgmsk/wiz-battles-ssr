@@ -88,8 +88,7 @@ class SmartForm extends React.Component {
     addChild(e, name, child) {
         e.preventDefault();
         e.stopPropagation();
-        this.setState(state => {
-            const { values, errors } = state;
+        this.setState(({ values, errors }) => {
             const error = {...child};
             Object.keys(error).forEach(key => {
                 error[key] = null;
@@ -103,11 +102,14 @@ class SmartForm extends React.Component {
     removeChild(e, name, index) {
         e.preventDefault();
         e.stopPropagation();
-        this.setState(state => {
-            const {values, errors} = state;
+        this.setState(({values, errors}) => {
             if (values[name].length > 1) {
-                const newValues = {...values, [name]: values[name].filter((item, i) => i.toString() !== index.toString())};
-                const newErrors = {...errors, [name]: errors[name].filter((item, i) => i.toString() !== index.toString())};
+                const newValues = {
+                    ...values,
+                    [name]: values[name].filter((item, i) => i.toString() !== index.toString())};
+                const newErrors = {
+                    ...errors,
+                    [name]: errors[name].filter((item, i) => i.toString() !== index.toString())};
                 return { values: newValues, errors: newErrors }
             }
         });
@@ -135,10 +137,9 @@ class SmartForm extends React.Component {
         }
     }
 
-    handleOnClick(e) {
+    handleOnClick({target}) {
         if (this.state.isValidating)
             return;
-        const target = e.target;
         if (target.type === 'reset' && (target.tagName === 'INPUT' || target.tagName === 'BUTTON')) {
             this.handleReset()
         }
@@ -229,7 +230,7 @@ class SmartForm extends React.Component {
         return invalid;
     }
 
-    validateForm(s) {
+    validateForm() {
         let invalidForm = false;
         const values = {...this.state.values};
         const errors = {...this.state.errors};

@@ -6,7 +6,18 @@ import './input.scss';
 const SmartInput = props => {
     //console.log('props: ', props);
     const { addChild, removeChild, ...inputProps } = props;
-    let {className, labelText, labelStyle, error, value, inputStyle, onBlur, onChange, argsForHandlers, ...restProps} = inputProps;
+    let {
+        className,
+        labelText,
+        labelStyle,
+        error,
+        value, 
+        inputStyle,
+        onBlur,
+        onChange,
+        argsForHandlers,
+        ...restProps
+    } = inputProps;
     if (inputProps.type === 'reset') {
         labelStyle = 'reset-input';
         inputStyle = '';
@@ -16,15 +27,16 @@ const SmartInput = props => {
         labelStyle = labelStyle === 'like-placeholder' ? 'in-row' : labelStyle;
     }
     const inputClassName = `smart-input__input${error ? " invalid-input" : ""}${value ? " dirty-input" : ""}`;
-    const ClassName = `
+    className = `
                 smart-input
                 ${className}
                 ${labelStyle} 
                 ${inputStyle}
                 ${error ? " invalid-input" : ""}
             `.replace(/\s{2,}/g, " ");
+            
     return (
-        <label className={ClassName}>
+        <label className={className}>
             {labelStyle === 'in-row' || labelStyle === 'in-col'
                 ? <React.Fragment>
                         <div className="smart-input__error-wrapper">

@@ -1,0 +1,19 @@
+@import 'mixin';
+
+.btn {
+    @include button-size();
+    @each $class, $color in $button-classes-map {
+        &.btn-filled.#{$class} {
+        @include button-filled($color);
+        }
+        &.btn-outlined.#{$class} {
+        @include button-outlined($color);
+        }
+        &.btn-like-label.#{$class} {
+        @include button-label($color);
+        }
+    }
+    &:not([disabled]){
+        cursor: pointer;
+    }
+}
