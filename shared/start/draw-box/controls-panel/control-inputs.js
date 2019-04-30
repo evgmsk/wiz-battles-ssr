@@ -44,7 +44,7 @@ export const InputWrapperLayres = props => {
 
 export const ShapePropsControl = React.forwardRef((props, ref) => {
     // console.log(props)
-    const {input, shapeProps, onChange} = props;
+    const {input, shapeProps, onChange, selectedShape} = props;
     switch (input) {
         case 'stroke-color':
             return (
@@ -124,7 +124,7 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                         min="-9"
                         max="11"
                         step="0.1"
-                        value={shapeProps.skewX.toFixed(1)}
+                        value={selectedShape.props.skewX.toFixed(1)}
                         label={'SkewX'}
                         indicator
                         onChange={onChange}
@@ -135,7 +135,7 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                         min="-9"
                         max="11"
                         step="0.1"
-                        value={shapeProps.skewY.toFixed(1)}
+                        value={sselectedShape.props.skewY.toFixed(1)}
                         label={'SkewY'}
                         indicator
                         onChange={onChange}
@@ -152,7 +152,7 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                         min="-199"
                         max="201"
                         step="1"
-                        value={shapeProps.offsetX}
+                        value={selectedShape.props.offsetX}
                         label={'OffsetX'}
                         indicator 
                         onChange={onChange}
@@ -163,7 +163,7 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                         min="-199"
                         max="201"
                         step="1"
-                        value={shapeProps.offsetY}
+                        value={selectedShape.props.offsetY}
                         label={'OffsetY'}
                         indicator
                         onChange={onChange}
@@ -175,11 +175,11 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                     <InputWrapperLayres
                         id="layerUp"
                         type="number"
-                        value={shapeProps.layerUp}
+                        value={selectedShape.props.layerUp}
                         label={'Layer'}
                         indicator
                     >
-                    {props.layersChildren}
+                        {props.layersChildren}
                     </InputWrapperLayres>
                 )
         default:

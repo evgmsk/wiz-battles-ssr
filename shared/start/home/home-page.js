@@ -5,7 +5,7 @@ import React from 'react';
 import {FaGithubSquare as Git} from 'react-icons/fa';
 import T from '../../translator';
 
-import './homePage.scss';
+import './home-page.scss';
 
 
 function HomePage(props) {
