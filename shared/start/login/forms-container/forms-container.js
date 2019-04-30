@@ -30,7 +30,12 @@ class FormsWrapper extends React.Component {
         const {action} = this.state;
         if (res.status < 300) {
             if (action === 'login') {
-                this.setState({resMsg: funcT({keys: "res_messages.success_signin"}), submitFail: false});
+                this.setState({
+                    resMsg: funcT({keys: "res_messages.success_signin"}),
+                    submitFail: false
+                });
+                setTimeout(() =>  this.props.toggle(), 999);
+               
                 const data = res.data;
                 saveUserName(data.userName);
                 saveToken(data.token);
@@ -39,10 +44,16 @@ class FormsWrapper extends React.Component {
                     setTimeout(() => history.push('/'), 1000);
 
             } else if(action === 'signup') {
-                this.setState({resMsg: funcT({keys: 'res_messages.success_signup'}), submitFail: false});
+                this.setState({
+                    resMsg: funcT({keys: 'res_messages.success_signup'}),
+                    submitFail: false
+                });
                 setTimeout(() => this.setState({action: 'login', resMsg: ''}), 1000)
             } else if(action === 'reset') {
-                this.setState({resMsg: funcT({keys: 'res_messages.success_pass_reset'}), submitFail: false});
+                this.setState({
+                    resMsg: funcT({keys: 'res_messages.success_pass_reset'}),
+                    submitFail: false
+                });
                 // setTimeout(() => this.setState({action: 'login', resMsg: ''}), 1500)
             }
         } else {

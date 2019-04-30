@@ -1,26 +1,22 @@
 import React, {useEffect} from 'react';
-import { connect } from 'react-redux';
 
 import NavMenu, {Login} from '../nav-nenu/nav-menu';
-import { logout, setLanguage } from '../../../store/actions/appActions';
+// import { logout, setLanguage } from '../../../store/actions/appActions';
 import {Langs} from '../../../common/constants/constants';
 import {Logo, LoginModal} from './header-components';
-import {DuoLanguageSwitcher} from '../lang-menu/lang-menu';
+import DuoLanguageSwitcher from './lang-menu';
 
 import './header.scss';
 
 const Header = props => {
-    const { app: {userName, lang}, logout, setLanguage } = props;
-
-    const navProps = {userName, logout};
-
+    console.log(props, DuoLanguageSwitcher)
     return (
         <header className="header">
             <div className="header__content-wrapper">
                 <Logo>WB</Logo>
-                <NavMenu {...navProps} />
+                <NavMenu />
                 <div className="header__right-bar">
-                    <DuoLanguageSwitcher lang={lang} setLanguage={setLanguage} langs={Langs} />
+                    <DuoLanguageSwitcher langs={Langs} />
                     <LoginModal withoutHeader withoutFooter fade />
                 </div>
             </div>
@@ -28,5 +24,5 @@ const Header = props => {
     );
 };
 
-export default connect(state => ({app : state.app}), {logout, setLanguage})(Header);
+export default Header;
 // <LoginModal withoutHeader withoutFooter fade />

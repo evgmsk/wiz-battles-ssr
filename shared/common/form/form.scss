@@ -8,7 +8,7 @@ form[name=smart-form] {
       &.btn-filled.#{$class} {
         @include button-filled($color);
       }
-      &.btn-outlined.#{$class}) {
+      &.btn-outlined.#{$class} {
         @include button-outlined($color);
       }
       &.btn-like-label.#{$class} {

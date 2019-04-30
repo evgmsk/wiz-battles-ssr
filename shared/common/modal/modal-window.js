@@ -37,7 +37,7 @@ class Modal extends React.Component {
 
     render() {
         const {
-            modalContent,
+            ModalContent,
             CustomHeader,
             CustomFooter,
             modalTitle = '',
@@ -54,7 +54,7 @@ class Modal extends React.Component {
             isOpen,
             className
         } = this.state;
-        // console.log(this.props, className);
+        console.log(this.props, className);
         const containerClassName = `modal-window__container${isOpen ? ' is-open' : ''}`;
         const contentWrapperClassName = `modal-window__content-wrapper${isOpen ? ' is-open' : ''}`;
         const fadeClassName = `modal-window__fade${fade ? ' fade-on' : ''}${isOpen ? ' is-open' : ''}`;
@@ -72,7 +72,7 @@ class Modal extends React.Component {
                             </ModalHeader>
                         }
                         <ModalBody>
-                            {modalContent}
+                            <ModalContent toggle={this.toggle} />
                         </ModalBody>
                         {!withoutFooter
                         &&  <ModalFooter toggle={this.toggle} label={closeButtonLabel} >
@@ -90,8 +90,8 @@ class Modal extends React.Component {
 Modal.propTypes = {
     CustomHeader: PropTypes.func,
     CustomFooter: PropTypes.func,
-    modalContent: PropTypes.element,
-    CustomOpenButton: PropTypes.func,
+    ModalContent: PropTypes.any,
+    CustomOpenButton: PropTypes.any,
     CustomCloseButton: PropTypes.func,
     withoutHeader: PropTypes.bool,
     withoutFooter: PropTypes.bool,

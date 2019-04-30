@@ -5,13 +5,13 @@
   background: none;
   max-width: 1000px;
   text-transform: uppercase;
-  color: $nav-item-color;
+  color: darken($nav-item-color, 10%);
   border-bottom: solid 4px transparent;
   font: 2rem/1  'Calibri', sans-serif;
   font-weight: 500;
   transition: all .5s;
   .nav-icon {
-    color: darken($nav-item-color, 10%);
+    color: $nav-item-color;
     height: 1.3rem;
     margin-left: 5px;
     transition: all .3s;
@@ -21,12 +21,15 @@
   &.active {
     outline: none;
     border-bottom: solid 4px $nav-item-color;
-    color: darken($nav-item-color, 10%);
+    color: $nav-item-color;
     .nav-icon {
-      color: $nav-item-color;
+      color: darken($nav-item-color, 10%);
       height: 1.3rem;
       margin-left: 5px;
     }
+  }
+  &.active {
+    border-color: transparent;
   }
   &:hover{
     cursor: pointer;
@@ -35,9 +38,10 @@
     cursor: none;
   }
   &.external-item {
-    height: 24px;
+    padding: 0;
     border: none;
     .nav-icon {
+      color: darken($nav-item-color, 10%);
       height: 24px;
     }
     &:focus,

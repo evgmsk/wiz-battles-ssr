@@ -3,5 +3,5 @@
  */
 
 export default function expire() {
-    return Date.now() + 7*24*3600*1000;
+    return Date.now() + 7*24*3600*10000;
 }

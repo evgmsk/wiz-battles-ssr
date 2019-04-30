@@ -16,7 +16,7 @@
     border: $border;
   }
   color: $color;
-  transition: all .3s;
+  transition: all .5s;
 }
 
 @mixin tooltip-variant($away: 2.5rem) {
@@ -37,6 +37,22 @@
   &.right {
     left: $away;
     top: 0;
+  }
+  &.up-left {
+    right: $away;
+    bottom: $away;
+  }
+  &.up-right {
+    left: $away;
+    bottom: $away;
+  }
+  &.down-left {
+    right: $away;
+    top: $away;
+  }
+  &.down-right {
+    left: $away;
+    top: $away;
   }
 }
 
@@ -95,8 +111,11 @@
     }
   }
 }
-.button-wrapper {
+.btn-with-tooltip-wrapper {
+  display: flex;
+  align-items: center;
   position: relative;
+  button,
   .btn-with-tooltip {
     @include btn-size();
     @include btn-colors();

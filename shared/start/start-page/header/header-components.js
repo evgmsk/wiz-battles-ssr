@@ -8,10 +8,10 @@ import Modal from '../../../common/modal/modal-window';
 import FormsContainer from '../../login/forms-container/forms-container';
 import '../../../common/modal/modal-window';
 import {CustomLogin} from '../nav-nenu/nav-menu';
-
+console.log(FormsContainer);
 
 export const LoginModal = props => {
-    return <Modal modalContent={<FormsContainer />} CustomOpenButton={CustomLogin} {...props} />
+    return <Modal ModalContent={FormsContainer} CustomOpenButton={CustomLogin} {...props} />
 };
 
 export const Logo = props => (
