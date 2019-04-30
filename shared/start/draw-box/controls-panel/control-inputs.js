@@ -3,7 +3,15 @@
  */
 import React from 'react';
 
+import {} from 'react-icons/fa';
+
 import './control-input-wrapper.scss';
+
+// export const SelectWrapper = React.forwardRef((props, ref) => {
+//     return (
+
+//     )
+// })
 
 export const InputWrapper = React.forwardRef((props, ref) => {
     const {label, id, indicator, value, ...restProps} = props;
@@ -21,7 +29,21 @@ export const InputWrapper = React.forwardRef((props, ref) => {
     )
 });
 
+export const InputWrapperLayres = props => {
+    const {label, id, indicator, value, children} = props;
+    return (
+        <div className="input-wrapper" id={id}>
+            <p>{label}</p>
+            {children}
+            {indicator && <span className="indicator-value">{value}</span>}
+        </div>
+    )
+}
+
+
+
 export const ShapePropsControl = React.forwardRef((props, ref) => {
+    // console.log(props)
     const {input, shapeProps, onChange} = props;
     switch (input) {
         case 'stroke-color':
@@ -31,6 +53,7 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                     ref={ref}
                     type="color"
                     value={shapeProps.stroke}
+                    // defaultValue={shapeProps.stroke}
                     label={'Stroke color'}
                     onChange={onChange}
                 />
@@ -147,6 +170,18 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                     />
                 </div>
             );
+        case 'layers':
+                return (
+                    <InputWrapperLayres
+                        id="layerUp"
+                        type="number"
+                        value={shapeProps.layerUp}
+                        label={'Layer'}
+                        indicator
+                    >
+                    {props.layersChildren}
+                    </InputWrapperLayres>
+                )
         default:
             return <div/>
     }

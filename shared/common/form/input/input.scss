@@ -1,7 +1,5 @@
 @import "../mixin";
 
-$input-style: "outlined" "underlined" "shadowed";
-
 .smart-input {
   @include smart-input();
   @include smart-input-flex();

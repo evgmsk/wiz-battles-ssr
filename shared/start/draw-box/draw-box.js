@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { Stage, Layer } from 'react-konva';
-import _ from 'lodash';
+import {last, mean} from 'lodash';
 
 import ControlsPanel from './controls-panel/controls-panel';
 import ShapeClass from '../../common/shape-classes/shape-class';
@@ -37,7 +37,7 @@ class DrawBox extends React.Component {
             drawing: true,
             animate: false,
             draggable: true,
-            interval: 0,
+            polygonPoints: props.polygonPoints,
             categories: [
                 { key: 'шейп', value: 'shapes', action: props.saveShape },
             ],
@@ -45,8 +45,7 @@ class DrawBox extends React.Component {
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
-        this.selectShape = this.selectShape.bind(this);
-        this.selectAction = this.selectAction.bind(this);
+        this.chooseMode = this.chooseMode.bind(this);
         this.undo = this.undo.bind(this);
         this.onSave = this.onSave.bind(this);
         this.startAnimation = this.startAnimation.bind(this);
@@ -55,11 +54,12 @@ class DrawBox extends React.Component {
         this.changeLayer = this.changeLayer.bind(this);
         this.setDraggable = this.setDraggable.bind(this);
         this.onChangeShapeProps = this.onChangeShapeProps.bind(this);
+        this.onChangeSelect = this.onChangeSelect.bind(this);
     }
 
     componentDidMount() {
         window.addEventListener('resize', this.canvasResize);
-        this.setInitialSize();
+        this.initializeCanvas();
     }
 
     canvasResize(e) {
@@ -73,7 +73,7 @@ class DrawBox extends React.Component {
         });
     }
 
-    setInitialSize() {
+    initializeCanvas() {
         const container = this.container.current;
         const [width, height] = [container.offsetWidth - 10, container.offsetHeight - 10];
         this.setState(({ stageProps }) => ({stageProps: {...stageProps, width, height}}));
@@ -83,258 +83,283 @@ class DrawBox extends React.Component {
         window.removeEventListener('resize', this.canvasResize);
     }
 
+    updateShapes(shape) {
+        return this.state.shapes.map(s => {
+            if (s.name !== shape.name)
+                return s;
+            return shape;
+        });
+    }
+
     onDragEnd(e) {
         e.cancelBubble = true;
-        const target = { ...e.target };
         if (this.state.drawing)
             return;
-        const { shapes } = this.state;
-        const shape = shapes[target.index];
-        if (target.nodeType === 'Group')
-            [shape.x, shape.y] = [e.evt.layerX, e.evt.layerY];
-        if (target.nodeType === 'Shape')
-            [shape.props.x, shape.props.y] = [e.evt.layerX, e.evt.layerY];
-        this.setState({ shapes, selectedShape: shape });
+        const {target, evt} = e;
+        const [x, y] = [evt.layerX, evt.layerY];
+        this.setState(({shapes}) => {
+            const newShapes = [...shapes]
+            const shape = newShapes[target.index];
+            if (target.nodeType === 'Group')
+                [shape.x, shape.y] = [x, y];
+            if (target.nodeType === 'Shape')
+                [shape.props.x, shape.props.y] = [x, y];
+            return ({
+                shapes: newShapes,
+                selectedShape: shape
+            });
+        });       
     }
 
     onMouseDown(e) {
         e.cancelBubble = true;
+        console.log('2b', e.evt.button, this.state.mouseDown)
         if (!this.state.drawing || e.target.nodeType !== 'Stage') {
             return;
         }
-
+        const [x, y] = [e.evt.layerX, e.evt.layerY];
         const { shapeType, shapeProps, draggable } = this.state;
         const { stroke, strokeWidth, fill, offsetX, offsetY } = shapeProps;
         const { tweenType, animationType, layerUp } = shapeProps;
         const initialProps = { stroke, strokeWidth, fill, offsetX, offsetY };
         const shape = { shapeType };
-        shape.name = `${shapeType}${idGen()}`;
-        const [x, y] = [e.evt.layerX, e.evt.layerY];
+        shape.name = `${shapeType}${idGen()}`; 
         shape.props = { ...initialProps, animationType, tweenType, draggable, layerUp };
-        console.log(e, shape);
         if (shapeType === Shapes.Line) {
-            this.resolveLineDown(x, y, shape);
+            this.createLine(x, y, shape);
         } else {
             shape.props = { ...shape.props, x, y };
-            this.resolveShapeDown(shape);
+            this.createShape(shape);
         }
     }
 
     onMouseUp(e) {
-        console.log(e)
         e.cancelBubble = true;
+        // console.log(e.evt.button, !this.state.drawing)
         if (!this.state.drawing) {
             return;
         }
-        if (this.state.linePath.length)
-            this.resolveLineUp();
+        if (e.evt.button === 1) {
+            return this.setState(({polygonPoints}) => ({polygonPoints: polygonPoints + 1}))
+        }
+        if (e.evt.button === 0) {
+            if (this.state.linePath.length)
+            this.finishLineDrawing();
         else
-            this.resolveShapeUp();
+            this.finishShapeDrawing();
+        }  
     }
 
     onMouseMove(e) {
         e.cancelBubble = true;
         if (!this.state.mouseDown || !this.state.drawing)
             return;
-        // console.log(e);
-        const { lineType } = this.state;
-        let { interval } = this.state;
         const [x, y] = [e.evt.layerX, e.evt.layerY];
-        const shape = _.last(this.state.shapes);
-        if (shape.shapeType === 'Line') {
-            if (!interval && lineType === 'polygon') {
-                this.resolveLineMove(x, y, shape);
-            } else if (!(interval % 2) && lineType !== 'polygon') {
-                this.resolveLineMove(x, y, shape);
+        const shape = last(this.state.shapes);
+        if (shape && shape.shapeType === 'Line') {
+            this.drawLine(x, y);
+        } else if (shape) {
+            this.drawShape(x, y);
+        }
+    }
+
+    createLine(x, y, shape) {
+        this.setState(({ shapes, linePath, lineType  }) => {
+            const newLinePath = [...linePath, x, y];
+            shape.props = { 
+                ...shape.props,
+                points: newLinePath,
+                lineCap: 'round',
+                lineJoin: 'round'
+            };
+            if (lineType === 'polygon')
+                shape.props = { ...shape.props, closed: true };
+            if (lineType === 'blob')
+                shape.props = { ...shape.props, closed: true, tension: 0.3 };
+            return ({
+                shapes: [...shapes, shape],
+                linePath: newLinePath,
+                mouseDown: true,
+            })
+        });
+    }
+
+    drawLine(x, y) {
+        this.setState(({ shapes, linePath, lineType, polygonPoints }) => {
+            const newLinePath = [...linePath];
+            const newShapes = [...shapes];
+            if (lineType !== 'polygon' || linePath.length <= polygonPoints * 2) {
+                newLinePath.push(x);
+                newLinePath.push(y);
+            } else {
+                newLinePath[linePath.length - 2] = x;
+                newLinePath[linePath.length - 1] = y;
             }
-        } else {
-                this.resolveShapeMove(x, y, shape);
+            newShapes[shapes.length - 1].props.points = newLinePath;
+            return ({ shapes: newShapes, linePath: newLinePath });
+        });
+    }
+
+    finishLineDrawing() {
+        this.setState(({ shapes, linePath }) => {
+            let selectedShape = null;
+            const newShapes = [...shapes];
+            const shape = newShapes.pop();
+            if (linePath.length > 2) {
+                const { points } = shape.props;
+                const [x, y] = [mean(evenIndexes(points)), mean(oddIndexes(points))];
+                shape.props.x = x;
+                shape.props.y = y;
+                shape.props.offsetX = x;
+                shape.props.offsetY = y;
+                newShapes.push(shape);
+                selectedShape = shape;
+            }
+            return ({
+                shapes: newShapes,
+                selectedShape,
+                mouseDown: false,
+                linePath: [],
+                polygonPoints: 1,
+            })
+        });   
+    }
+
+    createShape(shape) {
+        this.setState(({ shapes, shapeProps }) => {
+            const { size, tips, angle, cornerRadius } = shapeProps;
+            const [innerRadius, outerRadius, numPoints, clockwise] = [size, size, tips, true];
+            switch (shape.shapeType) {
+                case (Shapes.Star):
+                    shape.props = { ...shape.props, innerRadius, outerRadius, numPoints };
+                    break;
+                case (Shapes.Rect):
+                    shape.props = { ...shape.props, width: size, height: size, cornerRadius };
+                    break;
+                case (Shapes.Ellipse):
+                    shape.props = { ...shape.props, radius: { x: size, y: size } };
+                    break;
+                case (Shapes.RegularPolygon):
+                    shape.props = { ...shape.props, radius: size, sides: tips };
+                    break;
+                case (Shapes.Ring):
+                    shape.props = { ...shape.props, innerRadius, outerRadius };
+                    break;
+                case (Shapes.Arc):
+                    shape.props = { ...shape.props, innerRadius, outerRadius, angle, clockwise };
+                    break;
+                default:
+                    break;
+            }
+            return ({ shapes: [...shapes, shape], mouseDown: true});
+        });        
+    }
+
+    drawShape(x, y) {
+        this.setState(({ shapes }) => {
+            const newShapes = [...shapes];
+            const shape = newShapes[shapes.length - 1];
+            const [X, Y] = [x - shape.props.x, y - shape.props.y];
+            switch (shape.shapeType) {
+                case Shapes.Rect:
+                    shape.props.width = Math.abs(X);
+                    shape.props.height = Math.abs(Y);
+                    break;
+                case Shapes.Ring:
+                    shape.props.outerRadius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
+                    break;
+                case Shapes.Star:
+                    shape.props.outerRadius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
+                    break;
+                case Shapes.Ellipse:
+                    shape.props.radius.x = Math.abs(X);
+                    shape.props.radius.y = Math.abs(Y);
+                    break;
+                case Shapes.RegularPolygon:
+                    shape.props.radius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
+                    break;
+                case Shapes.Arc:
+                    shape.props.outerRadius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
+                    break;
+                default:
+                    break;
+            }
+            return ({shapes: newShapes})
+        }); 
+    }
+
+    finishShapeDrawing() {
+        this.setState(({ shapes }) => {
+            const newShapes = [...shapes];
+            const shape = newShapes[shapes.length - 1];
+            if (shape.shapeType === 'Rect' && shape.props.animationType === 'rotation') {
+                const [offsetX, offsetY] = [shape.props.width / 2, shape.props.height / 2];
+                shape.props = { ...shape.props, offsetX, offsetY };
+            }
+            return ({shapes: newShapes, selectedShape: shape, mouseDown: false, polygonPoints: 1});
+        });       
+    }
+
+    handleAnimationChange(data) {
+        this.setState(({ selectedShape, shapeProps }) => {
+            if (!selectedShape) 
+                return ({shapeProps: {...shapeProps, [data.type]: data.value}})
+            const shape = {...selectedShape};
+            if (shape.nodeType === 'Group')
+                shape[data.type] = data.value;
+            else
+                shape.props = { ...shape.props, [data.type]: data.value};
+            return ({
+                shapes: this.updateShapes(shape),
+                selectedShape: shape,
+                shapeProps: {...shapeProps, [data.type]: data.value}
+            });
+        });        
+    }
+
+    onChangeSelect({target}) {
+        const {id, value} = target;
+        //if (id === 'select-img')
+            //return onChange(value);
+        if (id === 'select-shape') {
+            if (/Line/.test(value))
+                return this.setState({lineType: value.slice(5)});
+            return this.setState({ shapeType: value });
         }
-        interval = interval < 5 ? interval + 1 : 0;
-        this.setState({ interval });
+        if (id === 'select-animation')
+            return this.handleAnimationChange({ type: 'animationType', value });
+        if (id === 'select-tween')
+            return this.handleAnimationChange({ type: 'tweenType', value });
     }
 
-    resolveLineDown(x, y, shape) {
-        const { shapes, linePath, lineType } = this.state;
-        const line = shape;
-        linePath.push(x);
-        linePath.push(y);
-        line.props = { ...line.props, points: [...linePath], lineCap: 'round', lineJoin: 'round' };
-        if (lineType === 'polygon')
-            line.props = { ...line.props, closed: true };
-        if (lineType === 'blob')
-            line.props = { ...line.props, closed: true, tension: 0.3 };
-        shapes.push(line);
-        this.setState({ mouseDown: true, shapes, linePath });
-    }
-
-    resolveLineUp() {
-        const { shapes, linePath } = this.state;
-        const shape = _.last(shapes);
-        if (linePath.length === 2) {
-            shapes.pop();
-        } else if (linePath.length > 2) {
-            const { points } = shape.props;
-            const [x, y] = [_.mean(evenIndexes(points)), _.mean(oddIndexes(points))];
-            shape.props.x = x;
-            shape.props.y = y;
-            shape.props.offsetX = x;
-            shape.props.offsetY = y;
-        }
-        this.setState({ mouseDown: false, shapes, linePath: [], selectedShape: shape });
-    }
-
-    resolveLineMove(x, y, shape) {
-        const { shapes, linePath } = this.state;
-        linePath.push(x);
-        linePath.push(y);
-        shape.props.points = [...linePath];
-        this.setState({ shapes, linePath });
-    }
-
-    resolveShapeDown(shape) {
-        const { shapes, shapeProps } = this.state;
-        const { size, tips, angle, cornerRadius } = shapeProps;
-        const [innerRadius, outerRadius, numPoints, clockwise] = [size, size, tips, true];
-        switch (shape.shapeType) {
-            case (Shapes.Star):
-                shape.props = { ...shape.props, innerRadius, outerRadius, numPoints };
-                break;
-            case (Shapes.Rect):
-                shape.props = { ...shape.props, width: size, height: size, cornerRadius };
-                break;
-            case (Shapes.Ellipse):
-                shape.props = { ...shape.props, radius: { x: size, y: size } };
-                break;
-            case (Shapes.RegularPolygon):
-                shape.props = { ...shape.props, radius: size, sides: tips };
-                break;
-            case (Shapes.Ring):
-                shape.props = { ...shape.props, innerRadius, outerRadius };
-                break;
-            case (Shapes.Arc):
-                shape.props = { ...shape.props, innerRadius, outerRadius, angle, clockwise };
-                break;
-            default:
-                break;
-        }
-        shapes.push(shape);
-        this.setState({ mouseDown: true, shapes });
-    }
-
-    resolveShapeUp() {
-        const { shapes } = this.state;
-        const shape = _.last(shapes);
-        // console.log(shape)
-        if (shape.shapeType === 'Rect' && shape.props.animationType === 'rotation') {
-            const [offsetX, offsetY] = [shape.props.width / 2, shape.props.height / 2];
-            shape.props = { ...shape.props, offsetX, offsetY };
-        }
-        this.setState({ mouseDown: false, shapes, selectedShape: shape });
-    }
-
-    resolveShapeMove(x, y, shape) {
-        const { shapes } = this.state;
-        const [X, Y] = [x - shape.props.x, y - shape.props.y];
-        switch (shape.shapeType) {
-            case Shapes.Rect:
-                shape.props.width = Math.abs(X);
-                shape.props.height = Math.abs(Y);
-                break;
-            case Shapes.Ring:
-                shape.props.outerRadius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
-                break;
-            case Shapes.Star:
-                shape.props.outerRadius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
-                break;
-            case Shapes.Ellipse:
-                shape.props.radius.x = Math.abs(X);
-                shape.props.radius.y = Math.abs(Y);
-                break;
-            case Shapes.RegularPolygon:
-                shape.props.radius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
-                break;
-            case Shapes.Arc:
-                shape.props.outerRadius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
-                break;
-            default:
-                break;
-        }
-        this.setState({ shapes });
-    }
-
-    resolveAnimationChange(data) {
-        const { selectedShape, shapes } = this.state;
-        const shape = selectedShape ? _.find(shapes, s => s.name === selectedShape.name) : null;
-        let { shapeProps } = this.state;
-        const { animationType, tweenType } = data.animation;
-        if (animationType) {
-            if (shape && shape.nodeType === 'Group')
-                shape.animationType = animationType;
-            else if (shape)
-                shape.props = { ...shape.props, animationType };
-            shapeProps = { ...shapeProps, animationType };
-        } else if (tweenType) {
-            if (shape && shape.nodeType === 'Group')
-                shape.tweenType = tweenType;
-            else if (shape)
-                shape.props = { ...shape.props, tweenType };
-            shapeProps = { ...shapeProps, tweenType };
-        }
-       // console.log(selectedShape, shapes, shape);
-        this.setState({ shapeProps });
-    }
-
-    onChangeShapeProps(e) {
-        let {id, value} = e.target;
-        console.log(id, value, id !== 'fill' && id !== 'stroke')
+    onChangeShapeProps({target}) {
+        let {id, value} = target;
         if (id !== 'fill' && id !== 'stroke') {
-            value = --value;
+            value = Number(value);
         }
-        const { selectedShape, shapes } = this.state;
-        if ([id] in this.state.shapeProps) {
-            console.log(selectedShape)
-            if (((id === 'skewX' || id === 'skewY') 
-                || (id === 'offsetX' || id === 'offsetY'))
-                && selectedShape) {              
-                this.setState(({shapes, shapeProps}) => {
-                    const shape = [...shapes].filter(s => 
-                        s.name === selectedShape.name)[0];
-                    shape.props = (shape.props || {}) && {...shape.props, [id]: value};
-                    return ({
-                        shapes: [...shapes.filter(s => s.name !== shape.name), shape],
-                        shapeProps: {...shapeProps, [id]: --value}
-                    });
-                })
-            } else {
-                this.setState(({shapeProps }) => {
-                    return ({shapeProps: {...shapeProps, [id]: value}})
-                });                  
+        if (!([id] in this.state.shapeProps)) 
+            throw new Error("Invalid arguments passed to 'onChangeShapeProps'");
+        const caseSkew = id === 'skewX' || id === 'skewY';
+        const caseOffset = id === 'offsetX' || id === 'offsetY';
+        this.setState(({shapes, selectedShape}) => {
+            if (caseOffset || caseSkew) {
+                const shape = {...selectedShape};
+                if(!selectedShape || !shape.props)
+                    return ({})
+                else { 
+                    if (caseOffset) {
+                        shape.props[id] += value;
+                    } else if (caseSkew) {
+                        shape.props[id] = valie;
+                    }
+                }
+                return ({
+                    shapes: this.updateShapes(shape),
+                    selectedShape: shape,
+                })  
             }
-        } else {
-            throw new Error("Invalid arguments passed to 'onChangeShapeProps'" )
-        }
-    }
-
-    selectShape(data) {
-        if (!data)
-            return;
-        let { shapeProps, selectedShape } = this.state;
-        if (typeof data === 'string') {
-            const chosenShape = this.props.savedShapes.filter(x => x.name === data)[0];
-            let { shapes } = this.state;
-            if (chosenShape.nodeType === 'Group') {
-                selectedShape = chosenShape;
-                shapes = shapes.concat(chosenShape);
-            } else {
-                shapes = shapes.concat(chosenShape.image);
-                selectedShape = chosenShape.image[0];
-            }
-            this.setState({ shapes, selectedShape });
-        } else if (data.animation)
-            this.resolveAnimationChange(data);
-        else
-            this.setState(data);
+            return ({shapeProps: {...shapeProps, [id]: value}})     
+        })
     }
 
     onSave(name, type, saveAs) {
@@ -361,31 +386,22 @@ class DrawBox extends React.Component {
         action(data);
     }
 
-    selectAction(e) {
-        e.stopPropagation();
-        e.preventDefault();
+    chooseMode() {
         this.setState(({drawing})=> ({ drawing: !drawing }));
     }
 
-    setDraggable(e) {
-        e.stopPropagation();
-        e.preventDefault();
+    setDraggable() {
         this.setState(({draggable, shapes, selectedShape}) => {
-            const shape = selectedShape
-                ? _.find(shapes, s => s.name === selectedShape.name)
-                : null;
-            if (shape) {
-                const updatedShape = {...shape, props: {...shape.props, draggable: !draggable}};
-                const updatedShapes = [...shapes.filter(s => s.name !== shape.name), updatedShape];
-                return ({ draggable: !draggable, shapes: updatedShapes })
-            }
-            return ({draggable: !draggable})
+            if (!selectedShape)
+                return ({draggable: !draggable})
+            const shape = {...selectedShape};            
+            shape.props = {...shape.props, draggable: !draggable};
+            const newShapes = this.updateShapes(shape);
+            return ({ draggable: !draggable, shapes: newShapes })            
         });
     }
 
-    startAnimation(e) {
-        e.stopPropagation();
-        e.preventDefault();
+    startAnimation() {
         this.setState(({animate}) => ({ animate: !animate }));
     }
 
@@ -393,32 +409,32 @@ class DrawBox extends React.Component {
         if (!this.state.selectedShape)
             return;
         this.setState(({shapes, selectedShape}) => {
-            const shape = _.find(shapes, s => s.name === selectedShape.name);
+            const shape = {...selectedShape};
             if (shape.shapeType) {
-                const layerUp = (shape.props.layerUp || 0) + data;
-                const upShape = {...shape, props: {...shape.props, layerUp}};
-                return ({shapes: [shapes.filter(s => s.name !== selectedShape.name), upShape]})
+                const layerUp = (shape.props.layerUp || 100) + data;
+                shape.props = {...shape.props, layerUp};       
             } else {
-                const layerUp = (shape.layerUp || 0) + data;
-                const upShape = {...shape, layerUp};
-                return ({shapes: [shapes.filter(s => s.name !== selectedShape.name), upShape]})
+                shape.layerUp += data
             }
+            return ({shapes: this.updateShapes(shape)})
         });
     }
 
-    undo(e) {
-        e.stopPropagation();
-        e.preventDefault();
+    undo() {
         this.setState(({ selectedShape, shapes }) => {
-            if (!selectedShape)
-                return ({shapes: shapes.slice(0, shapes.length - 1)});
-            return ({shapes: shapes.filter(s => selectedShape.name !== s.name)})
+            if (!selectedShape) {
+                return ({shapes: [...shapes].slice(0, shapes.length - 1)});
+            }
+            return ({
+                shapes: shapes.filter(s => selectedShape.name !== s.name),
+                selectedShape: [...shapes][shapes.length - 1],
+            })
         });
     }
 
     render() {
         const { shapes, categories, drawing, animate, draggable } = this.state;
-        const { shapeProps, stageProps } = this.state;
+        const { shapeProps, stageProps, selectedShape } = this.state;
         const savedShapes = this.props.savedShapes;
         const [stage, layer] = [this.stage, this.layer];
         const panelProps = {
@@ -428,9 +444,10 @@ class DrawBox extends React.Component {
             savedShapes,
             categories,
             draggable,
+            selectedShape,
             onChangeShapeProps: this.onChangeShapeProps,
-            // onChangeInput: this.selectShape,
-            selectAction: this.selectAction,
+            onChangeSelect: this.onChangeSelect,
+            chooseMode: this.chooseMode,
             startAnimation: this.startAnimation,
             undo: this.undo,
             onSave: this.onSave,
@@ -464,7 +481,7 @@ class DrawBox extends React.Component {
             }
             return acc;
         }, []);
-        // console.log(Images, this.state);
+        console.log(Images, this.state);
         return (
             <section className="draw-box">
                 <h2>Создай своего монстра</h2>
@@ -486,9 +503,9 @@ DrawBox.defaultProps = {
     overwriteShape: f => f,
     shapeProps: {
         id: '',
-        strokeWidth: 1,
-        stroke: '#d2d5cb',
-        fill: '#aaa56f',
+        strokeWidth: 2,
+        stroke: '#554bd5',
+        fill: '#118803',
         animationType: 0,
         tweenType: 0,
         size: 20,
@@ -503,6 +520,7 @@ DrawBox.defaultProps = {
     },
     shapeType: 'Line',
     lineType: 'simple',
+    polygonPoints: 1,
 };
 
 export default DrawBox;

@@ -250,25 +250,28 @@ class SmartForm extends React.Component {
     }
 
     validateAndFetch() {
-        console.log('fetch')
+        // console.log('fetch')
         const {invalidForm, values} = this.validateForm();
         if (invalidForm)
             return;
-        this.props.submit.fetch(values).then(res => {
+        const fetchResult = this.props.submit.fetch(values);
+        if (!fetchResult.then) {
+            return this.props.submit.onResponse(true);
+        }
+        fetchResult.then(res => {
             console.log(res);
             if (res.status < 300) {
                 this.setState(state => {
                     return {...state, successfullySubmitted: true, values: this.initialValues}
                 }, this.props.submit.onResponse(res));
             } else
-
-            this.props.submit.onResponse(res)
+                this.props.submit.onResponse(res)
         }).catch(error => this.props.submit.onResponse(error));
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        console.log('submit')
+        // console.log('submit')
         const {successfullySubmitted, isValidating} = this.state;
         if (successfullySubmitted || isValidating) {
             return;

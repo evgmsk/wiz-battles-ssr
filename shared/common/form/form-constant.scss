@@ -19,6 +19,8 @@ $gradient-color: rgba(255, 255, 255, 1) !default;
 
 $transition: all ease-in .3s;
 
+$input-style: "outlined" "underlined" "shadowed";
+
 $inputs-map: (
     shadowed: 'shadowed',
     outlined: 'outlined',

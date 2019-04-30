@@ -1,21 +1,44 @@
+@import '../../../common/btn-with-tooltip/btn.scss';
+
 .draw-box-controls {
   box-sizing: border-box;
   background: #fefefe;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
   width: 90%;
   max-width: 1000px;
   margin: 0 auto;
   border: solid 5px #64964c;
   padding: 3px;
+  .btn-with-tooltip{
+    min-width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    & + .btn-tooltip {
+      @include tooltip-variant(3.3rem);
+    }  
+  }
   .shape-controls-wrapper {
+    align-self: flex-start;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     .shape-control-input {
+      margin: .5rem;
+      color: #205f02;
+      display: flex;
+      align-items: center;  
       min-width: 10rem;
+      min-height: 3rem;
       border: solid 1px #64964c;
+      p {
+        margin: 0 .4rem;
+        font-size: 1.2rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
     }
   }
 }
