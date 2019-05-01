@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {FaCaretDown, FaCaretSquareRight, FaCaretSquareDown, FaCaretRight} from 'react-icons/fa';
+import {FaCaretDown, FaCaretRight} from 'react-icons/fa';
 
 const Dropdown = props => {
     const [open, setOpen] = useState(false);

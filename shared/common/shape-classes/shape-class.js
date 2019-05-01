@@ -33,7 +33,7 @@ class ShapeClass extends React.Component {
             this.state.animation.start();
         } else if (animation && !this.props.animate)
             this.state.animation.stop();
-        if (tween)
+        if (tween && this.props.animate)
             this.state.tween();
     }
     componentWillUnmount() {

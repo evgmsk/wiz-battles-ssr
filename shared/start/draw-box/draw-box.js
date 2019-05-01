@@ -116,27 +116,22 @@ class DrawBox extends React.Component {
             return;
         }
         // console.log('2b', e.evt.button, this.state.mouseDown)
-        const [x, y] = [e.evt.layerX, e.evt.layerY];
+        const {layerX, layerY} = e.evt;
         const { shapeType, shapeProps, draggable, shapes } = this.state;
-        const { stroke, strokeWidth, fill, offsetX, offsetY } = shapeProps;
-        const { tweenType, animationType, layerUp } = shapeProps;
-        const initialProps = { stroke, strokeWidth, fill, offsetX, offsetY };
+        const { x, y, layerUp, ...mainProps } = shapeProps;
         const shape = { shapeType };
         const name = `${shapeType}${idGen()}`;
         shape.name = name; 
         shape.props = {
-            ...initialProps,
-            animationType,
-            tweenType,
+            ...mainProps,
             draggable,
             layerUp: layerUp + shapes.length,
             name,
         };
-        shape.props.name = shape.name;
         if (shapeType === Shapes.Line) {
-            this.createLine(x, y, shape);
+            this.createLine(layerX, layerY, shape);
         } else {
-            shape.props = { ...shape.props, x, y };
+            shape.props = { ...shape.props, x: layerX, y: layerY };
             this.createShape(shape);
         }
     }
@@ -172,7 +167,7 @@ class DrawBox extends React.Component {
     }
 
     createLine(x, y, shape) {
-        this.setState(({ shapes, linePath, lineType  }) => {
+        this.setState(({ shapes, linePath, shapeProps: {type}  }) => {
             const newLinePath = [...linePath, x, y];
             shape.props = { 
                 ...shape.props,
@@ -180,9 +175,9 @@ class DrawBox extends React.Component {
                 lineCap: 'round',
                 lineJoin: 'round'
             };
-            if (lineType === 'polygon')
+            if (type === 'Line-polygon')
                 shape.props = { ...shape.props, closed: true };
-            if (lineType === 'blob')
+            if (type === 'Line-blob')
                 shape.props = { ...shape.props, closed: true, tension: 0.3 };
             return ({
                 shapes: [...shapes, shape],
@@ -332,8 +327,10 @@ class DrawBox extends React.Component {
             //return onChange(value);
         if (name === 'select-shape') {
             if (/Line/.test(value))
-                return this.setState({lineType: value.slice(5)});
-            return this.setState({ shapeType: value });
+                return this.setState(({shapeType, shapeProps}) =>
+                    ({shapeType: 'Line', shapeProps: {...shapeProps, type: value}}));
+            return this.setState(({shapeType, shapeProps}) =>
+                ({shapeType: value, shapeProps: {...shapeProps, type: value}}));
         }
         if (name === 'select-animation')
             return this.handleAnimationChange({ type: 'animationType', value });
@@ -354,7 +351,7 @@ class DrawBox extends React.Component {
             if (caseOffset || caseSkew) {
                 const shape = {...selectedShape};
                 if(!selectedShape)
-                    return ({})
+                    return ({});
                 else if (!shape.props) {
                     if (caseOffset) {
                         shape[id] += value;
@@ -408,7 +405,7 @@ class DrawBox extends React.Component {
     setDraggable() {
         this.setState(({draggable, shapes, selectedShape}) => {
             if (!selectedShape)
-                return ({draggable: !draggable})
+                return ({draggable: !draggable});
             const shape = {...selectedShape};            
             shape.props = {...shape.props, draggable: !draggable};
             const newShapes = this.updateShapes(shape);
@@ -498,7 +495,7 @@ class DrawBox extends React.Component {
             }
             return acc;
         }, []);
-        console.log(Images, this.state);
+        console.log(this.state);
         return (
             <section className="draw-box">
                 <h2>Создай своего монстра</h2>
@@ -519,7 +516,7 @@ DrawBox.defaultProps = {
     saveShape: f => f,
     overwriteShape: f => f,
     shapeProps: {
-        id: '',
+        type: 'Line-simple',
         strokeWidth: 2,
         stroke: '#554bd5',
         fill: '#118803',
@@ -536,7 +533,6 @@ DrawBox.defaultProps = {
         layerUp: 100,
     },
     shapeType: 'Line',
-    lineType: 'simple',
     polygonPoints: 1,
 };
 

@@ -11,6 +11,7 @@ import {Provider} from 'react-redux';
 /*import { onSaveMonster } from '../src/actions/actions/gameDataActions';
  import Monsters from './data/monsters.json';*/
 /*import AppContainer from './Containers/appContainer';*/
+import Test from './start/login/testLogin'
 import StartPage from './start/start-page-cr'
 import storeFactory from './store/index';
 import {initialStateStart} from './store/initialState';

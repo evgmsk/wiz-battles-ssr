@@ -41,7 +41,7 @@ import {
 import './control-panel.scss';
 
 function ControlsPanel(props) {
-    // console.log(props)
+    // console.log(props.shapeProps);
     
     const {
         startAnimation,
@@ -63,7 +63,7 @@ function ControlsPanel(props) {
     } = props;
 
     const onChange = e => {
-        console.log(e, typeof selectShape)
+        console.log(e)
         
     };
 
@@ -83,9 +83,10 @@ function ControlsPanel(props) {
     };
 
     const selectControlProps = {
-        onChangeSelect,
-
-    }
+        onChange: onChangeSelect,
+        shapeProps,
+        savedShapes,
+    };
 
     const functionalControlProps = {
         setDraggable,
@@ -102,13 +103,13 @@ function ControlsPanel(props) {
         shapeProps,
         changeLayer,
         selectedShape
-    }
+    };
 
     return (
         <div className="draw-box-controls">
             <ShapeControlsWrapper {...shapeControlProps} />
             <FunctionalControlsWrapper {...functionalControlProps} />
-            <SelectControls onChange={onChangeSelect} />
+            <SelectControls {...selectControlProps} />
         </div>
     );
 }

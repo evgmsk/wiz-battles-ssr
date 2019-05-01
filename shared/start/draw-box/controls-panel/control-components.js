@@ -98,52 +98,34 @@ export const FunctionalControlsWrapper = props => {
 };
 
 export const SelectControls = props => {
-    const {onChange, savedShapes} = props;
+    const {onChange, savedShapes, shapeProps: {type, animationType, tweenType}} = props;
+
     return (
         <div className="select-controls">
             <SmartSelect
+                caret
+                toggleLabel="Shape type"
+                value={type}
                 name="select-shape"
-                values={['Shape type', ...ShapeTypes]}
+                values={[...ShapeTypes]}
                 onChange={onChange}
             />
-            <select className="select-container" name="select-shape" onChange={onChange}>
-                <option value="">Тип фигуры</option>
-                {ShapeTypes.map((sht, i) => {
-                    return <option key={i} value={sht}>{sht}</option>;
-                })}
-            </select>
-            <select className="select-container" name="select-animation" onChange={onChange}>
-                <option value="">Тип анимации</option>
-                {Object.keys(AnimationTypes).map((anim, i) => (
-                        <option key={i} value={anim} defaultChecked={!i}>
-                            {anim}
-                        </option>))
-                }
-            </select>
-            <select className="select-container" id="select-tween" onChange={onChange}>
-                <option value="">Тип твина</option>
-                {Object.keys(TweenTypes).map((anim, i) => (
-                    <option key={i} value={anim} defaultChecked={!i}>
-                        {anim}
-                    </option>))
-                }
-            </select>
-            {
-                savedShapes &&  <select className="select-container" id="select-img">
-                                    <option value="">Вставить рисунок</option>
-                                    {savedShapes.map((sh, i) => {
-                                        return (
-                                            <option
-                                                key={i}
-                                                defaultChecked={!i}
-                                            >
-                                                {sh.name}
-                                            </option>);
-                                        })
-                                    }
-                                </select>
-            }
-            
+            <SmartSelect
+                caret
+                toggleLabel="Animation type"
+                value={animationType}
+                name="select-animation"
+                values={[ ...Object.keys(AnimationTypes)]}
+                onChange={onChange}
+            />
+            <SmartSelect
+                caret
+                name="select-tween"
+                toggleLabel="Tween type"
+                value={tweenType}
+                values={[ ...Object.keys(TweenTypes)]}
+                onChange={onChange}
+            />
         </div>   
     )
 };
@@ -279,3 +261,40 @@ export const ShapeControlsWrapper = props => {
 };
 
 // export default ShapeControlsWrapper;
+/*<select className="select-container" name="select-shape" onChange={onChange}>
+ <option value="">Тип фигуры</option>
+ {ShapeTypes.map((sht, i) => {
+ return <option key={i} value={sht}>{sht}</option>;
+ })}
+ </select>*/
+/* <select className="select-container" name="select-animation" onChange={onChange}>
+ <option value="">Тип анимации</option>
+ {Object.keys(AnimationTypes).map((anim, i) => (
+ <option key={i} value={anim} defaultChecked={!i}>
+ {anim}
+ </option>))
+ }
+ </select>
+ <select className="select-container" id="select-tween" onChange={onChange}>
+ <option value="">Тип твина</option>
+ {Object.keys(TweenTypes).map((anim, i) => (
+ <option key={i} value={anim} defaultChecked={!i}>
+ {anim}
+ </option>))
+ }
+ </select>
+ {
+ savedShapes &&  <select className="select-container" id="select-img">
+ <option value="">Вставить рисунок</option>
+ {savedShapes.map((sh, i) => {
+ return (
+ <option
+ key={i}
+ defaultChecked={!i}
+ >
+ {sh.name}
+ </option>);
+ })
+ }
+ </select>
+ }*/
