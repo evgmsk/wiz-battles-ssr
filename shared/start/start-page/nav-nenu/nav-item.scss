@@ -24,6 +24,10 @@
     color: $nav-item-color;
     .nav-icon {
       color: darken($nav-item-color, 10%);
+    border-bottom-color: $nav-item-color;
+      color: $nav-item-color;
+    .nav-icon {
+      color: darken($nav-item-color, 10%);
       height: 1.3rem;
       margin-left: 5px;
     }

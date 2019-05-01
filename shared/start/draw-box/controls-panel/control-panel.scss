@@ -18,7 +18,7 @@
     font-weight: 600;
     & + .btn-tooltip {
       @include tooltip-variant(3.3rem);
-    }  
+    }
   }
   .shape-controls-wrapper {
     align-self: flex-start;
@@ -29,7 +29,7 @@
       margin: .5rem;
       color: #205f02;
       display: flex;
-      align-items: center;  
+      align-items: center;
       min-width: 10rem;
       min-height: 3rem;
       border: solid 1px #64964c;
@@ -40,6 +40,12 @@
         white-space: nowrap;
       }
     }
+    .shape-control-input {
+      min-width: 20rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
   }
 }
 
@@ -47,3 +53,7 @@ form.input-wrapper {
   border: solid 1px #acacac;
 }
 
+[type="color"] {
+  padding: 0 5px;
+
+}

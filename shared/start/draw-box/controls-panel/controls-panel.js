@@ -10,18 +10,18 @@ import {
     FaLock,
     FaUnlock,
     FaArrowUp as ArrowUp,
-    FaArrowDown as ArrowDown,
-    FaHandPaper,
-} from 'react-icons/fa';
+    FaArrowDown as ArrowDown
+} from 'react-icons/fa/';
 
 import {
     GiSave,
     GiStarFormation,
+    GiTransform,
 } from 'react-icons/gi';
 
 import {
-    MdLayers,  
-} from 'react-icons/md';/**/
+    Fi,
+} from 'react-icons/io';/**/
 
 import {
     FiMove as Grab,
@@ -38,11 +38,15 @@ import {
 } from './control-components';
 
 
+import { AnimationTypes, TweenTypes } from '../../../common/constants/game-constants';
+import { ShapeTypes } from '../../../common/constants/constants';
+import InputWrapper from './control-input-wrapper';
+import ShapeControlsWrapper from './shape-controls-wrapper';
+
 import './control-panel.scss';
 
 function ControlsPanel(props) {
-    // console.log(props)
-    
+    const [input, setInput] = useState('stroke-color');
     const {
         startAnimation,
         selectedShape,
@@ -64,8 +68,25 @@ function ControlsPanel(props) {
     // console.log(props);
 
     const onChange = e => {
-        console.log(e, typeof selectShape)
-        
+        // console.log(e)
+        e.stopPropagation();
+        const [id, value] = [e.target.id, e.target.value];
+
+        if (id === 'select-img')
+            return onChange(value);
+        if (id === 'select-shape') {
+            if (/Line/.test(value))
+                return onChangeInput({
+                    shapeType: value.slice(0, 4),
+                    lineType: value.slice(5),
+                });
+            return onChangeInput({ shapeType: value });
+        }
+        if (id === 'select-animation')
+            return onChangeInput({ animation: { animationType: value } });
+        if (id === 'select-tween')
+            return onChangeInput({ animation: { tweenType: value } });
+        return false;/**/
     };
 
     const submit = e => {
@@ -109,7 +130,7 @@ function ControlsPanel(props) {
         <div className="draw-box-controls">
             <ShapeControlsWrapper {...shapeControlProps} />
             <FunctionalControlsWrapper {...functionalControlProps} />
-            
+
         </div>
     );
 }

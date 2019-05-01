@@ -64,7 +64,7 @@ class DrawBox extends React.Component {
 
     canvasResize(e) {
         e.cancelBubble = true;
-        console.log('resize')
+        // console.log('resize')
         this.setState(({ stageProps }) => {
             const container = this.container.current;
             const [width, height] = [container.offsetWidth  - 10, container.offsetHeight  - 10];
@@ -461,6 +461,7 @@ class DrawBox extends React.Component {
             onMouseDown: this.onMouseDown,
             onMouseUp: this.onMouseUp,
             onDragEnd: this.onDragEnd,
+            onDragStart: f => f,
         };
 
         const Images = shapes.reduce((acc, Image, i) => {
