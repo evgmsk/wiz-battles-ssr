@@ -16,12 +16,11 @@ import {
 import {
     GiSave,
     GiStarFormation,
-    GiTransform,
 } from 'react-icons/gi';
 
 import {
-    Fi,
-} from 'react-icons/io';/**/
+    MdLayers,  
+} from 'react-icons/md';/**/
 
 import {
     FiMove as Grab,
@@ -34,7 +33,7 @@ import {
     ShapeControlsWrapper,
     FunctionalControlsWrapper,
     SaveForm,
-    SelectOptionsControl,
+    SelectControls,
 } from './control-components';
 
 
@@ -46,7 +45,8 @@ import ShapeControlsWrapper from './shape-controls-wrapper';
 import './control-panel.scss';
 
 function ControlsPanel(props) {
-    const [input, setInput] = useState('stroke-color');
+    // console.log(props)
+    
     const {
         startAnimation,
         selectedShape,
@@ -65,28 +65,10 @@ function ControlsPanel(props) {
         draggable,
         shapeProps
     } = props;
-    // console.log(props);
 
     const onChange = e => {
-        // console.log(e)
-        e.stopPropagation();
-        const [id, value] = [e.target.id, e.target.value];
-
-        if (id === 'select-img')
-            return onChange(value);
-        if (id === 'select-shape') {
-            if (/Line/.test(value))
-                return onChangeInput({
-                    shapeType: value.slice(0, 4),
-                    lineType: value.slice(5),
-                });
-            return onChangeInput({ shapeType: value });
-        }
-        if (id === 'select-animation')
-            return onChangeInput({ animation: { animationType: value } });
-        if (id === 'select-tween')
-            return onChangeInput({ animation: { tweenType: value } });
-        return false;/**/
+        console.log(e)
+        
     };
 
     const submit = e => {
@@ -105,9 +87,10 @@ function ControlsPanel(props) {
     };
 
     const selectControlProps = {
-        onChangeSelect,
-
-    }
+        onChange: onChangeSelect,
+        shapeProps,
+        savedShapes,
+    };
 
     const functionalControlProps = {
         setDraggable,
@@ -124,13 +107,13 @@ function ControlsPanel(props) {
         shapeProps,
         changeLayer,
         selectedShape
-    }
+    };
 
     return (
         <div className="draw-box-controls">
             <ShapeControlsWrapper {...shapeControlProps} />
             <FunctionalControlsWrapper {...functionalControlProps} />
-
+            <SelectControls {...selectControlProps} />
         </div>
     );
 }

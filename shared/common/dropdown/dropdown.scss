@@ -1,0 +1,38 @@
+@mixin set-min-size($height, $width) {
+    min-height: $height;
+    min-width: $width;
+}
+
+@mixin set-padding($padding: 0 0 0 0) {
+    padding: $padding;
+}
+
+.dropdown-wrapper {
+    position: relative;
+    .dropdown-toggle {
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        @include set-min-size(2.5, 3rem);
+        padding: .3rem;
+        font-size: 2rem;
+        color: #222;
+        .dropdown-caret {
+            @include set-min-size(1rem, 1rem)
+        }
+    }
+    .dropdown-menu {
+        position: absolute;
+        left: 0;
+        bottom: 3rem;
+        opacity: 0;
+        transition: all .4s;
+        &.is-open {
+            opacity: 1;
+            z-index: 1000;
+            bottom: -5px;
+        }
+    }
+}

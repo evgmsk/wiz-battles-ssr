@@ -95,17 +95,16 @@ class DrawBox extends React.Component {
         e.cancelBubble = true;
         if (this.state.drawing)
             return;
-        const {target, evt} = e;
-        const [x, y] = [evt.layerX, evt.layerY];
+        const {_lastPos: {x, y}, attrs: {name}} = e.target;
         this.setState(({shapes}) => {
-            const newShapes = [...shapes]
-            const shape = newShapes[target.index];
-            if (target.nodeType === 'Group')
+            const shape = shapes.filter(s => s.name === name)[0];
+            console.log(shape, shapes)
+            if (shape.nodeType)
                 [shape.x, shape.y] = [x, y];
-            if (target.nodeType === 'Shape')
+            if (shape.shapeType)
                 [shape.props.x, shape.props.y] = [x, y];
             return ({
-                shapes: newShapes,
+                shapes: this.updateShapes(shape),
                 selectedShape: shape
             });
         });       
@@ -113,22 +112,26 @@ class DrawBox extends React.Component {
 
     onMouseDown(e) {
         e.cancelBubble = true;
-        console.log('2b', e.evt.button, this.state.mouseDown)
         if (!this.state.drawing || e.target.nodeType !== 'Stage') {
             return;
         }
-        const [x, y] = [e.evt.layerX, e.evt.layerY];
-        const { shapeType, shapeProps, draggable } = this.state;
-        const { stroke, strokeWidth, fill, offsetX, offsetY } = shapeProps;
-        const { tweenType, animationType, layerUp } = shapeProps;
-        const initialProps = { stroke, strokeWidth, fill, offsetX, offsetY };
+        // console.log('2b', e.evt.button, this.state.mouseDown)
+        const {layerX, layerY} = e.evt;
+        const { shapeType, shapeProps, draggable, shapes } = this.state;
+        const { x, y, layerUp, ...mainProps } = shapeProps;
         const shape = { shapeType };
-        shape.name = `${shapeType}${idGen()}`; 
-        shape.props = { ...initialProps, animationType, tweenType, draggable, layerUp };
+        const name = `${shapeType}${idGen()}`;
+        shape.name = name; 
+        shape.props = {
+            ...mainProps,
+            draggable,
+            layerUp: layerUp + shapes.length,
+            name,
+        };
         if (shapeType === Shapes.Line) {
-            this.createLine(x, y, shape);
+            this.createLine(layerX, layerY, shape);
         } else {
-            shape.props = { ...shape.props, x, y };
+            shape.props = { ...shape.props, x: layerX, y: layerY };
             this.createShape(shape);
         }
     }
@@ -164,7 +167,7 @@ class DrawBox extends React.Component {
     }
 
     createLine(x, y, shape) {
-        this.setState(({ shapes, linePath, lineType  }) => {
+        this.setState(({ shapes, linePath, shapeProps: {type}  }) => {
             const newLinePath = [...linePath, x, y];
             shape.props = { 
                 ...shape.props,
@@ -172,9 +175,9 @@ class DrawBox extends React.Component {
                 lineCap: 'round',
                 lineJoin: 'round'
             };
-            if (lineType === 'polygon')
+            if (type === 'Line-polygon')
                 shape.props = { ...shape.props, closed: true };
-            if (lineType === 'blob')
+            if (type === 'Line-blob')
                 shape.props = { ...shape.props, closed: true, tension: 0.3 };
             return ({
                 shapes: [...shapes, shape],
@@ -317,18 +320,21 @@ class DrawBox extends React.Component {
         });        
     }
 
-    onChangeSelect({target}) {
-        const {id, value} = target;
+    onChangeSelect({target: {name, value}}) {
+        
+        //const  = target;
         //if (id === 'select-img')
             //return onChange(value);
-        if (id === 'select-shape') {
+        if (name === 'select-shape') {
             if (/Line/.test(value))
-                return this.setState({lineType: value.slice(5)});
-            return this.setState({ shapeType: value });
+                return this.setState(({shapeType, shapeProps}) =>
+                    ({shapeType: 'Line', shapeProps: {...shapeProps, type: value}}));
+            return this.setState(({shapeType, shapeProps}) =>
+                ({shapeType: value, shapeProps: {...shapeProps, type: value}}));
         }
-        if (id === 'select-animation')
+        if (name === 'select-animation')
             return this.handleAnimationChange({ type: 'animationType', value });
-        if (id === 'select-tween')
+        if (name === 'select-tween')
             return this.handleAnimationChange({ type: 'tweenType', value });
     }
 
@@ -344,8 +350,15 @@ class DrawBox extends React.Component {
         this.setState(({shapes, selectedShape}) => {
             if (caseOffset || caseSkew) {
                 const shape = {...selectedShape};
-                if(!selectedShape || !shape.props)
-                    return ({})
+                if(!selectedShape)
+                    return ({});
+                else if (!shape.props) {
+                    if (caseOffset) {
+                        shape[id] += value;
+                    } else if (caseSkew) {
+                        shape[id] = valie;
+                    }
+                }
                 else { 
                     if (caseOffset) {
                         shape.props[id] += value;
@@ -357,8 +370,7 @@ class DrawBox extends React.Component {
                     shapes: this.updateShapes(shape),
                     selectedShape: shape,
                 })  
-            }
-            return ({shapeProps: {...shapeProps, [id]: value}})     
+            } 
         })
     }
 
@@ -393,7 +405,7 @@ class DrawBox extends React.Component {
     setDraggable() {
         this.setState(({draggable, shapes, selectedShape}) => {
             if (!selectedShape)
-                return ({draggable: !draggable})
+                return ({draggable: !draggable});
             const shape = {...selectedShape};            
             shape.props = {...shape.props, draggable: !draggable};
             const newShapes = this.updateShapes(shape);
@@ -408,15 +420,15 @@ class DrawBox extends React.Component {
     changeLayer(data) {
         if (!this.state.selectedShape)
             return;
-        this.setState(({shapes, selectedShape}) => {
+        this.setState(({selectedShape, shapes}) => {
             const shape = {...selectedShape};
             if (shape.shapeType) {
                 const layerUp = (shape.props.layerUp || 100) + data;
-                shape.props = {...shape.props, layerUp};       
+                shape.props = {...shape.props, layerUp};   
             } else {
                 shape.layerUp += data
             }
-            return ({shapes: this.updateShapes(shape)})
+            return ({shapes: this.updateShapes(shape), selectedShape: shape})
         });
     }
 
@@ -425,9 +437,11 @@ class DrawBox extends React.Component {
             if (!selectedShape) {
                 return ({shapes: [...shapes].slice(0, shapes.length - 1)});
             }
+            const newShapes = shapes.filter(s => selectedShape.name !== s.name);
+            const length = newShapes.length;
             return ({
-                shapes: shapes.filter(s => selectedShape.name !== s.name),
-                selectedShape: [...shapes][shapes.length - 1],
+                shapes: newShapes,
+                selectedShape: length ? [...newShapes][length - 1] : null,
             })
         });
     }
@@ -482,7 +496,7 @@ class DrawBox extends React.Component {
             }
             return acc;
         }, []);
-        console.log(Images, this.state);
+        console.log(this.state);
         return (
             <section className="draw-box">
                 <h2>Создай своего монстра</h2>
@@ -503,7 +517,7 @@ DrawBox.defaultProps = {
     saveShape: f => f,
     overwriteShape: f => f,
     shapeProps: {
-        id: '',
+        type: 'Line-simple',
         strokeWidth: 2,
         stroke: '#554bd5',
         fill: '#118803',
@@ -520,7 +534,6 @@ DrawBox.defaultProps = {
         layerUp: 100,
     },
     shapeType: 'Line',
-    lineType: 'simple',
     polygonPoints: 1,
 };
 

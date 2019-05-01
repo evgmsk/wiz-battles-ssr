@@ -5,7 +5,8 @@
 import React from'react';
 import PropTypes from 'prop-types';
 
-import Input from './input/input';
+import SmartInput from './input/input';
+import SmartSelect from './smart-select/smart-select';
 
 import './form.scss';
 
@@ -88,8 +89,7 @@ class SmartForm extends React.Component {
     addChild(e, name, child) {
         e.preventDefault();
         e.stopPropagation();
-        this.setState(state => {
-            const { values, errors } = state;
+        this.setState(({ values, errors }) => {
             const error = {...child};
             Object.keys(error).forEach(key => {
                 error[key] = null;
@@ -103,11 +103,14 @@ class SmartForm extends React.Component {
     removeChild(e, name, index) {
         e.preventDefault();
         e.stopPropagation();
-        this.setState(state => {
-            const {values, errors} = state;
+        this.setState(({values, errors}) => {
             if (values[name].length > 1) {
-                const newValues = {...values, [name]: values[name].filter((item, i) => i.toString() !== index.toString())};
-                const newErrors = {...errors, [name]: errors[name].filter((item, i) => i.toString() !== index.toString())};
+                const newValues = {
+                    ...values,
+                    [name]: values[name].filter((item, i) => i.toString() !== index.toString())};
+                const newErrors = {
+                    ...errors,
+                    [name]: errors[name].filter((item, i) => i.toString() !== index.toString())};
                 return { values: newValues, errors: newErrors }
             }
         });
@@ -135,60 +138,58 @@ class SmartForm extends React.Component {
         }
     }
 
-    handleOnClick(e) {
+    handleOnClick({target}) {
         if (this.state.isValidating)
             return;
-        const target = e.target;
         if (target.type === 'reset' && (target.tagName === 'INPUT' || target.tagName === 'BUTTON')) {
             this.handleReset()
         }
     }
 
-    handleOnChange(e, name, index) {
+    handleOnChange(e, Name, index) {
         if (this.state.isValidating)
             return;
-        const target = e.target;
-        const  error = this.state.errors[name];
+        const {name, value, type} = e.target;
+        Name = Name || name;
+        const  error = this.state.errors[Name];
         const isArray = Array.isArray(error);
-        if (error && !isArray || isArray && error[index])
-            this.handleOnBlur(e, name, index);
+        if (error && !isArray || isArray && error[index][name])
+            this.handleOnBlur(e, Name, index);
         this.setState(state => {
-            const { values } = state;
-            if (!(name in values))
-                throw Error(`Form 'values' and input name: ${target.name} do not match or do not set appropriately`);
-            if(target.type === 'checkbox') {
-                const newValue = values[name] ? "" : target.value;
-                return {values: {...values, [name]: newValue}};
+            const values = {...state.values};
+            if (!(Name in values))
+                throw Error(`Form 'values' and input name: ${name} do not match or do not set appropriately`);
+            if(type === 'checkbox') {
+                const newValue = values[Name] ? "" : value;
+                return {values: {...values, [Name]: newValue}};
             }
-            if (!Array.isArray(values[name]))
-                return {values: {...values, [name]: target.value}};
+            if (!Array.isArray(values[Name]))
+                return {values: {...values, [Name]: value}};
             else {
-                const newValues = state.values[name].filter(x => 1);
-                newValues[index] = {...state.values[name][index], [target.name]: target.value};
-                return {values: {...values, [name]: newValues}}
+                values[Name][index] = {...values[Name][index], [name]: value};
+                return {values}
             }
         })
     }
 
-    handleOnBlur(e, name, index) {
+    handleOnBlur(e, Name, index) {
         if (this.state.isValidating)
             return;
-        const target = e.target;
+        const {name, value} = e.target;
+        Name = Name || name;
         const { validationschema } = this.props;
-        if (!validationschema[target.name].required)
+        if (!validationschema[name].required)
             return;
-        const error = validationschema[target.name].validator(target.value);
+        const error = validationschema[name].validator(value);
         this.setState(state => {
             const errors = {...state.errors};
-            if (!(name in errors))
-                throw new Error(`Form 'values' and input name: ${target.name} do not match or do not set appropriately`);
-            if (!Array.isArray(errors[name]))
-                return { errors: {...errors, [name]: error}};
+            if (!(Name in errors))
+                throw new Error(`Form 'values' and input name: ${name} do not match or do not set appropriately`);
+            if (!Array.isArray(errors[Name]))
+                return { errors: {...errors, [Name]: error}};
             else {
-                const newErrors = errors[name].filter(x => 1);
-                newErrors[index] = newErrors[index] || {};
-                newErrors[index][target.name] = error;
-                return { errors: {...errors, [name]: newErrors}}
+                errors[Name][index][name] = error;
+                return { errors }
             }
         })
     }
@@ -229,7 +230,7 @@ class SmartForm extends React.Component {
         return invalid;
     }
 
-    validateForm(s) {
+    validateForm() {
         let invalidForm = false;
         const values = {...this.state.values};
         const errors = {...this.state.errors};
@@ -250,7 +251,6 @@ class SmartForm extends React.Component {
     }
 
     validateAndFetch() {
-        // console.log('fetch')
         const {invalidForm, values} = this.validateForm();
         if (invalidForm)
             return;
@@ -259,7 +259,7 @@ class SmartForm extends React.Component {
             return this.props.submit.onResponse(true);
         }
         fetchResult.then(res => {
-            console.log(res);
+            // console.log(res);
             if (res.status < 300) {
                 this.setState(state => {
                     return {...state, successfullySubmitted: true, values: this.initialValues}
@@ -290,7 +290,7 @@ class SmartForm extends React.Component {
             onBlur: this.handleOnBlur,
             onChange: this.handleOnChange,
         };
-        // console.log(this.state, propsForChildren);
+        console.log(this.state, propsForChildren);
         const {children, ...restProps} = this.props;
         return (
             <React.Fragment>
@@ -340,4 +340,4 @@ SmartForm.propTypes = {
     className: PropTypes.string.isRequired,
 };
 
-export const SmartInput = Input;
+export { SmartInput, SmartSelect };

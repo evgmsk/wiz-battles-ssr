@@ -1,3 +1,10 @@
+@import '../common/form/btn.scss';
+
 html {
   font-family: 'Roboto', sans-serif;
+  .start-page-wrapper {
+    // height: 650px;
+    display: flex;
+    flex-direction: column;
+  }
 }

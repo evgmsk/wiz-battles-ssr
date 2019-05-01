@@ -16,23 +16,15 @@ import {
     FaArrowsAltH,
     FaFillDrip,
     FaExpand,
+    FaSave,
+    FaLayerGroup,
     // FaArchive,
     FaPalette,
     FaAsterisk,
 } from 'react-icons/fa';
 
 import {
-    GiSave,
-    GiStarFormation,
-} from 'react-icons/gi';
-
-import {
-    MdLayers,  
-} from 'react-icons/md';/**/
-
-import {
     FiMove as Grab,
-    FiSave,
     FiLayers,
 } from 'react-icons/fi';
 
@@ -40,13 +32,18 @@ import { ShapeTypes } from '../../../common/constants/constants';
 import { AnimationTypes, TweenTypes } from '../../../common/constants/game-constants';
 import ShapePropsControl from './control-inputs';
 import BtnWT from '../../../common/btn-with-tooltip/btn';
+import SmartSelect from '../../../common/form/smart-select/smart-select';
 
-export const Layers = ({onClick}) => (
-    <div className="layers-control-wrapper">
-        <ArrowDown onClick={() => onClick(-1)} />
-        <ArrowUp onClick={() => onClick(1)} />
-    </div> 
-)
+export const Layers = ({onClick}) => {
+    console.log(onClick)
+    return (
+        <div className="layers-control-wrapper">
+            <ArrowDown onClick={() => onClick(-1)} />
+            <ArrowUp onClick={() => onClick(1)} />
+        </div> 
+    )
+}
+   
 
 export const FunctionalControlsWrapper = props => {
     const {draggable, animate, drawing} = props;
@@ -100,38 +97,35 @@ export const FunctionalControlsWrapper = props => {
     )
 };
 
-export const SelectOptionsControl = props => {
-    const {onChange} = props;
+export const SelectControls = props => {
+    const {onChange, savedShapes, shapeProps: {type, animationType, tweenType}} = props;
+
     return (
-        <div className="select-options-control">
-            <select className="select-container" id="select-shape" onChange={onChange}>
-                <option value="">Тип фигуры</option>
-                {ShapeTypes.map((sht, i) => {
-                    return <option key={i} value={sht}>{sht}</option>;
-                })}
-            </select>
-            <select className="select-container" id="select-animation" onChange={onChange}>
-                <option value="">Тип анимации</option>
-                {Object.keys(AnimationTypes).map((anim, i) => (
-                        <option key={i} value={anim} defaultChecked={!i}>
-                            {anim}
-                        </option>))
-                }
-            </select>
-            <select className="select-container" id="select-tween" onChange={onChange}>
-                <option value="">Тип твина</option>
-                {Object.keys(TweenTypes).map((anim, i) => (
-                    <option key={i} value={anim} defaultChecked={!i}>
-                        {anim}
-                    </option>))
-                }
-            </select>
-            <select className="select-container" id="select-img">
-                <option value="">Вставить рисунок</option>
-                {savedShapes && savedShapes.map((sh, i) => {
-                    return <option key={i} defaultChecked={!i}>{sh.name}</option>;
-                })}
-            </select>
+        <div className="select-controls">
+            <SmartSelect
+                caret
+                toggleLabel="Shape type"
+                value={type}
+                name="select-shape"
+                values={[...ShapeTypes]}
+                onChange={onChange}
+            />
+            <SmartSelect
+                caret
+                toggleLabel="Animation type"
+                value={animationType}
+                name="select-animation"
+                values={[ ...Object.keys(AnimationTypes)]}
+                onChange={onChange}
+            />
+            <SmartSelect
+                caret
+                name="select-tween"
+                toggleLabel="Tween type"
+                value={tweenType}
+                values={[ ...Object.keys(TweenTypes)]}
+                onChange={onChange}
+            />
         </div>   
     )
 };
@@ -162,6 +156,7 @@ export const SaveForm = props => {
 export const ShapeControlsWrapper = props => {
     const [input, setInput] = useState('stroke-color');
     const {onChange, shapeProps, selectedShape, changeLayer} = props;
+    const inputProps = {shapeProps, selectedShape, onChange};
     const inputRef = React.createRef();
     const handleClick = input => {
         setInput(input)
@@ -255,9 +250,8 @@ export const ShapeControlsWrapper = props => {
             <div className="shape-control-input">
                 <p>{'Current control:'}</p>
                 <ShapePropsControl
-                    onChange={onChange}
                     input={input}
-                    shapeProps={shapeProps}
+                    {...inputProps}
                     ref={inputRef}
                     layersChildren={<Layers onClick={changeLayer} />}
                 />
@@ -267,3 +261,40 @@ export const ShapeControlsWrapper = props => {
 };
 
 // export default ShapeControlsWrapper;
+/*<select className="select-container" name="select-shape" onChange={onChange}>
+ <option value="">Тип фигуры</option>
+ {ShapeTypes.map((sht, i) => {
+ return <option key={i} value={sht}>{sht}</option>;
+ })}
+ </select>*/
+/* <select className="select-container" name="select-animation" onChange={onChange}>
+ <option value="">Тип анимации</option>
+ {Object.keys(AnimationTypes).map((anim, i) => (
+ <option key={i} value={anim} defaultChecked={!i}>
+ {anim}
+ </option>))
+ }
+ </select>
+ <select className="select-container" id="select-tween" onChange={onChange}>
+ <option value="">Тип твина</option>
+ {Object.keys(TweenTypes).map((anim, i) => (
+ <option key={i} value={anim} defaultChecked={!i}>
+ {anim}
+ </option>))
+ }
+ </select>
+ {
+ savedShapes &&  <select className="select-container" id="select-img">
+ <option value="">Вставить рисунок</option>
+ {savedShapes.map((sh, i) => {
+ return (
+ <option
+ key={i}
+ defaultChecked={!i}
+ >
+ {sh.name}
+ </option>);
+ })
+ }
+ </select>
+ }*/

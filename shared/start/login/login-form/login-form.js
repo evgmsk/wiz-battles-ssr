@@ -5,7 +5,7 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
 import validators from '../../../common/validators';
-import SmartForm, { SmartInput } from '../../../common/form/smartForm';
+import SmartForm, { SmartInput } from '../../../common/form';
 import T from '../../../translator'
 
 const LoginForm = ({className, onResponse = f => f, forgotPassword = f => f}) => {

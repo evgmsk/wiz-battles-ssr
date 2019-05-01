@@ -1,55 +1,84 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
+import {FaCaretDown, FaCaretRight} from 'react-icons/fa';
+
+import './smart-select.scss';
 
 export const SmartOption = props => {
-    const {label, className, value, children, onClick} = props;
-    const ref = React.createRef();
-    const handleClick = e => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (ref.current)
-            ref.current.blur();
-        onClick(value);
-    }
+    const {name, label, className, value, children, onClick} = props;
     return (
         <button
-            ref={ref}
+            name={name}
             type="button"
-            className={`smart-option${className && ' ' + className || ''}`}
-            onClick={handleClick}>
+            value={value}
+            className={className}
+            onClick={onClick}>
             {label || children}
         </button>
     )
 };
 
 export const SmartSelect = props => {
-    const {values, classNames, labels, onChange} = props;
-    const [itemToShow, setItemToShow] = useState({
-        value: values[0],
-        label: labels[0],
-        className: classNames[0],
-    });
-    const [optionsOpened, setOptionsOpened] = useState(false);
+    let {caret, value, toggleLabel, name, values, labels, classNames, onChange} = props;
+    // console.log(props);
+    classNames = Array.isArray(classNames)
+        ? classNames 
+        : new Array(values.length).fill("").map((c, i) => (`smart-select__option sm-op${i}`));
 
-    const onClick = (value) => {
-        if (value === itemToShow.value && !optionsOpened) {
-            setOptionsOpened(true);
-        } else if (optionsOpened){
-            const index = values.indexOf(value);
-            setItemToShow({
-                value,
-                label: labels[index],
-                className: classNames[index]
-            });
+    labels =  Array.isArray(labels)
+        ? labels 
+        : new Array(values.length).fill("");
+
+    const [displayed, setDisplayed] = useState(false);
+    const [open, setOpen] = useState(false);
+
+    const handleClick = (e) => {
+        const {name, value} = e.target;
+        if (name !== props.name) {
+            setOpen(false);
+            return setDisplayed(false);
         }
+        if (value === 'toggle') {
+            if (open) {
+                setOpen(false);
+                setDisplayed(false);
+            } else {
+                setDisplayed(true);
+                setOpen(true);
+            }
+            return
+        }
+        setOpen(false);
+        setDisplayed(false);
+        onChange(e);
     };
+
+    const dropClass = `smart-select__dropdown-options ${open ? ' is-open' : ''}${!displayed ? ' display-none' : ''}`;
+
+
     return (
-        <div className="smart-select-wrapper" onChange={onChange}>
-            <SmartOption {...itemToShow} onClick={onClick} />
-            <div className={`select-modal ${optionsOpened}`}>
-                {values.slice(1).map((v, i) =>
-                    <SmartOption key={i} className={classNames[i]} value={v} label={names[i] } />)
-                })}
+        <div className="smart-select">
+            <SmartOption
+                name={name}
+                value={'toggle'}
+                className="smart-select__toggle"
+                onClick={handleClick}
+            >
+                {toggleLabel}
+                {caret && open && <FaCaretRight/>}
+                {caret && !open && <FaCaretDown/>}
+            </SmartOption>
+            <div className={dropClass}>
+                {values.map((v, i) =>
+                    <SmartOption
+                        name={name}
+                        key={i}
+                        className={`${classNames[i]}${value === v ? ' selected' : ''}`}
+                        value={v}
+                        label={labels[i] || v}
+                        onClick={handleClick}
+                    />)
+                }
             </div>
         </div>
     )
@@ -60,4 +89,7 @@ SmartSelect.propTypes = {
     classNames: PropTypes.array,
     labels: PropTypes.array,
     onChange: PropTypes.func.isRequired,
+    name: PropTypes.string.isRequired,
 };
+
+export default SmartSelect;

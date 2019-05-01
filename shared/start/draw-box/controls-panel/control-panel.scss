@@ -20,6 +20,19 @@
       @include tooltip-variant(3.3rem);
     }
   }
+  .select-controls {
+    
+  }
+  .functional-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 7rem;
+    width: 100%;
+    min-height: 7rem;
+    padding: 0;
+  }
   .shape-controls-wrapper {
     align-self: flex-start;
     display: flex;

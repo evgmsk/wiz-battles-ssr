@@ -6,7 +6,7 @@ import {FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
 
 import validators from '../../../common/validators';
-import SmartForm, { SmartInput } from '../../../common/form/smartForm';
+import SmartForm, { SmartInput } from '../../../common/form/index';
 import {funcT} from '../../../translator'
 
 const SpecifiedInput = props => {

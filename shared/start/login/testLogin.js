@@ -3,7 +3,8 @@
  */
 import React from 'react';
 
-import SmartForm, { SmartInput } from '../../common/form/smartForm';
+import SmartForm, { SmartInput, SmartSelect } from '../../common/form';
+
 
 import './login-form/login.scss';
 
@@ -13,9 +14,12 @@ const validationSchema = {
             const Value = value.trim();
             if (!Value)
                 return { msg: 'Name is required.' };
-            return /^\w+/.test(Value) ? null : {msg: 'Invalid Name.'}
+            return /^\w+|[а-яА-Я]+/.test(Value) ? null : {msg: 'Invalid Name.'}
         },
         required: true,
+    },
+    city: {
+        required: false,
     },
     email: {
         validator: value => {
@@ -78,7 +82,8 @@ const values = {
     date: "",
     sex: 'male',
     breakfast: '',
-    dinner: ''
+    dinner: '',
+    city: ''
 };
 
 
@@ -87,7 +92,7 @@ const LoginForm = (props) => {
         fetch: () => new Promise((resolve, reject) => {
             resolve('hi');
         }),
-        onSuccessSubmit: f => f,
+        onResponse: f => f,
     };
 
     return (
@@ -103,6 +108,7 @@ const LoginForm = (props) => {
                     const { errors, values, addChild, removeChild, ...restProps} = props;
                     return (
                         <React.Fragment>
+
                             <SmartInput
                                 tag="select"
                                 name="country"
@@ -153,6 +159,7 @@ const LoginForm = (props) => {
                                     </div>
                                 )
                             })}
+                            <SmartSelect values={['dfg', 'rth', 'tjytj']} onChange={props.onChange} name="city"/>
                             <SmartInput
                                 tag="input"
                                 type="password"
@@ -243,13 +250,13 @@ const LoginForm = (props) => {
                             <button type="submit" className="btn btn-success btn-outlined">Submit</button>
                             <div className="test-buttons-wrapper">
                                 <button type="button" className="btn">Test Btn</button>
-                                <button type="button" className="btn btn-danger">Test Btn</button>
-                                <button type="button" className="btn btn-info">Test Btn</button>
+                                <button type="button" className="btn btn-filled btn-danger">Test Btn</button>
+                                <button type="button" className="btn btn-filled btn-info">Test Btn</button>
                                 <button type="button" className="btn btn-large btn-secondary btn-outlined">Test Btn</button>
-                                <button type="button" className="btn btn-warning" disabled>Test Btn</button>
-                                <button type="button" className="btn btn-primary btn-small" >Test Btn</button>
+                                <button type="button" className="btn btn-filled btn-warning" disabled>Test Btn</button>
+                                <button type="button" className="btn btn-filled btn-primary btn-small" >Test Btn</button>
                                 <button type="button" className="btn btn-warning btn-outlined">Test</button>
-                                <button type="button" className="btn btn-large btn-dark">Test</button>
+                                <button type="button" className="btn btn-filled btn-large btn-dark">Test</button>
                             </div>
                         </React.Fragment>
                     )
