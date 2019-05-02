@@ -33,8 +33,8 @@ import {
 import {
     ShapeControlsWrapper,
     FunctionalControlsWrapper,
-    SaveForm,
-    SelectControls,
+    SaveShapeForm,
+    SelectControlsContainer,
 } from './control-components';
 
 
@@ -85,7 +85,6 @@ function ControlsPanel(props) {
     const selectControlProps = {
         onChange: onChangeSelect,
         shapeProps,
-        savedShapes,
     };
 
     const functionalControlProps = {
@@ -108,8 +107,9 @@ function ControlsPanel(props) {
     return (
         <div className="draw-box-controls">
             <ShapeControlsWrapper {...shapeControlProps} />
+            <SaveShapeForm/>
             <FunctionalControlsWrapper {...functionalControlProps} />
-            <SelectControls {...selectControlProps} />
+            <SelectControlsContainer {...selectControlProps} />
         </div>
     );
 }

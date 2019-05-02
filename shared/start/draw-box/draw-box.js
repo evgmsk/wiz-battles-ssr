@@ -112,13 +112,12 @@ class DrawBox extends React.Component {
 
     onMouseDown(e) {
         e.cancelBubble = true;
-        if (!this.state.drawing || e.target.nodeType !== 'Stage') {
+        if (!this.state.drawing || e.target.nodeType !== 'Stage' || this.state.animate) {
             return;
         }
-        // console.log('2b', e.evt.button, this.state.mouseDown)
         const {layerX, layerY} = e.evt;
         const { shapeType, shapeProps, draggable, shapes } = this.state;
-        const { x, y, layerUp, ...mainProps } = shapeProps;
+        const { x, y, layerUp, size, ...mainProps } = shapeProps;
         const shape = { shapeType };
         const name = `${shapeType}${idGen()}`;
         shape.name = name; 
@@ -155,14 +154,16 @@ class DrawBox extends React.Component {
 
     onMouseMove(e) {
         e.cancelBubble = true;
+        
         if (!this.state.mouseDown || !this.state.drawing)
             return;
-        const [x, y] = [e.evt.layerX, e.evt.layerY];
+        console.log(e)
+        const {layerX, layerY}= e.evt;
         const shape = last(this.state.shapes);
         if (shape && shape.shapeType === 'Line') {
-            this.drawLine(x, y);
+            this.drawLine(layerX, layerY);
         } else if (shape) {
-            this.drawShape(x, y);
+            this.drawShape(layerX, layerY);
         }
     }
 
@@ -188,10 +189,10 @@ class DrawBox extends React.Component {
     }
 
     drawLine(x, y) {
-        this.setState(({ shapes, linePath, lineType, polygonPoints }) => {
+        this.setState(({ shapes, linePath, shapeProps:{type}, polygonPoints }) => {
             const newLinePath = [...linePath];
             const newShapes = [...shapes];
-            if (lineType !== 'polygon' || linePath.length <= polygonPoints * 2) {
+            if (type !== 'Line-polygon' || linePath.length <= polygonPoints * 2) {
                 newLinePath.push(x);
                 newLinePath.push(y);
             } else {
@@ -240,7 +241,7 @@ class DrawBox extends React.Component {
                     shape.props = { ...shape.props, width: size, height: size, cornerRadius };
                     break;
                 case (Shapes.Ellipse):
-                    shape.props = { ...shape.props, radius: { x: size, y: size } };
+                    shape.props = { ...shape.props, radiusX: size, radiusY: size } ;
                     break;
                 case (Shapes.RegularPolygon):
                     shape.props = { ...shape.props, radius: size, sides: tips };
@@ -263,23 +264,26 @@ class DrawBox extends React.Component {
             const newShapes = [...shapes];
             const shape = newShapes[shapes.length - 1];
             const [X, Y] = [x - shape.props.x, y - shape.props.y];
+            console.log(x, y, X, Y, shape)
+            const {abs, sqrt} = Math;
             switch (shape.shapeType) {
                 case Shapes.Rect:
-                    shape.props.width = Math.abs(X);
-                    shape.props.height = Math.abs(Y);
+                    shape.props.width = abs(X);
+                    shape.props.height = abs(Y);
                     break;
                 case Shapes.Ring:
-                    shape.props.outerRadius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
+                    shape.props.outerRadius = sqrt(abs((X * X) - (Y * Y)));
                     break;
                 case Shapes.Star:
-                    shape.props.outerRadius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
+                    shape.props.outerRadius = sqrt(abs((X * X) - (Y * Y)));
                     break;
                 case Shapes.Ellipse:
-                    shape.props.radius.x = Math.abs(X);
-                    shape.props.radius.y = Math.abs(Y);
+                    shape.props.radiusX = abs(X);
+                    shape.props.radiusY = abs(Y);
+                    console.log(x, y, X, Y, shape)
                     break;
                 case Shapes.RegularPolygon:
-                    shape.props.radius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
+                    shape.props.radius = sqrt(abs((X * X) - (Y * Y)));
                     break;
                 case Shapes.Arc:
                     shape.props.outerRadius = Math.sqrt(Math.abs((X * X) - (Y * Y)));
@@ -323,8 +327,9 @@ class DrawBox extends React.Component {
     onChangeSelect({target: {name, value}}) {
         
         //const  = target;
-        //if (id === 'select-img')
-            //return onChange(value);
+        if (name === 'select-img') {
+
+        }
         if (name === 'select-shape') {
             if (/Line/.test(value))
                 return this.setState(({shapeType, shapeProps}) =>
@@ -339,6 +344,7 @@ class DrawBox extends React.Component {
     }
 
     onChangeShapeProps({target}) {
+        console.log(target)
         let {id, value} = target;
         if (id !== 'fill' && id !== 'stroke') {
             value = Number(value);
@@ -347,23 +353,23 @@ class DrawBox extends React.Component {
             throw new Error("Invalid arguments passed to 'onChangeShapeProps'");
         const caseSkew = id === 'skewX' || id === 'skewY';
         const caseOffset = id === 'offsetX' || id === 'offsetY';
-        this.setState(({shapes, selectedShape}) => {
+        this.setState(({selectedShape, shapeProps}) => {
             if (caseOffset || caseSkew) {
                 const shape = {...selectedShape};
                 if(!selectedShape)
                     return ({});
                 else if (!shape.props) {
                     if (caseOffset) {
-                        shape[id] += value;
+                        shape[id] = value;
                     } else if (caseSkew) {
-                        shape[id] = valie;
+                        shape[id] = value;
                     }
                 }
                 else { 
                     if (caseOffset) {
-                        shape.props[id] += value;
+                        shape.props[id] = value;
                     } else if (caseSkew) {
-                        shape.props[id] = valie;
+                        shape.props[id] = value;
                     }
                 }
                 return ({
@@ -371,6 +377,7 @@ class DrawBox extends React.Component {
                     selectedShape: shape,
                 })  
             } 
+            return ({shapeProps: {...shapeProps, [id]: value}})
         })
     }
 
@@ -445,17 +452,15 @@ class DrawBox extends React.Component {
             })
         });
     }
-
+    
     render() {
         const { shapes, categories, drawing, animate, draggable } = this.state;
         const { shapeProps, stageProps, selectedShape } = this.state;
-        const savedShapes = this.props.savedShapes;
         const [stage, layer] = [this.stage, this.layer];
         const panelProps = {
             shapeProps,
             animate,
             drawing,
-            savedShapes,
             categories,
             draggable,
             selectedShape,
@@ -496,6 +501,7 @@ class DrawBox extends React.Component {
             return acc;
         }, []);
         console.log(this.state);
+        console.log(this.props);
         return (
             <section className="draw-box">
                 <h2>Создай своего монстра</h2>
@@ -520,8 +526,8 @@ DrawBox.defaultProps = {
         strokeWidth: 2,
         stroke: '#554bd5',
         fill: '#118803',
-        animationType: 0,
-        tweenType: 0,
+        animationType: '',
+        tweenType: '',
         size: 20,
         tips: 3,
         offsetX: 0,

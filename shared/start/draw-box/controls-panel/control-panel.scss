@@ -5,49 +5,77 @@
   background: #fefefe;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   width: 90%;
   max-width: 1000px;
   margin: 0 auto;
   border: solid 5px #64964c;
   padding: 3px;
+  .btn-with-tooltip-wrapper {
+    
+  }
   .btn-with-tooltip{
-    min-width: 2.5rem;
-    height: 2.5rem;
+    min-width: 2rem;
+    height: 2rem;
     font-size: 1.4rem;
     font-weight: 600;
+    margin: .3rem;
     & + .btn-tooltip {
       @include tooltip-variant(3.3rem);
     }  
   }
   .select-controls {
-    
+    min-width: 20rem;
+    .smart-select {
+      width: 100%;
+      .smart-select__toggle {
+        width: 100%;
+        margin: .2rem 0;
+      }
+    }
   }
   .functional-controls {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
     align-items: center;
-    max-width: 7rem;
+    max-width: 3rem;
+    align-self: center;
+    justify-self: flex-end;
     width: 100%;
-    min-height: 7rem;
+    // min-height: 7rem;
     padding: 0;
   }
-  .shape-controls-wrapper {
+  .save-shape-form {
+    max-width: 15rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .shape-controls {
     align-self: flex-start;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    max-width: 30rem;
+    .shape-controls__buttons-wrapper{
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
     .shape-control-input {
+      display: flex;
+      flex-wrap: wrap;
       margin: .5rem;
       color: #205f02;
-      display: flex;
       align-items: center;  
-      min-width: 10rem;
-      min-height: 3rem;
+      // min-width: 10rem;
+      flex-shrink: 1;
+      width: auto;
+      min-height: 2.5rem;
+      padding: 0;
       border: solid 1px #64964c;
       p {
-        margin: 0 .4rem;
+        margin: .4rem ;
         font-size: 1.2rem;
         font-weight: 500;
         white-space: nowrap;

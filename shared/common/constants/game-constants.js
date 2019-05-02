@@ -33,7 +33,7 @@ export const TaskGenerators = {
 };
 
 export const AnimationTypes = {
-    '': null,
+    '': '',
     swingX,
     swingY,
     rotation,
@@ -62,7 +62,7 @@ export const Effects = {
     life: { effect: leafRising, animation: 'lifeAttack' },
 };
 
-export const TweenTypes = { '': null, fall, moveX, skewXY };
+export const TweenTypes = { '': '', fall, moveX, skewXY };
 
 export const Salutation = { effect: salute, animation: Salute };
 
