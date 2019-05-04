@@ -3,11 +3,6 @@
 @function transY($height, $dist) {
   @return -($height * .5 + $dist);
 }
-@mixin smart-form($direction: column, $width: 80%, $margin: auto) {
-  @include smart-form-flex($direction);
-  @include smart-form-size($width);
-  margin: $margin;
-}
 
 @mixin smart-form-size($width: 80%, $max-width: 800px, $height: auto) {
   width: $width;
@@ -21,24 +16,35 @@
   justify-content: $justify;
 }
 
+@mixin smart-form($direction: column, $width: 80%, $margin: auto) {
+  @include smart-form-flex($direction);
+  @include smart-form-size($width);
+  margin: $margin;
+}
+
 @mixin smart-input_flex(
     $direction: row-reverse,
     $justify: space-between,
     $align: center) {
-  display: flex;
-  flex-direction: $direction;
-  justify-content: $justify;
+  @include smart-form-flex($direction, $justify);
   align-items: $align;
 }
+
+@mixin dirty-label($translate, $font-size) {
+  font-size: $font-size;
+  transform: translateY($translate);
+}
+
 
 @mixin smart-input_likeplaceholder-transform ($args: ()) {
   $defaultValues: (
     height: $height-input,
-    ratio: .6,
+    ratio: .5,
     left: 1.5rem,
     top: false,
     translateY: .7rem,
     label-resize: .3rem,
+    z-index: 10,
     transition: all .3s
   );
   $argsMap: map-merge($defaultValues, $args);
@@ -54,9 +60,8 @@
   .smart-input__label {
     font-size: $font-size;
     position: absolute;
-    
+    z-index: map_get($argsMap, z-index) - 1;
     left: map-get($argsMap, left);
-    z-index: 9;
     @if $top {
       top: $top;
     } @else {
@@ -66,16 +71,24 @@
     transition: map-get($argsMap, transition);
     &.dirty-input {
       font-size: $font-top;
-      @include dirty-label(-$transY, $font-top);
-      z-index: 10;
+      @include dirty-label($transY, $font-top);
+      z-index: map_get($argsMap, z-index);
     }
   }
   .smart-input__input {
     height: $height;
     transition: $transition;
-    &:focus + .smart-input__label {
-      @include dirty-label(-$transY, $font-top);
-      z-index: 10;
+    z-index: map_get($argsMap, z-index);
+    &::placeholder {
+      opacity: 0;
+    }
+    &:focus {
+      &::placeholder {
+        opacity: 1;
+      }
+      & + .smart-input__label {
+        @include dirty-label($transY, $font-top);
+      }
     }
   }
   &:not(.shadowed) {
@@ -89,6 +102,7 @@
 
 @mixin smart-input_input-padding(
     $padding: 1rem .5rem,
+    $border-resize: 1px
   ) {
   .smart-input__input {
     padding: $padding;
@@ -98,13 +112,17 @@
       &:hover,
       &:focus,
       &.invalid-input {
-        padding: nth($padding, 1) calc(nth($padding, 2) - 1px);
+        @if length($padding) > 1 {
+          padding: nth($padding, 1) calc(nth($padding, 2) - #{$border-resize});
+        } @else {
+          padding: nth($padding, 1) calc(nth($padding, 1) - #{$border-resize});
+        }
       }
     }
   }
 }
 
-@mixin smart-input_input-border-rad($border-rad) {
+@mixin smart-input_input-border-rad($border-rad: 5px) {
   &:not(.underlined) {
     .smart-input__input {
       border-radius: $border-rad;
@@ -117,36 +135,48 @@
   }
 }
 
-@mixin smart-input_likeplaceholder-background($background: #fff, $label-padding: 2px) {
-  background: $background;
+@mixin smart-input_likeplaceholder-background($args: ()) {
+  $default: (
+    background: #fff,
+    label-color: #aaa,
+    label-hadding: 2px
+  );
+  $argsMap: map_merge($default, $args);
+  background: map_get($argsMap, background);
   .smart-input__input {
     background: transparent;
-    z-index: 10;
-    &:focus + .smart-input__label {
-      z-index: 10;
-    }
   }
   .smart-input__label {
-    z-index: 9;
-    background: $background;
-    padding: $label-padding;
+    color: map_get($argsMap, color);
+    background: map_get($argsMap, background);
+    padding:map_get($argsMap, label-padding);
     border-radius: 2px;
-    &.dirty-input {
-      z-index: 10;
-    }
   }
 }
 
-@mixin smart-input_border-colors($colors: $input-colors) {
-  @include smart-input__border-color('',nth($colors, 1), 1px);
-  @include smart-input__border-color('hover',nth($colors, 2), 2px);
-  @include smart-input__border-color('focus',nth($colors, 3), 2px); 
-  @include smart-input__border-color('error',nth($colors, 4), 2px);  
+@mixin box-shadow($args: ()) {
+  $default: (
+          size: 0 1px 1px 1px,
+          inset: false,
+          color: gray,
+  );
+  $argsMap: map_merge($default, $args);
+  $inset: map_get($argsMap, inset);
+  $size: map_get($argsMap, size);
+  $color: map_get($argsMap, color);
+  $box-shadow: $size $color !default;
+  @if($inset) {
+    $box-shadow: $size $color inset !global;
+  }
+  box-shadow: $box-shadow;
+  &:-webkit-autofill {
+    transition: background 0s 100000000000s;
+  }
 }
 
-@mixin smart-input__border-color( $case: '', $color: nth($input-colors, 1), $width: 1px,) {
+@mixin smart-input__border-color( $case, $color, $width, $shadow-size: 0 1px 1px 1px) {
   @debug $color;
-  @if($case == '') {
+  @if($case == 'main') {
     &.underlined .smart-input__input{
     border: $width solid transparent;
     border-bottom-color: $color;
@@ -155,7 +185,7 @@
       border: $width solid $color;
     }
     &.shadowed .smart-input__input{
-      @include box-shadow($color);
+      @include box-shadow((color: $color, size: $shadow-size));
     }
   } 
   @if($case == 'hover') {
@@ -167,7 +197,7 @@
       border: $width solid $color;
     }
     &.shadowed .smart-input__input:hover{
-      @include box-shadow($color);
+      @include box-shadow((color: $color, size: $shadow-size));
     }
     &.like-placeholder {
       .smart-input__input:hover + .smart-input__label {
@@ -185,14 +215,13 @@
       border: $width solid $color;
     }
     &.shadowed .smart-input__input:focus{
-      @include box-shadow($color);
+      @include box-shadow((color: $color, size: $shadow-size));
     }
     &.like-placeholder {
       .smart-input__input:focus + .smart-input__label {
         color: $color;
       }
     }
-
   }
   @if($case == 'error') {
     &.invalid-input {
@@ -204,7 +233,7 @@
         border: $width solid $color;
       }
       &.shadowed .smart-input__input{
-        @include box-shadow($color);
+        @include box-shadow((color: $color, size: $shadow-size));
       }
       &.like-placeholder {
         .smart-input__label {
@@ -219,15 +248,27 @@
   }
 }
 
+@mixin smart-input_border-colors($args: (d: 6)) {
+  $default: (
+    main: nth($input-colors, 1),
+    hover: nth($input-colors, 2),
+    focus: nth($input-colors, 3),
+    errror: nth($input-colors, 4),
+    border-main: 1px,
+    border-hover: 2px,
+  );
+  $argsMap: map_merge($default, $args);
+  @include smart-input__border-color('main', map_get($argsMap, main), map_get($argsMap, border-main));
+  @include smart-input__border-color('hover', map_get($argsMap, hover), map_get($argsMap, border-hover));
+  @include smart-input__border-color('focus', map_get($argsMap, focus), map_get($argsMap, border-hover));
+  @include smart-input__border-color('error', map_get($argsMap, error), map_get($argsMap, border-hover));
+}
+
 @mixin smart-input(
     $margin:  0 0 .5rem 0,
-    $padding: 1rem .5rem,
-    $border-rad: 5px,
-    $background: white) {
+    $padding: 1rem .5rem) {
   position: relative;
   margin: $margin;
-  background: $background;
-  border-radius: $border-rad;
   box-sizing: border-box;
   .smart-input__error-wrapper {
     position: relative;
@@ -236,9 +277,8 @@
 
   &.like-placeholder {
     padding: $padding;
-    .smart-input__label {
-      background: $background;
-      z-index: 9;
+    .smart-input__input {
+      width: 100%;
     }
   }
   .smart-input__input {
@@ -288,17 +328,6 @@
   }
 }
 
-@mixin box-shadow($color, $size: 0 1px 1px 1px, $inset: false) {
-  $box-shadow: $size $color !default;
-  @if($inset == inset) {
-    $box-shadow: $size $color inset !global;
-  }
-  box-shadow: $box-shadow;
-  &:-webkit-autofill {
-    transition: background 0s 100000000000s;
-  }
-}
-
 @mixin box-border($color, $input-style, $width: 2px) {
   @if($input-style == 'outlined') {
     border: solid $width $color;
@@ -315,7 +344,7 @@
     &.error:hover,
     &.error:focus {
       border: none;
-      @include box-shadow($input-style, $color, 2px);
+      @include box-shadow((color: $color));
     }
   }
   @else {
@@ -358,25 +387,21 @@
   }
   @else if($input-style == 'shadowed') {
     border: none;
-    @include box-shadow(nth($colors, 1), 0 0 1px 1px);
+    @include box-shadow((color: nth($colors, 1), size: 0 0 1px 1px));
     &:hover {
       border: none;
-      @include box-shadow(nth($colors, 2));
+      $color: nth($colors, 2);
+      @include box-shadow((color: $color));
     }
     &:focus {
       border: none;
-      @include box-shadow(nth($colors, 3));
+      @include box-shadow((color: nth($colors, 3)));
     }
     &.invalid-input {
       border: none;
-      @include box-shadow(nth($colors, 4));
+      @include box-shadow((color: nth($colors, 4)));
     }
   }
-}
-
-@mixin dirty-label($translate, $font-size) {
-  font-size: $font-size;
-  transform: translateY(-$translate);
 }
 
 @mixin error-msg($color: $error-color, $left: 1.5rem, $bottom: 0, $font-size: .9rem) {

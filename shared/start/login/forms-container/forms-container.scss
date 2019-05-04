@@ -102,7 +102,7 @@
     margin: auto;
     width: 100%;
     align-self: center;
-    $colors: #999999 $hover-color #11aa11 #dc3545;
+    $colors: (main: #999999, focus: #11aa11, error: #dc3545);
     @include smart-input_input-padding();
     .smart-input {
       @include smart-input_likeplaceholder-transform((height: 3.4rem, translateY: .9rem, ratio: .5, label-resize: .4rem));

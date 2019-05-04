@@ -3,14 +3,19 @@
 .smart-input {
   @include smart-input();
   @include smart-input_flex();
-  .smart-input__input {
+  @include smart-input_likeplaceholder-transform();
+  @include smart-input_border-colors((gg: #fff));
+  @include smart-input_likeplaceholder-background();
+  @include smart-input_input-border-rad();
+  //@include s
+ /* .smart-input__input {
     @include smart-input-input-size();
     @include smart-input-input-color();
-  }
+  }*/
   .input-error-msg {
     @include error-msg();
   }
-  &:not(.like-placeholder) {
+ /* &:not(.like-placeholder) {
     &.outlined {
       .smart-input__input {
         @include input-border-style('outlined');
@@ -24,7 +29,7 @@
         text-shadow: 1px 1px $text-shadow-color;
       }
     }
-  }
+  }*/
   &.in-col {
     flex-direction: column-reverse;
     .smart-input__label {
@@ -75,23 +80,3 @@
   }
 }
 
-.like-placeholder {
-  @each $style in $input-style {
-    &.#{$style} {
-      .smart-input__input {
-        @include like-placeholder-input($style);
-        &.invalid-input {
-          @include error($style);
-        }
-      }
-      .smart-input__label {
-        @if($style != "underlined") {
-          @include like-placeholder-label();
-        }
-        @else {
-          @include like-placeholder-label(.5rem);
-        }
-      }
-    }
-  }
-}
