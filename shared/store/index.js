@@ -23,7 +23,7 @@ const storeFactory = (window, data = initialData) => {
     if (window && window.__REDUX_DEVTOOLS_EXTENSION__) {
         reduxToolsExt =  window.__REDUX_DEVTOOLS_EXTENSION__();
     }
-    const store = applyMiddleware(logger, sagaMiddleware)(createStore)(
+    const store = applyMiddleware(sagaMiddleware)(createStore)(
         combineReducers({ app }),
         data, reduxToolsExt,
     );

@@ -51,7 +51,6 @@ export const GameConnected = connect(state => ({app: state.app}),{})(Game);
 
 export const CustomLogin = connect(state => ({userName: state.app.userName}),{logout})(
     ({className = 'nav-menu-item', userName, logout, toggle}) => {
-        console.log(userName)
         return (
             <BtnWT
                 variant="down-left"

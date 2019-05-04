@@ -23,7 +23,7 @@
       flex-direction: column;
       justify-content: center;
       width: 100%;
-      margin: unset;
+      margin: 0;
       > div,
       .smart-input {
         width: auto;
@@ -103,19 +103,27 @@
     width: 100%;
     align-self: center;
     $colors: #999999 $hover-color #11aa11 #dc3545;
-    .smart-input.like-placeholder {
-      &.outlined {
-        .smart-input__input {
-          @include like-placeholder-input('outlined', 1.2rem, .8rem, $colors, 3.4rem, 5px, 100%)
-        }
-        .smart-input__label {
-          @include like-placeholder-label(1.2rem, 1.5rem, 0.3rem, .8rem, 3.4rem, $placeholder-color #dc3545)
-        }
-        .input-error-msg {
-          @include error-msg(#dc3545)
-        }
-      }
+    @include smart-input_input-padding();
+    .smart-input {
+      @include smart-input_likeplaceholder-transform((height: 3.4rem, translateY: .9rem, ratio: .5, label-resize: .4rem));
+      @include smart-input_border-colors($colors);
     }
+
+    
+    // .smart-input.like-placeholder {
+      
+    //   &.outlined {
+    //     .smart-input__input {
+    //       @include like-placeholder-input('outlined', 1.2rem, .8rem, $colors, 3.4rem, 5px, 100%)
+    //     }
+    //     .smart-input__label {
+    //       @include like-placeholder-label(1.2rem, 1.5rem, 0.3rem, .8rem, 3.4rem, $placeholder-color #dc3545)
+    //     }
+    //     .input-error-msg {
+    //       @include error-msg(#dc3545)
+    //     }
+    //   }
+    // }
     &:not(.log-form) [type=submit] {
       margin: 1rem auto;
     }
@@ -123,7 +131,7 @@
   // reset
   .reset-password-title {
     font-size: 1.2rem;
-    margin: 2rem 1rem 0;
+    margin: .5rem 1rem;
     line-height: 1.6rem;
     text-align: justify;
     color: darken(#11aa11, 10%);

@@ -1,9 +1,11 @@
 @import '../../../common/btn-with-tooltip/btn.scss';
+@import '../../../common/form/mixin.scss';
 
-.draw-box-controls {
+.draw-box__controls {
   box-sizing: border-box;
   background: #fefefe;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   width: 90%;
@@ -11,9 +13,9 @@
   margin: 0 auto;
   border: solid 5px #64964c;
   padding: 3px;
-  .btn-with-tooltip-wrapper {
+  // .btn-with-tooltip-wrapper {
     
-  }
+  // }
   .btn-with-tooltip{
     min-width: 2rem;
     height: 2rem;
@@ -29,6 +31,7 @@
     .smart-select {
       width: 100%;
       .smart-select__toggle {
+        max-height: 1.4rem;
         width: 100%;
         margin: .2rem 0;
       }
@@ -40,16 +43,70 @@
     justify-content: space-around;
     align-items: center;
     max-width: 3rem;
-    align-self: center;
+    align-self: flex-start;
     justify-self: flex-end;
     width: 100%;
-    // min-height: 7rem;
     padding: 0;
   }
   .save-shape-form {
-    max-width: 15rem;
+    width: auto;
+    margin: .5rem;
+    color: #205f02;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
+    border: 1px solid #205f02;
+    border-radius: 3px;
+    .smart-input {
+      // font-size: 1.2rem;
+      margin: 0;
+      &.like-placeholder {
+        .smart-input__input {
+          @include like-placeholder-input("underlined", 1rem, .7rem, inherit inherit #205f02 red, 2rem, 3px, auto, 0 1rem);
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+        .smart-input__label {
+          @include like-placeholder-label(.5rem, 1.3rem, .3rem, .5rem);
+        }
+        padding: .8rem .5rem 1rem;
+        width: auto;
+        border-radius: 3px;
+      }
+    }
+    
+    .radio-buttons-wrapper {
+      display: flex;
+      // flex-wrap: wrap;
+      p {
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        padding: 0 .5rem;
+        width:100%;
+        // margin: 0 auto .4rem;
+      }
+    }
+    button {
+      background: none;
+      border: 1px solid #205f02;
+      border-radius: 3px;
+      color: inherit;
+      margin: .5rem;
+      padding: .2rem;
+      height: 2rem;
+      min-width: 2rem;
+      &[disabled] {
+        cursor: none;
+        color: gray;
+      }
+      svg {
+        color: inherit;
+        height: 100%;
+        width: 100%;
+      }
+    }
   }
   .shape-controls {
     align-self: flex-start;
@@ -64,16 +121,14 @@
     }
     .shape-control-input {
       display: flex;
-      flex-wrap: wrap;
       margin: .5rem;
       color: #205f02;
       align-items: center;  
-      // min-width: 10rem;
-      flex-shrink: 1;
       width: auto;
       min-height: 2.5rem;
       padding: 0;
       border: solid 1px #64964c;
+      border-radius: 3px;
       p {
         margin: .4rem ;
         font-size: 1.2rem;

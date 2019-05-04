@@ -15,7 +15,7 @@ $disable-filter: rgba(150, 150, 150, .7) !default;
 $info-color: #17a2b8 !default;
 $btn-light-color: #d8d9da !default;
 $btn-dark-color: #343a40 !default;
-$gradient-color: rgba(255, 255, 255, 1) !default;
+//$gradient-color: rgba(255, 255, 255, 1) !default;
 
 $transition: all ease-in .3s;
 
@@ -48,7 +48,7 @@ $button-classes-map: (
     btn-dark: $btn-dark-color,
 );
 
-$height-input: 3.8rem  !default;
-$translate: .6rem;
+$height-input: 2.4rem  !default;
+$translate: .5rem;
 $input-padding-left: 1rem  !default;
 $input-padding-top: 1rem  !default;

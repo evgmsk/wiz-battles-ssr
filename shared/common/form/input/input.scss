@@ -2,7 +2,7 @@
 
 .smart-input {
   @include smart-input();
-  @include smart-input-flex();
+  @include smart-input_flex();
   .smart-input__input {
     @include smart-input-input-size();
     @include smart-input-input-color();

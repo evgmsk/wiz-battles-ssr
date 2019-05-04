@@ -133,8 +133,8 @@ const SelectControls = props => {
                 name="saved-shapes"
                 toggleLabel="Insert saved shape"
                 value={""}
-                values={[...savedShapes].map((l, i) => i)}
-                labels={[...savedShapes]}
+                values={[...savedShapes]}
+                labels={[...savedShapes].map((s, i) => s.name)}
                 onChange={onChange}
             />
         </div>   
@@ -146,8 +146,9 @@ export const SelectControlsContainer = connect(state =>
 
 
 const SaveForm = props => {
+    const {selectedShape} = props;
     const [res, setRes] = useState(null);
-    const values = {shapeName: ''};
+    const values = {shapeName: '', saveOption: 'shape'};
     const validationSchema = {
         shapeName: {
             validator: value => {
@@ -158,15 +159,22 @@ const SaveForm = props => {
                 return null;
             },
             required: true,
+        },
+        saveOption: {
+            required: false,
         }
     }
-    const submit = {
-        fetch: f=> f,
-        onResponse: f => f
-    };
-    const handleResponse = res => {
 
+    const handleResponse = res => {
+        if (res && res.status) return
     }
+
+    const submit = {
+        fetch: props.onSave,
+        onResponse: handleResponse,
+    };
+
+    
 
     return (
         <SmartForm
@@ -182,16 +190,38 @@ const SaveForm = props => {
                         <React.Fragment>
                             <SmartInput
                                 type="text"
-                                name="image-name"
-                                placeholder="Enter shape name"
+                                name="shapeName"
+                                placeholder="Enter image name"
                                 labelStyle="like-placeholder"
-                                inputStyle="outlined"
-                                labelText="Shape name"
+                                inputStyle="underlined"
+                                labelText="Image name"
                                 {...restProps}
                                 value={props.values.shapeName}
                                 error={props.errors.shapeName}
                             />
-                            <button type="submit"><FaSave/></button>
+                            <div className="radio-buttons-wrapper">
+                                <p className="radio-buttons-label">Save as</p>
+                                <SmartInput 
+                                    type="radio"
+                                    name="saveOption"
+                                    value="shape"
+                                    labelText="Shape"
+                                    defaultChecked
+                                    {...restProps}
+                                /> 
+                                <SmartInput 
+                                    type="radio"
+                                    name="saveOption"
+                                    value="group"
+                                    labelText="Group"
+                                    {...restProps}
+                                /> 
+                                <button disabled={!selectedShape} type="submit">
+                                    <FaSave className="save-icon" />
+                                </button>
+                            </div>
+                            
+                            
                         </React.Fragment>
                     )
                 }
@@ -299,7 +329,6 @@ export const ShapeControlsWrapper = props => {
                 }  
             </div>   
             <div className="shape-control-input">
-                <p>{'Current control:'}</p>
                 <ShapePropsControl
                     input={input}
                     {...inputProps}

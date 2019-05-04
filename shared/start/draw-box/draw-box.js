@@ -4,8 +4,13 @@
 import React from 'react';
 import { Stage, Layer } from 'react-konva';
 import {last, mean} from 'lodash';
-
-import ControlsPanel from './controls-panel/controls-panel';
+import {
+    ShapeControlsWrapper,
+    FunctionalControlsWrapper,
+    SaveShapeForm,
+    SelectControlsContainer,
+} from './controls-panel/control-components';
+// import ControlsPanel from './controls-panel/controls-panel';
 import ShapeClass from '../../common/shape-classes/shape-class';
 import { oddIndexes, evenIndexes } from '../../common/helper-functions/indexFilters';
 import idGen from '../../common/helper-functions/idGen';
@@ -22,11 +27,8 @@ class DrawBox extends React.Component {
         this.container = React.createRef();
         this.hero = React.createRef();
         this.sh = React.createRef();
-        const [width, height] = [window.innerWidth * 0.8, window.innerHeight * 0.6];
-        const [initialWidth, initialHeight] = [...[width, height]];
         this.state = {
             stageProps: {width: window.innerWidth * .8, height: window.innerHeight - 400, scaleX: 1, scaleY: 1},
-            // stageProps: { width, height, initialWidth, initialHeight, scaleX: 1, scaleY: 1 },
             shapes: [],
             linePath: [],
             lineType: props.lineType,
@@ -137,7 +139,6 @@ class DrawBox extends React.Component {
 
     onMouseUp(e) {
         e.cancelBubble = true;
-        // console.log(e.evt.button, !this.state.drawing)
         if (!this.state.drawing) {
             return;
         }
@@ -325,8 +326,6 @@ class DrawBox extends React.Component {
     }
 
     onChangeSelect({target: {name, value}}) {
-        
-        //const  = target;
         if (name === 'select-img') {
 
         }
@@ -384,10 +383,8 @@ class DrawBox extends React.Component {
     onSave(name, type, saveAs) {
         if (!parseInt(saveAs, 10))
             return;
-        // const savedShapes = this.props.savedShapes;
         const { shapes, shapeProps } = this.state;
         let data;
-        const action = this.state.categories.filter(c => c.value === type)[0].action;
         if (saveAs === '1') {
             const group = shapes.filter(s => s.nodeType)[0];
             const restShapes = shapes.filter(s => s.shapeType).map((shape) => {
@@ -454,24 +451,34 @@ class DrawBox extends React.Component {
     }
     
     render() {
-        const { shapes, categories, drawing, animate, draggable } = this.state;
-        const { shapeProps, stageProps, selectedShape } = this.state;
-        const [stage, layer] = [this.stage, this.layer];
-        const panelProps = {
+        const { shapeProps, stageProps, selectedShape, shapes, drawing, animate, draggable } = this.state;
+        const {stage, layer, undo, changeLayer, chooseMode, setDraggable, startAnimation, onSave} = this;
+        
+        const selectControlProps = {
+            onChange: this.onChangeSelect,
             shapeProps,
+        };
+    
+        const functionalControlProps = {
+            setDraggable,
+            chooseMode,
+            undo,
+            startAnimation,
             animate,
             drawing,
-            categories,
-            draggable,
+            draggable
+        };
+    
+        const saveFormProps = {
+            onSave,
             selectedShape,
-            onChangeShapeProps: this.onChangeShapeProps,
-            onChangeSelect: this.onChangeSelect,
-            chooseMode: this.chooseMode,
-            startAnimation: this.startAnimation,
-            undo: this.undo,
-            onSave: this.onSave,
-            changeLayer: this.changeLayer,
-            setDraggable: this.setDraggable,
+        }
+    
+        const shapeControlProps = {
+            onChange: this.onChangeShapeProps,
+            shapeProps,
+            changeLayer,
+            selectedShape
         };
 
         const StageProps = {
@@ -512,7 +519,14 @@ class DrawBox extends React.Component {
                         </Layer>
                     </Stage>
                 </div>
-                <ControlsPanel {...panelProps} />
+                <div className="draw-box__controls">
+                    <div>
+                        <ShapeControlsWrapper {...shapeControlProps} />
+                        <SaveShapeForm {...saveFormProps} />
+                    </div>
+                    <FunctionalControlsWrapper {...functionalControlProps} />
+                    <SelectControlsContainer {...selectControlProps} />
+                </div>
             </section>
         );
     }

@@ -1,7 +1,6 @@
 /**
  * project new-wiz-bat
  */
-
 import React from'react';
 import PropTypes from 'prop-types';
 
@@ -9,23 +8,9 @@ import SmartInput from './input/input';
 import SmartSelect from './smart-select/smart-select';
 
 import './form.scss';
+import { fromBits } from 'long';
 
 class SmartForm extends React.Component {
-    static compare(newState, oldState) {
-        for (let key in newState) {
-            if (newState.hasOwnProperty(key)) {
-                if(typeof oldState[key] === 'object' && oldState[key] !== null)
-                    return compare(oldState[key], newState[key]);
-                else {
-                    if (oldState[key] !== newState[key]) {
-                        return true
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     static findInput(node) {
         if (node.tagName === 'INPUT' || node.tagName === 'TEXTAREA' || node.tagName === 'SELECT')
             return node;
@@ -64,12 +49,11 @@ class SmartForm extends React.Component {
         super(props);
         this.initialValues = {...props.values};
         this.state = {
-            resStatus: null,
-            resMessage: '',
             values: props.values,
             errors: props.errors || SmartForm.resetErrors(props.values),
-            successfullySubmitted: false,
             isValidating: false,
+            isSubmitting: false,
+            successfullySubmitted: false,
         };
         this.handleOnChange = this.handleOnChange.bind(this);
         this.handleOnClick = this.handleOnClick.bind(this);
@@ -82,8 +66,13 @@ class SmartForm extends React.Component {
     }
 
     shouldComponentUpdate(props, newState) {
-        return !((newState.isValidating !== this.state.isValidating)
-            && !SmartForm.compare(newState.errors, this.state.errors));
+        return !(newState.isValidating !== this.state.isValidating 
+            && newState.isSubmitting === this.state.isSubmitting
+            && JSON.stringify(newState.errors) === JSON.stringify(this.state.errors))
+    }
+
+    componentWillUnmount() {
+        // console.log('unmount')
     }
 
     addChild(e, name, child) {
@@ -117,18 +106,15 @@ class SmartForm extends React.Component {
     };
 
     handleReset() {
-        this.setState( {values: this.initialValues, errors: SmartForm.resetErrors(this.initialValues)})
+        this.setState({values: this.initialValues, errors: SmartForm.resetErrors(this.initialValues)})
     }
 
     handleOnEnter(e) {
-        if (this.state.isValidating)
+        const {isSubmitting, isValidating, successfullySubmitted} = this.state;
+        if (isValidating || isSubmitting || successfullySubmitted)
             return;
-        const target = e.target;
-        if (e.key === 'Enter' && target.type === 'submit') {
-            this.handleSubmit(e);
-        } else if (e.key === 'Enter' && target.tagName !== 'BUTTON'){
-            e.stopPropagation();
-        } else if (e.key === 'Tab' && target.type === 'submit') {
+        const {key, target: {type}} = e;
+        if (key === 'Tab' && type === 'submit') {
             const formChildren = this.refToForm.current.children;
             const input = SmartForm.findInput(formChildren);
             if (input) {
@@ -139,15 +125,18 @@ class SmartForm extends React.Component {
     }
 
     handleOnClick({target}) {
-        if (this.state.isValidating)
+        const {isSubmitting, isValidating, successfullySubmitted} = this.state;
+        if (isValidating || isSubmitting || successfullySubmitted)
             return;
-        if (target.type === 'reset' && (target.tagName === 'INPUT' || target.tagName === 'BUTTON')) {
+        if (target.type === 'reset' 
+            && (target.tagName === 'INPUT' || target.tagName === 'BUTTON')) {
             this.handleReset()
         }
     }
 
     handleOnChange(e, Name, index) {
-        if (this.state.isValidating)
+        const {isSubmitting, isValidating, successfullySubmitted} = this.state;
+        if (isValidating || isSubmitting || successfullySubmitted)
             return;
         const {name, value, type} = e.target;
         Name = Name || name;
@@ -173,7 +162,8 @@ class SmartForm extends React.Component {
     }
 
     handleOnBlur(e, Name, index) {
-        if (this.state.isValidating)
+        const {isSubmitting, isValidating, successfullySubmitted} = this.state;
+        if (isValidating || isSubmitting || successfullySubmitted)
             return;
         const {name, value} = e.target;
         Name = Name || name;
@@ -194,24 +184,19 @@ class SmartForm extends React.Component {
         })
     }
 
-    validateField(key, value, errors) {
+    validateField(key, value, errors, form) {
         const {validationschema} = this.props;
         if (validationschema[key].required) {
             const error = validationschema[key].validator(value);
+            console.log(error)
             if (error) {
                 errors[key] = error;
-                return true;
-            } else {
-                errors[key] = null;
-            }
-        } else {
-            errors[key] = null;
-        }
-        return false;
+                form.invalid = true;
+            } 
+        } 
     }
 
-    validateArrayOfFields(key, value, errors) {
-        let invalid = false;
+    validateArrayOfFields(key, value, errors, form) {
         const {validationschema} = this.props;
         value.forEach((v, i) => {
             const names = Object.keys(v);
@@ -221,65 +206,74 @@ class SmartForm extends React.Component {
                 if (validationschema[name].required) {
                     const error = validationschema[name].validator(valueToCheck);
                     if (error) {
-                        invalid = true;
+                        form.invalid = true;
                         errors[key][i][name] = error;
                     }
                 }
             });
         });
-        return invalid;
     }
 
     validateForm() {
-        let invalidForm = false;
+        const form = {invalid: false};
         const values = {...this.state.values};
         const errors = {...this.state.errors};
         for (let key in values) {
             if (values.hasOwnProperty(key)) {
                 const value = values[key];
                 if (Array.isArray(value)) {
-                    invalidForm = this.validateArrayOfFields(key, value, errors)
+                    this.validateArrayOfFields(key, value, errors, form)
                 } else {
                     const valueToCheck = value.trim();
                     values[key] = valueToCheck;
-                    invalidForm = this.validateField(key, valueToCheck, errors)
+                    this.validateField(key, valueToCheck, errors, form)
                 }
             }
         }
         this.setState({errors, values, isValidating: false});
-        return {invalidForm, values};
+        return {invalidForm: form.invalid, values};
     }
 
     validateAndFetch() {
         const {invalidForm, values} = this.validateForm();
+        console.log(invalidForm, values)
         if (invalidForm)
             return;
+        this.setState({isValidating: false, isSubmitting: true})
         const fetchResult = this.props.submit.fetch(values);
-        if (!fetchResult.then) {
-            return this.props.submit.onResponse(true);
+        if (!fetchResult || fetchResult && !fetchResult.then) {
+            this.setState({
+                isSubmitting: false,
+                successfullySubmitted: true,
+                values: this.initialValues,
+            })
+            return this.props.submit.onResponse({status: 200, msg: "Successfuly submitted"});
         }
         fetchResult.then(res => {
-            // console.log(res);
-            if (res.status < 300) {
-                this.setState(state => {
-                    return {...state, successfullySubmitted: true, values: this.initialValues}
-                }, this.props.submit.onResponse(res));
-            } else
-                this.props.submit.onResponse(res)
-        }).catch(error => this.props.submit.onResponse(error));
+            this.setState({
+                isSubmitting: false,
+                successfullySubmitted: true,
+                values: this.initialValues
+            });
+            this.props.submit.onResponse(res);                
+        }).catch(error => {
+            this.setState({isSubmitting: false});
+            this.props.submit.onResponse(error);
+        })
     }
 
     handleSubmit(event) {
-        event.preventDefault();
-        // console.log('submit')
-        const {successfullySubmitted, isValidating} = this.state;
-        if (successfullySubmitted || isValidating) {
+        console.log('sub')
+        if (event)
+            event.preventDefault();
+        const {isSubmitting, isValidating, successfullySubmitted} = this.state;
+        if (isValidating || isSubmitting || successfullySubmitted)
             return;
-        }
         this.setState({isValidating:true}, this.validateAndFetch);
     }
-
+    
     render() {
+        console.log(this.state)
         const { errors, values } = this.state;
         const propsForChildren = {
             values,
@@ -290,22 +284,19 @@ class SmartForm extends React.Component {
             onBlur: this.handleOnBlur,
             onChange: this.handleOnChange,
         };
-        console.log(this.state, propsForChildren);
         const {children, ...restProps} = this.props;
         return (
-            <React.Fragment>
-                <form
-                    onSubmit={this.props.onSubmit || this.handleSubmit}
-                    onKeyDown={this.props.onKeyDown || this.handleOnEnter}
-                    className={this.props.className}
-                    name="smart-form"
-                    ref={this.refToForm}
-                    {...restProps}
-                >
-                    {children(propsForChildren)}
-                </form>
-            </React.Fragment>
-            );
+            <form
+                onSubmit={this.props.onSubmit || this.handleSubmit}
+                onKeyDown={this.props.onKeyDown || this.handleOnEnter}
+                className={this.props.className}
+                name="smart-form"
+                ref={this.refToForm}
+                {...restProps}
+            >
+                {children(propsForChildren)}
+            </form>
+        );
     }
 }
 

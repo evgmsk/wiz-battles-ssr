@@ -124,4 +124,6 @@ SmartInput.defaultProps = {
     inputStyle: 'outlined',
     tag: 'input',
     fieldoptions: null,
+    argsForHandlers: [],
+    error: undefined,
 };

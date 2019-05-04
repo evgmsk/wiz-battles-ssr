@@ -50,7 +50,7 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
         }
 
         if (typeof string !== 'string') {
-            throw new Error(`Invalid 'keys' property passed to react-redux-translate! Value to return ${JSON.stringify(string)}`);
+            throw new Error(`Invalid 'keys' property passed to react-redux-translate! Value to return ${JSON.stringify(string)} Keys ${JSON.stringify(keys)}`);
         }
         if (insertions.length) {
             return insertions.reduce((acc, ins) => acc.replace('{{}}', ins), string)
