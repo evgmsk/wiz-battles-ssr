@@ -26,11 +26,15 @@
   background: #fefefe;
   width: 90%;
   max-width: 1000px;
-  /*min-width: 800px;*/
   min-height: 400px;
   height: calc(100vh - 400px);
   margin: 0 auto;
   border: solid 5px #64964c;
+  &.moving-mode {
+    canvas {
+      cursor: crosshair;
+    }
+  }
   .draw-stage {
     width: 100%;
   }

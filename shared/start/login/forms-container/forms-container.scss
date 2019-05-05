@@ -103,9 +103,10 @@
     width: 100%;
     align-self: center;
     $colors: (main: #999999, focus: #11aa11, error: #dc3545);
-    @include smart-input_input-padding();
+    
     .smart-input {
-      @include smart-input_likeplaceholder-transform((height: 3.4rem, translateY: .9rem, ratio: .5, label-resize: .4rem));
+      @include smart-input_likeplaceholder-padding();
+      @include smart-input_likeplaceholder-transform((height: 3.4rem, translateY: .9rem, ratio: .45, label-resize: .4rem));
       @include smart-input_border-colors($colors);
     }
 

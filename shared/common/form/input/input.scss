@@ -2,11 +2,7 @@
 
 .smart-input {
   @include smart-input();
-  @include smart-input_flex();
-  @include smart-input_likeplaceholder-transform();
-  @include smart-input_border-colors((gg: #fff));
-  @include smart-input_likeplaceholder-background();
-  @include smart-input_input-border-rad();
+  
   //@include s
  /* .smart-input__input {
     @include smart-input-input-size();
@@ -32,9 +28,9 @@
   }*/
   &.in-col {
     flex-direction: column-reverse;
-    .smart-input__label {
-      @include smart-input-label('in-col');
-    }
+    // .smart-input__label {
+    //   @include smart-input-label('in-col');
+    // }
   }
   &.in-row:not(.check-input) {
     justify-content: space-between;
@@ -47,7 +43,7 @@
       bottom: -1.3rem;
     }
     .smart-input__label {
-      @include smart-input-label('in-row', 1.6rem, 50%);
+      //@include smart-input-label('in-row', 1.6rem, 50%);
     }
   }
  /* &.like-placeholder.outlined {

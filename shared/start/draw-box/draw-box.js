@@ -66,19 +66,23 @@ class DrawBox extends React.Component {
 
     canvasResize(e) {
         e.cancelBubble = true;
-        console.log('resize')
-        this.setState(({ stageProps }) => {
+        this.setState(({ stageProps, initial }) => {
             const container = this.container.current;
             const [width, height] = [container.offsetWidth  - 10, container.offsetHeight  - 10];
-            const [scaleX, scaleY] = [width / stageProps.width, height / stageProps.height];
-            return {...stageProps, width, height, scaleX, scaleY };
+            
+            const [scaleX, scaleY] = [width / initial.width, height / initial.height];
+            console.log('resize', width, scaleX);
+            return {stageProps: {...stageProps, width, height, scaleX, scaleY }};
         });
     }
 
     initializeCanvas() {
         const container = this.container.current;
         const [width, height] = [container.offsetWidth - 10, container.offsetHeight - 10];
-        this.setState(({ stageProps }) => ({stageProps: {...stageProps, width, height}}));
+        this.setState(({ stageProps }) => ({
+            stageProps: {...stageProps, width, height},
+             initial:{...stageProps, width, height}
+            }));
     }
 
     componentWillUnmount() {
@@ -380,26 +384,25 @@ class DrawBox extends React.Component {
         })
     }
 
-    onSave(name, type, saveAs) {
-        if (!parseInt(saveAs, 10))
-            return;
+    onSave(data) {
         const { shapes, shapeProps } = this.state;
-        let data;
-        if (saveAs === '1') {
-            const group = shapes.filter(s => s.nodeType)[0];
-            const restShapes = shapes.filter(s => s.shapeType).map((shape) => {
-                shape.groupName = `${name}`;
-                shape.props.draggable = this.state.draggable;
-                return shape;
-            });
-            const animationType = shapeProps.animationType;
-            const tweenType = shapeProps.tweenType;
-            const [nodeType, id] = ['Group', name];
-            const image = group ? group.image.concat(restShapes) : restShapes;
-            data = { name, nodeType, id, animationType, tweenType, image, layerUp: 0 };
-        } else
-            data = { name, nodeType: 'Shape', image: shapes };
-        action(data);
+        console.log(data)
+        // let data;
+        // if (saveAs === '1') {
+        //     const group = shapes.filter(s => s.nodeType)[0];
+        //     const restShapes = shapes.filter(s => s.shapeType).map((shape) => {
+        //         shape.groupName = `${name}`;
+        //         shape.props.draggable = this.state.draggable;
+        //         return shape;
+        //     });
+        //     const animationType = shapeProps.animationType;
+        //     const tweenType = shapeProps.tweenType;
+        //     const [nodeType, id] = ['Group', name];
+        //     const image = group ? group.image.concat(restShapes) : restShapes;
+        //     data = { name, nodeType, id, animationType, tweenType, image, layerUp: 0 };
+        // } else
+        //     data = { name, nodeType: 'Shape', image: shapes };
+        // action(data);
     }
 
     chooseMode() {
@@ -489,6 +492,8 @@ class DrawBox extends React.Component {
             onDragEnd: this.onDragEnd,
         };
 
+        const stageClassName =`draw-stage-wrapper${!drawing ? ' moving-mode': ''}`;
+
         const Images = shapes.reduce((acc, Image, i) => {
             if (Image.shapeType) {
                 const [type, props] = [Image.shapeType, Image.props];
@@ -512,7 +517,7 @@ class DrawBox extends React.Component {
         return (
             <section className="draw-box">
                 <h2>Создай своего монстра</h2>
-                <div className="draw-stage-wrapper" ref={this.container}>
+                <div className={stageClassName} ref={this.container}>
                     <Stage className="draw-stage" ref={stage} {...StageProps}>
                         <Layer ref={layer}>
                             { Images }
@@ -520,12 +525,12 @@ class DrawBox extends React.Component {
                     </Stage>
                 </div>
                 <div className="draw-box__controls">
-                    <div>
-                        <ShapeControlsWrapper {...shapeControlProps} />
-                        <SaveShapeForm {...saveFormProps} />
-                    </div>
-                    <FunctionalControlsWrapper {...functionalControlProps} />
+                    
+                    <ShapeControlsWrapper {...shapeControlProps} />
                     <SelectControlsContainer {...selectControlProps} />
+                    <SaveShapeForm {...saveFormProps} />
+                    <FunctionalControlsWrapper {...functionalControlProps} />
+                   
                 </div>
             </section>
         );

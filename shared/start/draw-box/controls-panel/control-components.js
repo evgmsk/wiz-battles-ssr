@@ -92,7 +92,7 @@ export const FunctionalControlsWrapper = props => {
                     tooltip={`Delete shape.\nDelete selected shape\n (usually last created)`}
                 >
                     <Trash />
-                </BtnWT>
+                </BtnWT>                
         </div>
     )
 };
@@ -104,7 +104,7 @@ const SelectControls = props => {
             <SmartSelect
                 caret
                 showCurrent
-                toggleLabel="Select shape type"
+                toggleLabel="Shapes"
                 value={type}
                 name="select-shape"
                 values={[...ShapeTypes]}
@@ -113,7 +113,7 @@ const SelectControls = props => {
             <SmartSelect
                 caret
                 showCurrent
-                toggleLabel="Select animation"
+                toggleLabel="Animations"
                 value={animationType}
                 name="select-animation"
                 values={[ ...Object.keys(AnimationTypes)]}
@@ -123,7 +123,7 @@ const SelectControls = props => {
                 caret
                 showCurrent
                 name="select-tween"
-                toggleLabel="Select tween"
+                toggleLabel="Tweens"
                 value={tweenType}
                 values={[ ...Object.keys(TweenTypes)]}
                 onChange={onChange}
@@ -146,9 +146,22 @@ export const SelectControlsContainer = connect(state =>
 
 
 const SaveForm = props => {
-    const {selectedShape} = props;
-    const [res, setRes] = useState(null);
-    const values = {shapeName: '', saveOption: 'shape'};
+    const {selectedShape, savedShapes, onSave} = props;
+    const [tooltip, setTooltip] = useState(false);
+    const values = {shapeName: '', saveOption: 'shape', confirmOverwrite: false};
+
+    const handleSave = ({shapeName, saveOption, confirmOverwrite}) => {
+        if (!savedShapes.filter(s => s.name === shapeName).length) {
+            onSave({shapeName, saveOption})
+            return true;
+        } 
+        if (confirmOverwrite) {
+            overwriteShape(shapeName)
+            return true;
+        }
+        setTooltip(true);
+    };
+
     const validationSchema = {
         shapeName: {
             validator: value => {
@@ -162,6 +175,9 @@ const SaveForm = props => {
         },
         saveOption: {
             required: false,
+        },
+        confirmOverwrite: {
+            required: false,
         }
     }
 
@@ -170,67 +186,93 @@ const SaveForm = props => {
     }
 
     const submit = {
-        fetch: props.onSave,
+        fetch: handleSave,
         onResponse: handleResponse,
     };
 
-    
-
     return (
-        <SmartForm
-            className="save-shape-form"
-            submit={submit}
-            validationschema={validationSchema}
-            values={values}
-        >
-            {
-                props => {
-                    const { errors, values, ...restProps} = props;
-                    return (
-                        <React.Fragment>
-                            <SmartInput
-                                type="text"
-                                name="shapeName"
-                                placeholder="Enter image name"
-                                labelStyle="like-placeholder"
-                                inputStyle="underlined"
-                                labelText="Image name"
-                                {...restProps}
-                                value={props.values.shapeName}
-                                error={props.errors.shapeName}
-                            />
-                            <div className="radio-buttons-wrapper">
-                                <p className="radio-buttons-label">Save as</p>
-                                <SmartInput 
-                                    type="radio"
-                                    name="saveOption"
-                                    value="shape"
-                                    labelText="Shape"
-                                    defaultChecked
-                                    {...restProps}
-                                /> 
-                                <SmartInput 
-                                    type="radio"
-                                    name="saveOption"
-                                    value="group"
-                                    labelText="Group"
-                                    {...restProps}
-                                /> 
-                                <button disabled={!selectedShape} type="submit">
-                                    <FaSave className="save-icon" />
-                                </button>
-                            </div>
-                            
-                            
-                        </React.Fragment>
-                    )
-                }
+        <div className="save-form-wrapper">
+            {tooltip 
+                && <div className="overwrite-tooltip">
+                        <p className="tooltip-massage">
+                            Image with name you entered already exist. 
+                            Please click confirm to overwrite image
+                            or click cancel and change name.
+                        </p>
+                        <div className="tooltip-footer">
+                            <button
+                                onClick={() => setTooltip(false)}
+                                className="btn btn-small btn-filled"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
             }
-        </SmartForm>   
+            <SmartForm
+                className="save-shape-form"
+                submit={submit}
+                validationschema={validationSchema}
+                values={values}
+            >
+                {
+                    props => {
+                        const { errors, values, ...restProps} = props;
+                        return (
+                            <React.Fragment>
+                                <SmartInput
+                                    type="text"
+                                    name="shapeName"
+                                    placeholder="Enter image name"
+                                    labelStyle="like-placeholder"
+                                    inputStyle="underlined"
+                                    labelText="Image name"
+                                    {...restProps}
+                                    value={props.values.shapeName}
+                                    error={props.errors.shapeName}
+                                />
+                                <div className="radio-buttons-wrapper">
+                                    <p className="radio-buttons-label">Save as</p>
+                                    <SmartInput 
+                                        type="radio"
+                                        name="saveOption"
+                                        value="shape"
+                                        labelText="Shape"
+                                        defaultChecked
+                                        {...restProps}
+                                    /> 
+                                    <SmartInput 
+                                        type="radio"
+                                        name="saveOption"
+                                        value="group"
+                                        labelText="Group"
+                                        {...restProps}
+                                    /> 
+                                </div> 
+                                <div className="submit-wrapper">
+                                    <SmartInput 
+                                        type="checkbox"
+                                        name="confirmOverwrite"
+                                        value={values.confirmOverwrite}
+                                        labelText="Allow overwriting"
+                                        {...restProps}
+                                    /> 
+                                    <button disabled={!selectedShape} type="submit">
+                                        <FaSave className="save-icon" />
+                                    </button>
+                                </div>
+                            </React.Fragment>
+                        )
+                    }
+                }
+            </SmartForm> 
+        </div>
+          
     )
 };
 
-export const SaveShapeForm = connect(null, {saveShape, overwriteShape})(SaveForm);
+export const SaveShapeForm = connect(state => 
+    ({savedShapes: state.app.savedShapes}), {saveShape, overwriteShape})(SaveForm);
 
 export const ShapeControlsWrapper = props => {
     const [input, setInput] = useState('stroke-color');
@@ -290,45 +332,43 @@ export const ShapeControlsWrapper = props => {
                 >
                     <FaExpand/>
                 </BtnWT>
-                {selectedShape 
-                    && selectedShape.props
-                    &&  <React.Fragment>
-                            <BtnWT
-                                variant="up"
-                                onClick={() => handleClick('skew')}
-                                tooltip={`Shape skew. \n
-                                        Current values \n
-                                        skewX: ${shapeProps.skewX} \n
-                                        skewY: ${shapeProps.skewY}. \n
-                                        Click to change.`} 
-                            >
-                                Skew
-                            </BtnWT>
-                            <BtnWT
-                                variant="up"
-                                onClick={() => handleClick('offset')}
-                                tooltip={`Shape offset. \n
-                                            Current values \n
-                                            offsetX: ${shapeProps.offsetX} \n
-                                            offsetY: ${shapeProps.offsetY}. \n
-                                            Click to change.`} 
-                            >
-                                Offset
-                            </BtnWT>
-                            <BtnWT
-                                variant="up"
-                                onClick={() => handleClick('layers')}
-                                tooltip={`Layers.\n
-                                        Current value ${shapeProps.layerUp}.\n
-                                        Click to change.`}
-                            >
-                                <FiLayers/>
-                            </BtnWT>
-                        </React.Fragment>
-                    
-                }  
+                <BtnWT
+                    disabled={!selectedShape}
+                    variant="up"
+                    onClick={() => handleClick('skew')}
+                    tooltip={`Shape skew. \n
+                            Current values \n
+                            skewX: ${shapeProps.skewX} \n
+                            skewY: ${shapeProps.skewY}. \n
+                            Click to change.`} 
+                >
+                    Skew
+                </BtnWT>
+                <BtnWT
+                    disabled={!selectedShape}
+                    variant="up"
+                    onClick={() => handleClick('offset')}
+                    tooltip={`Shape offset. \n
+                                Current values \n
+                                offsetX: ${shapeProps.offsetX} \n
+                                offsetY: ${shapeProps.offsetY}. \n
+                                Click to change.`} 
+                >
+                    Offset
+                </BtnWT>
+                <BtnWT
+                    disabled={!selectedShape}
+                    variant="up"
+                    onClick={() => handleClick('layers')}
+                    tooltip={`Layers.\n
+                            Current value ${shapeProps.layerUp}.\n
+                            Click to change.`}
+                >
+                    <FiLayers/>
+                </BtnWT>
             </div>   
             <div className="shape-control-input">
+                <p>Current input</p>
                 <ShapePropsControl
                     input={input}
                     {...inputProps}

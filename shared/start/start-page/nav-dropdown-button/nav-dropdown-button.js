@@ -7,10 +7,10 @@ import './nav-dropdown-button.scss';
 
 const NavDropDownButton = props => {
     const [open, setOpen] = useState(false);
-    let {className, onClick} = props;
+    let {className, toggle} = props;
     const handleClick = () => {
-        setOpen(!clicked);
-        onClick();
+        setOpen(!open);
+        toggle();
     };
     className = className ? className + ' nav-dropdown-button' : 'nav-dropdown-button';
     className = open

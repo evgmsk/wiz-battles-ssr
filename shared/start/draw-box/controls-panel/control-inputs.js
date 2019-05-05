@@ -116,7 +116,7 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
             );
         case 'skew':
             return (
-                <div className="inputs-container">
+                <React.Fragment>
                     <InputWrapper
                         id="skewX"
                         ref={ref}
@@ -144,11 +144,11 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                         indicator
                         onChange={onChange}
                     />
-                </div>
+                </React.Fragment>
             );
         case 'offset':
             return (
-                <div className="inputs-container">
+                <React.Fragment>
                     <InputWrapper
                         id="offsetY"
                         ref={ref}
@@ -176,7 +176,7 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                         indicator
                         onChange={onChange}
                     />
-                </div>
+                </React.Fragment>
             );
         case 'layers':
                 return (

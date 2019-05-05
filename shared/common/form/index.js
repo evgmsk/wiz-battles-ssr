@@ -149,7 +149,7 @@ class SmartForm extends React.Component {
             if (!(Name in values))
                 throw Error(`Form 'values' and input name: ${name} do not match or do not set appropriately`);
             if(type === 'checkbox') {
-                const newValue = values[Name] ? "" : value;
+                const newValue = values[Name] ? false : true;
                 return {values: {...values, [Name]: newValue}};
             }
             if (!Array.isArray(values[Name]))
@@ -241,13 +241,17 @@ class SmartForm extends React.Component {
             return;
         this.setState({isValidating: false, isSubmitting: true})
         const fetchResult = this.props.submit.fetch(values);
-        if (!fetchResult || fetchResult && !fetchResult.then) {
+        if (fetchResult && !fetchResult.then) {
             this.setState({
                 isSubmitting: false,
                 successfullySubmitted: true,
                 values: this.initialValues,
             })
             return this.props.submit.onResponse({status: 200, msg: "Successfuly submitted"});
+        } else if(fetchResult) {
+            this.setState({
+                isSubmitting: false,
+            })
         }
         fetchResult.then(res => {
             this.setState({
