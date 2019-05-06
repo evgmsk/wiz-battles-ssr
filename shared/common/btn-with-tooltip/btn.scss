@@ -1,124 +1,143 @@
-//@import "../../../common/form/mixin";
+// @import '../form/mixin.scss';
+$disable-gradient: linear-gradient(to left, rgba(150, 150, 150, .7));
 
-@mixin tooltip-color (
-    $color: #104a01,
-    $font: 1rem/1 'Helvetica',
-    $background: #cdcdcd,
-    $border: false) {
-  white-space: nowrap;
-  visibility: hidden;
-  opacity: 0;
-  font: $font;
-  padding: .2rem .3rem;
-  border-radius: 2px;
-  background: $background;
-  @if ($border != false) {
-    border: $border;
-  }
-  color: $color;
-  transition: all .5s;
+@mixin disable($gradient: $disable-gradient) {
+  background-image: $gradient;
+  border-color: gray;
+  color: #fff;
+  cursor: default;
 }
 
-@mixin tooltip-variant($away: 2.5rem) {
-  position: absolute;
-  z-index: 2000;
-  &.up {
-    left: 0;
-    bottom: $away;
-  }
-  &.down {
-    left: 0;
-    top: $away;
-  }
-  &.left {
-    right: $away;
-    top: 0;
-  }
-  &.right {
-    left: $away;
-    top: 0;
-  }
-  &.up-left {
-    right: $away;
-    bottom: $away;
-  }
-  &.up-right {
-    left: $away;
-    bottom: $away;
-  }
-  &.down-left {
-    right: $away;
-    top: $away;
-  }
-  &.down-right {
-    left: $away;
-    top: $away;
+@mixin tooltip-variant($args: ()) {
+  $default: (
+    color: #104a01,
+    font: 1rem/1 Helvetica sans-serif,
+    background: #cdcdcd,
+    border: false,
+    away: 2.5rem,
+    padding: .2rem .3rem,
+    width: auto,
+    height: auto,
+    border-radius: 2px,
+    line-height: 1.2,
+    transition: all .5s,
+    z-index: 2000
+  );
+  $argsMap: map-merge($default, $args);
+  .btn-tooltip {
+    white-space: nowrap;
+    visibility: hidden;
+    width: map-get($argsMap, width);
+    height: map-get($argsMap, height);
+    opacity: 0;
+    font: map-get($argsMap, font);
+    padding: map-get($argsMap, padding);
+    border-radius: map-get($argsMap, border-radius);
+    background: map-get($argsMap, background);
+    border: map-get($argsMap, border);
+    color: map-get($argsMap, color);
+    line-height: map-get($argsMap, line-height);
+    transition: map-get($argsMap, transition);
+    position: absolute;
+    z-index: map-get($argsMap, z-index);
+    $away: map-get($argsMap, away);
+    &.up {
+      left: 0;
+      bottom: $away;
+    }
+    &.down {
+      left: 0;
+      top: $away;
+    }
+    &.left {
+      right: $away;
+      top: 0;
+    }
+    &.right {
+      left: $away;
+      top: 0;
+    }
+    &.up-left {
+      right: $away;
+      bottom: $away;
+    }
+    &.up-right {
+      left: $away;
+      bottom: $away;
+    }
+    &.down-left {
+      right: $away;
+      top: $away;
+    }
+    &.down-right {
+      left: $away;
+      top: $away;
+    }
   }
 }
 
-@mixin btn-size($size: 1.8rem 1.8rem, $padding: .2rem, $margin: 0 .5rem) {
+@mixin btn-size($args: ()) {
+  $default: (
+    min-width: 1.8rem,
+    height: 1.8rem,
+    padding: .2rem,
+    margin: 0 .5erm,
+    font-size: 1.2rem,
+    font-weight: 600,
+    color: #205f02,
+    color-hover: lighten(#205f02, 10%),
+    background: transparent,
+    backgaound-focus: transparent,
+    border: 1px solid #205f02,
+    border-radius: 3px,
+    font: inherit
+  );
+  $argsMap: map-merge($default, $args);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: $padding;
-  height: nth($size, 2);
-  min-width: nth($size, 1);
-  line-height: nth($size, 2) - .4rem;
-  margin: $margin;
-  cursor: pointer;
-  font-weight: 600;
+  padding: map-get($argsMap, padding);
+  height: map-get($argsMap, height);
+  min-width: map-get($argsMap, min-width);
+  line-height: map-get($argsMap, height) - nth(map-get($argsMap, padding), 1) * 2;
+  margin: map-get($argsMap, margin);
+  border: map-get($argsMap, border);
+  border-radius: map-get($argsMap, border-radius);
+  background: map-get($argsMap, background);
+  color: map-get($argsMap, color);
+  font: map-get($argsMap, font);
+  font-size: map-get($argsMap, font-size);
+  font-weight: map-get($argsMap, font-weight);
+  &:hover,
+  &:focus {
+    & + .btn-tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+    $color: map-get($argsMap, color-hover);
+    color: $color;
+    background: map-get($argsMap, background-hover);
+    border-color: $color;
+  }
+  &:not(:disabled) {
+     cursor: pointer;
+  }
   svg {
     height: 100%;
     width: 100%;
   }
 }
 
-@mixin btn-colors(
-    $colors: #205f02 false,
-    $background: transparent,
-    $border: 1px solid #205f02,
-    $border-radius: 3px) {
-  border: $border;
-  background: $background;
-  color: nth($colors, 1);
-  border-radius: $border-radius;
-
-  & + .btn-tooltip {
-    @include tooltip-variant();
-    @include tooltip-color();
-  }
-  &:hover,
-  &:focus {
-    $color: nth($colors, 1);
-    & + .btn-tooltip {
-      visibility: visible;
-      opacity: 1;
-    }
-    @if(nth($colors, 2) == false) {
-      color: lighten($color, 10%);
-    }
-    @else {
-      color: nth($colors, 2)
-    }
-  }
-  &:active {
-    @if(nth($colors, 2) == false) {
-      $color: nth($colors, 1);
-      color: darken($color, 15%);
-    }
-    @else {
-      color: nth($colors, 2)
-    }
-  }
-}
 .btn-with-tooltip-wrapper {
+  @include tooltip-variant();
   display: flex;
   align-items: center;
   position: relative;
   button,
   .btn-with-tooltip {
     @include btn-size();
-    @include btn-colors();
+    &:disabled {
+      @include disable();
+    }
   }
 }
-

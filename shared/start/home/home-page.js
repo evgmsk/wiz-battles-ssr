@@ -10,7 +10,7 @@ import './home-page.scss';
 
 function HomePage(props) {
     return (
-        <section className="home-section">
+        <section className="home-section page">
             <div className="home-img" />
             <div className="home-wrapper">
                 <h2 className="page-title">WizBattles - <T keys="home_page.title" /></h2>

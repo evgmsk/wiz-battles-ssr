@@ -12,15 +12,17 @@ export const SmartOption = props => {
             type="button"
             value={value}
             className={className}
-            onClick={onClick}>
+            onClick={() => onClick({name, value, type: "select"})}>
             {label || children}
         </button>
     )
 };
 
 export const SmartSelect = props => {
-    let {caret, value, toggleLabel, name, values, labels, classNames, onChange} = props;
-    // console.log(props);
+    let {caret, value, showCurrent, toggleLabel, name, values, labels, classNames, onChange} = props;
+    if (!values.length)
+        values.push('');
+    
     classNames = Array.isArray(classNames)
         ? classNames 
         : new Array(values.length).fill("").map((c, i) => (`smart-select__option sm-op${i}`));
@@ -32,29 +34,28 @@ export const SmartSelect = props => {
     const [displayed, setDisplayed] = useState(false);
     const [open, setOpen] = useState(false);
 
-    const handleClick = (e) => {
-        const {name, value} = e.target;
+    const handleClick = (data) => {
+        console.log(data)
+        const {name, value} = data;
         if (name !== props.name) {
             setOpen(false);
-            return setDisplayed(false);
+            return setTimeout(() => setDisplayed(false), 0)
         }
         if (value === 'toggle') {
             if (open) {
                 setOpen(false);
-                setDisplayed(false);
+                return setTimeout(() => setDisplayed(false), 0)
             } else {
                 setDisplayed(true);
-                setOpen(true);
+                return setTimeout(() => setOpen(true), 0)
             }
-            return
         }
         setOpen(false);
         setDisplayed(false);
-        onChange(e);
+        onChange({target: data});
     };
 
     const dropClass = `smart-select__dropdown-options ${open ? ' is-open' : ''}${!displayed ? ' display-none' : ''}`;
-
 
     return (
         <div className="smart-select">
@@ -65,6 +66,7 @@ export const SmartSelect = props => {
                 onClick={handleClick}
             >
                 {toggleLabel}
+                <span className="selected-value">{showCurrent && value }</span>
                 {caret && open && <FaCaretRight/>}
                 {caret && !open && <FaCaretDown/>}
             </SmartOption>
@@ -73,7 +75,7 @@ export const SmartSelect = props => {
                     <SmartOption
                         name={name}
                         key={i}
-                        className={`${classNames[i]}${value === v ? ' selected' : ''}`}
+                        className={`${classNames[i]}${value == v ? ' selected' : ''}`}
                         value={v}
                         label={labels[i] || v}
                         onClick={handleClick}

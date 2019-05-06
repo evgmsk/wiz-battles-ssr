@@ -34,7 +34,7 @@ class FormsWrapper extends React.Component {
                     resMsg: funcT({keys: "res_messages.success_signin"}),
                     submitFail: false
                 });
-                setTimeout(() =>  this.props.toggle(), 999);
+                setTimeout(() =>  {this.setState({resMsg: ''}); this.props.toggle()}, 1000);
                
                 const data = res.data;
                 saveUserName(data.userName);
@@ -56,7 +56,7 @@ class FormsWrapper extends React.Component {
                 });
                 // setTimeout(() => this.setState({action: 'login', resMsg: ''}), 1500)
             }
-        } else {
+        } else if (res.response.status < 500) {
             const keys = `res_messages.${res.response.statusText.toString()}`;
             this.setState({resMsg: funcT({keys}),  submitFail: true});
         }

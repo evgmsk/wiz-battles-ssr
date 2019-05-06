@@ -58,8 +58,10 @@ a {
   text-decoration: none;
   outline: none;
 }
+
 button {
   outline: none;
+  cursor: pointer;
 }
 .display-none {
   display: none !important;

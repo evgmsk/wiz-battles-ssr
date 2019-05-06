@@ -31,7 +31,8 @@ class Modal extends React.Component {
         e.preventDefault();
         e.stopPropagation();
         const {closeOnClickOnFade, withoutHeader, withoutFooter} = this.props;
-        if ((closeOnClickOnFade || (withoutFooter && withoutHeader)) && e.target.classList.contains('modal-window__fade') )
+        if ((closeOnClickOnFade || (withoutFooter && withoutHeader)) 
+            && e.target.classList.contains('modal-window__fade') )
             this.toggle()
     }
 
@@ -54,7 +55,6 @@ class Modal extends React.Component {
             isOpen,
             className
         } = this.state;
-        console.log(this.props, className);
         const containerClassName = `modal-window__container${isOpen ? ' is-open' : ''}`;
         const contentWrapperClassName = `modal-window__content-wrapper${isOpen ? ' is-open' : ''}`;
         const fadeClassName = `modal-window__fade${fade ? ' fade-on' : ''}${isOpen ? ' is-open' : ''}`;
@@ -72,7 +72,7 @@ class Modal extends React.Component {
                             </ModalHeader>
                         }
                         <ModalBody>
-                            <ModalContent toggle={this.toggle} />
+                            {isOpen && <ModalContent toggle={this.toggle} />}
                         </ModalBody>
                         {!withoutFooter
                         &&  <ModalFooter toggle={this.toggle} label={closeButtonLabel} >

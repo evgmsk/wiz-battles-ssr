@@ -3,7 +3,7 @@
   justify-content: flex-start;
   align-items: center;
   margin: 1px;
-  padding: 2px;
+  padding: 2px .6rem 0 0;
   background: #ecf4f6;
   .indicator-value,
   label,
@@ -14,7 +14,6 @@
   }
   .indicator-value {
     width: 2rem;
-    // max-width: 2rem;
   }
   input,
   select{
@@ -50,6 +49,7 @@
   }
   [type="range"] {
     cursor: pointer;
+    width: 6rem;
     &:hover,
     &:focus {
       &::-webkit-slider-thumb {

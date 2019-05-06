@@ -116,7 +116,7 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
             );
         case 'skew':
             return (
-                <div className="inputs-container">
+                <React.Fragment>
                     <InputWrapper
                         id="skewX"
                         ref={ref}
@@ -124,7 +124,9 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                         min="-9"
                         max="11"
                         step="0.1"
-                        value={selectedShape.props.skewX.toFixed(1)}
+                        value={selectedShape
+                            ? selectedShape.props.skewX.toFixed(1)
+                            : shapeProps.skewX}
                         label={'SkewX'}
                         indicator
                         onChange={onChange}
@@ -135,47 +137,55 @@ export const ShapePropsControl = React.forwardRef((props, ref) => {
                         min="-9"
                         max="11"
                         step="0.1"
-                        value={sselectedShape.props.skewY.toFixed(1)}
+                        value={selectedShape
+                            ? selectedShape.props.skewY.toFixed(1)
+                            : shapeProps.skewY}
                         label={'SkewY'}
                         indicator
                         onChange={onChange}
                     />
-                </div>
+                </React.Fragment>
             );
         case 'offset':
             return (
-                <div className="inputs-container">
+                <React.Fragment>
                     <InputWrapper
-                        id="offsetX"
+                        id="offsetY"
                         ref={ref}
                         type="range"
-                        min="-199"
-                        max="201"
+                        min="-399"
+                        max="401"
                         step="1"
-                        value={selectedShape.props.offsetX}
-                        label={'OffsetX'}
+                        value={selectedShape 
+                            ? selectedShape.props.offsetY.toFixed(1) 
+                            : shapeProps.offsetY}
+                        label={'OffsetY'}
                         indicator 
                         onChange={onChange}
                     />
                     <InputWrapper
-                        id="offsetY"
+                        id="offsetX"
                         type="range"
-                        min="-199"
-                        max="201"
+                        min="-599"
+                        max="601"
                         step="1"
-                        value={selectedShape.props.offsetY}
-                        label={'OffsetY'}
+                        value={selectedShape 
+                            ? selectedShape.props.offsetX.toFixed(1) 
+                            : shapeProps.offsetX}
+                        label={'OffsetX'}
                         indicator
                         onChange={onChange}
                     />
-                </div>
+                </React.Fragment>
             );
         case 'layers':
                 return (
                     <InputWrapperLayres
                         id="layerUp"
                         type="number"
-                        value={selectedShape.props.layerUp}
+                        value={selectedShape
+                            ? selectedShape.props.layerUp
+                            : shapeProps.layerUp}
                         label={'Layer'}
                         indicator
                     >

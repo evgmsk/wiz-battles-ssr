@@ -1,7 +1,7 @@
 @import "../../scss/_constants";
+@import "./controls-panel/control-panel";
 
 .draw-box {
-  height: calc(100vh - 120px);
   background: url('#{$imgPath}/start_page_bg.jpg') no-repeat;
   background-size: 100% 100%;
   width: 100%;
@@ -15,9 +15,6 @@
     text-align: center;
     margin-bottom: 1rem;
   }
-  @media (max-height: 500px) and (orientation: landscape) {
-    height: auto;
-  }
 }
 
 .draw-stage-wrapper {
@@ -25,11 +22,15 @@
   background: #fefefe;
   width: 90%;
   max-width: 1000px;
-  /*min-width: 800px;*/
   min-height: 400px;
   height: calc(100vh - 400px);
   margin: 0 auto;
   border: solid 5px #64964c;
+  &.moving-mode {
+    canvas {
+      cursor: crosshair;
+    }
+  }
   .draw-stage {
     width: 100%;
   }

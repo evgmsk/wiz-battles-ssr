@@ -9,7 +9,6 @@ import DuoLanguageSwitcher from './lang-menu';
 import './header.scss';
 
 const Header = props => {
-    console.log(props, DuoLanguageSwitcher)
     return (
         <header className="header">
             <div className="header__content-wrapper">

@@ -105,7 +105,7 @@ SmartInput.propTypes = {
     labelStyle: PropTypes.oneOf(['in-row', 'in-col', 'like-placeholder', 'reset-input']),
     inputStyle: PropTypes.oneOf(['shadowed', 'outlined', 'underlined', 'check-input']),
     onBlur: PropTypes.func.isRequired,
-    argsForHandlers: PropTypes.array.isRequired,
+    argsForHandlers: PropTypes.array,
     onChange: PropTypes.func.isRequired,
     value: PropTypes.PropTypes.any.isRequired,
     error: function(props, error) {
@@ -124,4 +124,6 @@ SmartInput.defaultProps = {
     inputStyle: 'outlined',
     tag: 'input',
     fieldoptions: null,
+    argsForHandlers: [],
+    error: undefined,
 };
