@@ -69,7 +69,7 @@ class DrawBox extends React.Component {
         this.setState(({ stageProps, initial }) => {
             const container = this.container.current;
             const [width, height] = [container.offsetWidth  - 10, container.offsetHeight  - 10];
-            
+
             const [scaleX, scaleY] = [width / initial.width, height / initial.height];
             console.log('resize', width, scaleX);
             return {stageProps: {...stageProps, width, height, scaleX, scaleY }};
@@ -104,7 +104,6 @@ class DrawBox extends React.Component {
         const {_lastPos: {x, y}, attrs: {name}} = e.target;
         this.setState(({shapes}) => {
             const shape = shapes.filter(s => s.name === name)[0];
-            console.log(shape, shapes)
             if (shape.nodeType)
                 [shape.x, shape.y] = [x, y];
             if (shape.shapeType)
@@ -162,7 +161,6 @@ class DrawBox extends React.Component {
         
         if (!this.state.mouseDown || !this.state.drawing)
             return;
-        console.log(e)
         const {layerX, layerY}= e.evt;
         const shape = last(this.state.shapes);
         if (shape && shape.shapeType === 'Line') {
@@ -269,7 +267,6 @@ class DrawBox extends React.Component {
             const newShapes = [...shapes];
             const shape = newShapes[shapes.length - 1];
             const [X, Y] = [x - shape.props.x, y - shape.props.y];
-            console.log(x, y, X, Y, shape)
             const {abs, sqrt} = Math;
             switch (shape.shapeType) {
                 case Shapes.Rect:
@@ -285,7 +282,6 @@ class DrawBox extends React.Component {
                 case Shapes.Ellipse:
                     shape.props.radiusX = abs(X);
                     shape.props.radiusY = abs(Y);
-                    console.log(x, y, X, Y, shape)
                     break;
                 case Shapes.RegularPolygon:
                     shape.props.radius = sqrt(abs((X * X) - (Y * Y)));
@@ -347,7 +343,6 @@ class DrawBox extends React.Component {
     }
 
     onChangeShapeProps({target}) {
-        console.log(target)
         let {id, value} = target;
         if (id !== 'fill' && id !== 'stroke') {
             value = Number(value);
@@ -475,7 +470,7 @@ class DrawBox extends React.Component {
         const saveFormProps = {
             onSave,
             selectedShape,
-        }
+        };
     
         const shapeControlProps = {
             onChange: this.onChangeShapeProps,
@@ -525,12 +520,12 @@ class DrawBox extends React.Component {
                     </Stage>
                 </div>
                 <div className="draw-box__controls">
-                    
+
                     <ShapeControlsWrapper {...shapeControlProps} />
                     <SelectControlsContainer {...selectControlProps} />
                     <SaveShapeForm {...saveFormProps} />
                     <FunctionalControlsWrapper {...functionalControlProps} />
-                   
+
                 </div>
             </section>
         );

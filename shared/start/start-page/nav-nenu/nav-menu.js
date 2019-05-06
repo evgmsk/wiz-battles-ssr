@@ -139,7 +139,7 @@ class MainNavMenu extends React.Component {
         const className = isOpen ? 'nav-menu' : 'nav-menu nav-hidden';
         return (
             <div className="nav-wrapper">
-                <NavDropDownButton onClick={this.onClick} />
+                <NavDropDownButton toggle={this.onClick} />
                 <nav className={className}>
                     <MainNavRoutes routes={restRouts} />
                     <GameConnected />

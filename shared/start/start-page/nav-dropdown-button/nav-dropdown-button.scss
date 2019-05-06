@@ -4,7 +4,6 @@
   //@include set-colors($nav-item-color, #e6b827);
   $color: #e6b827;
   background: transparent;
-  position: relative;
   padding: 0;
   width: 2rem;
   height: 2rem;
@@ -12,11 +11,14 @@
   justify-content: center;
   align-content: center;
   border-radius: 3px;
+  box-sizing: border-box;
   border: 1px solid $color;
   cursor: pointer;
   opacity: 1;
   transition: all .3s;
   .nav-dropdown-button__center-line {
+    display: block;
+    position: relative;
     height: 2px;
     width: 1.2rem;
     background: $color;
@@ -24,15 +26,32 @@
     &:after {
       content: '';
       position: absolute;
-      top: 65%;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 0;
       height: 2px;
       width: 1.2rem;
       background: $color;
+      transition: all .3s;
+    }
+    &:before {
+      bottom: 6px;
     }
     &:after {
-      top: 25%;
+      top: 6px;
     }
   }
+  &.dropdown-open {
+     .nav-dropdown-button__center-line {
+       background: transparent;
+       &:after,
+       &:before {
+         top: 0;
+       }
+       &:after {
+         transform: rotate(45deg);
+       }
+       &:before {
+         transform: rotate(-45deg);
+       }
+     }
+   }
 }
