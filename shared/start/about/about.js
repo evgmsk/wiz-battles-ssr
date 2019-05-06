@@ -15,7 +15,6 @@ import './about.scss';
 
 function About() {
     return (
-    <Page>
         <section className="about">
             <h2>Cкриншоты игры</h2>
             <div className="screenshots-wrapper">
@@ -24,7 +23,6 @@ function About() {
                 })}
             </div>
         </section>
-    </Page>
     );
 }
 

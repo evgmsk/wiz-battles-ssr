@@ -21,7 +21,8 @@ export const SmartOption = props => {
 export const SmartSelect = props => {
     let {caret, value, showCurrent, toggleLabel, name, values, labels, classNames, onChange} = props;
     if (!values.length)
-        values.push('')
+        values.push('');
+    
     classNames = Array.isArray(classNames)
         ? classNames 
         : new Array(values.length).fill("").map((c, i) => (`smart-select__option sm-op${i}`));
@@ -34,6 +35,7 @@ export const SmartSelect = props => {
     const [open, setOpen] = useState(false);
 
     const handleClick = (data) => {
+        console.log(data)
         const {name, value} = data;
         if (name !== props.name) {
             setOpen(false);
@@ -54,7 +56,6 @@ export const SmartSelect = props => {
     };
 
     const dropClass = `smart-select__dropdown-options ${open ? ' is-open' : ''}${!displayed ? ' display-none' : ''}`;
-
 
     return (
         <div className="smart-select">

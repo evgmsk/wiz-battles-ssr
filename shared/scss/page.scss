@@ -1,0 +1,18 @@
+html {
+font-family: 'Roboto', sans-serif;
+ .start-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    .page{
+      min-height: 650px;
+      height: calc(100vh - 50px);
+      @media (min-height: 300px) and (max-height: 600px) and (orientation: landscape) {
+        height: auto;
+      }
+      @media (min-width: 960px) {
+        height: calc(100vh - 120px);
+      }
+    }
+  }
+}
+

@@ -30,15 +30,15 @@ const Icons = {
 };
 
 const Game = props => {
-    const {app: {userName, token}} = props;
+    const {app: {userName, token}, icon, ...restProps} = props;
     if (!userName)
         return null;
     let href = props.href || MainRoutes.game.path;
     href = !token ? href : `${href}}?token=${token}`;
     return (
-        <SpecialLink href={href}>
+        <SpecialLink href={href} {...restProps}>
             <T keys={'nav_menu.game'} />
-        <FaGamepad className="nav-icon" />
+        {icon && <FaGamepad className="nav-icon" />}
     </SpecialLink>
     )
 };
@@ -47,7 +47,7 @@ Game.propTypes = {
     app: PropTypes.object.isRequired,
 }
 
-export const GameConnected = connect(state => ({app: state.app}),{})(Game);
+export const GameConnected = connect(state => ({app: state.app}))(Game);
 
 export const CustomLogin = connect(state => ({userName: state.app.userName}),{logout})(
     ({className = 'nav-menu-item', userName, logout, toggle}) => {
@@ -70,11 +70,6 @@ export const CustomLogin = connect(state => ({userName: state.app.userName}),{lo
         )
     }
 );
-
-export const CustomLoginConnected = connect(
-    state => ({userName: state.app.userName}),
-    {logout}
-)(CustomLogin)
 
 export const Login = props => {
     const {
@@ -125,22 +120,35 @@ class MainNavMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isOpen: false
+            isOpen: false,
+            isShown: false,
         };
         this.onClick = this.onClick.bind(this);
     }
     onClick() {
-        this.setState(({isOpen}) => !isOpen);
+        this.setState(({isOpen}) => ({isOpen: !isOpen}));
+        this.timeout = setTimeout(() => 
+        this.setState(({isShown}) => ({isShown: !isShown})), 0);
     }
+    componentWillUnmount() {
+        clearTimeout(this.timeout);
+    }
+    
     render() {
-        const {routes = MainRoutes} = this.props;
-        const {isOpen} = this.state;
+        const {routes = MainRoutes, className} = this.props;
+        const {isOpen, isShown} = this.state;
         const { game, login, ...restRouts } = routes;
-        const className = isOpen ? 'nav-menu' : 'nav-menu nav-hidden';
+        const dropdownClassName = isShown ? "dropdown-wrapper is-open" : "dropdown-wrapper";
         return (
             <div className="nav-wrapper">
                 <NavDropDownButton toggle={this.onClick} />
-                <nav className={className}>
+                {isOpen
+                    &&  <div className={dropdownClassName}>
+                            <MainNavRoutes className={"dropdown-nav-item"} routes={restRouts} />
+                            <GameConnected className={"dropdown-nav-item"} />
+                        </div>
+                }
+                <nav className={className || "nav-menu"}>
                     <MainNavRoutes routes={restRouts} />
                     <GameConnected />
                 </nav>

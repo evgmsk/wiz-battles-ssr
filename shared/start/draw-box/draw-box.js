@@ -117,6 +117,7 @@ class DrawBox extends React.Component {
 
     onMouseDown(e) {
         e.cancelBubble = true;
+        console.log(e);
         if (!this.state.drawing || e.target.nodeType !== 'Stage' || this.state.animate) {
             return;
         }
@@ -481,6 +482,9 @@ class DrawBox extends React.Component {
 
         const StageProps = {
             ...stageProps,
+            onTouchStart: this.onMouseDown,
+            onTouchMove: this.onMouseMove,
+            onTouchEnd: this.onMouseUp,
             onMouseMove: this.onMouseMove,
             onMouseDown: this.onMouseDown,
             onMouseUp: this.onMouseUp,
@@ -510,7 +514,7 @@ class DrawBox extends React.Component {
         console.log(this.state);
         console.log(this.props);
         return (
-            <section className="draw-box">
+            <section className="draw-box page">
                 <h2>Создай своего монстра</h2>
                 <div className={stageClassName} ref={this.container}>
                     <Stage className="draw-stage" ref={stage} {...StageProps}>
@@ -520,12 +524,10 @@ class DrawBox extends React.Component {
                     </Stage>
                 </div>
                 <div className="draw-box__controls">
-
                     <ShapeControlsWrapper {...shapeControlProps} />
-                    <SelectControlsContainer {...selectControlProps} />
                     <SaveShapeForm {...saveFormProps} />
+                    <SelectControlsContainer {...selectControlProps} /> 
                     <FunctionalControlsWrapper {...functionalControlProps} />
-
                 </div>
             </section>
         );

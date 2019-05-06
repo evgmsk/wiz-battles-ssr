@@ -1,5 +1,19 @@
 @import "../../../scss/_constants";
 
+// @mixin nav-item($args: ()) {
+//   $default: (
+//     background: none,
+//     backgroud-image: none,
+//     font: inherit,
+//     color: #fff,
+//     border: none,
+//     border-bottom-color: transparent,
+//     border-top-color: transparent,
+//     transition: all .3s,
+//   );
+//   $argsMap: map-merge($default, $args);
+
+// }
 .nav-menu-item {
   @include flex();
   background: none;
@@ -10,6 +24,7 @@
   font: 2rem/1  'Calibri', sans-serif;
   font-weight: 500;
   transition: all .5s;
+  box-sizing: border-box;
   .nav-icon {
     color: $nav-item-color;
     height: 1.3rem;
