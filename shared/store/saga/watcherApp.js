@@ -23,6 +23,13 @@ function* workerCheckRefreshToken(action) {
     }
 }
 
+function* workerShape(action) {
+    if (action.type === 'SAVE_SHAPE') {
+        const storage = localStorage.getItem('wiz-battles');
+        console.log(storage);
+    }
+}
+
 function* workerSaveRefreshToken(action) {
     try {
         localStorage.setItem('wiz-battles', JSON.stringify({'refreshToken': action.payload}));
@@ -44,5 +51,7 @@ function* workerLogout() {
 export default function* watcherTimer() {
     yield takeLatest(ActionTypes.SAVE_REFRESH_TOKEN, workerSaveRefreshToken);
     yield takeLatest(ActionTypes.CHECK_REFRESH_TOKEN, workerCheckRefreshToken);
-    yield takeLatest(ActionTypes.LOGOUT, workerLogout)
+    yield takeLatest(ActionTypes.LOGOUT, workerLogout);
+    yield takeLatest(ActionTypes.SAVE_SHAPE, workerShape);
+    yield takeLatest(ActionTypes.OVERWRITE_SHAPE, workerShape);
 }

@@ -11,8 +11,8 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
             if (log) console.log(this);
         }
 
-        defineSource(lang) {
-            this.langSource = require(`../${this.path}${lang}.json`);
+        defineSource(lang, ext = '.json') {
+            this.langSource = require(`../${this.path}${lang}${ext}`);
             this.lang = lang;
         }
     }
@@ -22,7 +22,7 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
     return function translate(props) {
         let source;
         let string = i18nLang.langSource;
-        let {keys, insertions = []} = props;
+        let {keys, insertions = [], ext} = props;
         let lang = props[storeLanguageKey];
         if (!lang) {
             throw new Error('Property "language" is undefined')
@@ -34,7 +34,7 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
         if (!Keys || !Keys.length)
             throw new Error("Invalid 'keys' property passed to react-redux-translate! 'Keys' must be array or string with keys and dots as delimiters");
         if (lang !== i18nLang.lang) {
-            i18nLang.defineSource(lang)
+            i18nLang.defineSource(lang, ext)
         }
         source = i18nLang.langSource;
 

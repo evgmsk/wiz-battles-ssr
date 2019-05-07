@@ -2,6 +2,7 @@
  * project WizBattle
  */
 import React from 'react';
+import {connect} from 'react-redux';
 import { Stage, Layer } from 'react-konva';
 import {last, mean} from 'lodash';
 import {
@@ -10,10 +11,11 @@ import {
     SaveShapeForm,
     SelectControlsContainer,
 } from './controls-panel/control-components';
-// import ControlsPanel from './controls-panel/controls-panel';
+
+import {saveShape} from '../../store/actions/appActions';
 import ShapeClass from '../../common/shape-classes/shape-class';
 import { oddIndexes, evenIndexes } from '../../common/helper-functions/indexFilters';
-import idGen from '../../common/helper-functions/idGen';
+import {deepCopy, idGen} from '../../common/helper-functions/';
 import { Shapes } from '../../common/constants/constants';
 import GroupClass from '../../common/shape-classes/group-class';
 
@@ -90,7 +92,7 @@ class DrawBox extends React.Component {
     }
 
     updateShapes(shape) {
-        return this.state.shapes.map(s => {
+        return deepCopy(this.state.shapes).map(s => {
             if (s.name !== shape.name)
                 return s;
             return shape;
@@ -125,7 +127,7 @@ class DrawBox extends React.Component {
         const { shapeType, shapeProps, draggable, shapes } = this.state;
         const { x, y, layerUp, size, ...mainProps } = shapeProps;
         const shape = { shapeType };
-        const name = `${shapeType}${idGen()}`;
+        const name = `${shapeType}-${idGen()}`;
         shape.name = name; 
         shape.props = {
             ...mainProps,
@@ -327,7 +329,19 @@ class DrawBox extends React.Component {
     }
 
     onChangeSelect({target: {name, value}}) {
-        if (name === 'select-img') {
+        if (name === 'saved-shapes') {
+            this.setState(state => {
+                const shapes = deepCopy(state.shapes);
+                const shapesToAdd = deepCopy(value.image).map(s => {
+                    const name = `${s.shapeType}+${idGen()}`
+                    s.name = name;
+                    s.props.name = name;
+                    return s;
+                });
+                return ({shapes: shapes.concat(shapesToAdd)});
+            })
+            
+            console.log(value.image, shapesToAdd);
 
         }
         if (name === 'select-shape') {
@@ -380,25 +394,27 @@ class DrawBox extends React.Component {
         })
     }
 
-    onSave(data) {
-        const { shapes, shapeProps } = this.state;
-        console.log(data)
-        // let data;
-        // if (saveAs === '1') {
-        //     const group = shapes.filter(s => s.nodeType)[0];
-        //     const restShapes = shapes.filter(s => s.shapeType).map((shape) => {
-        //         shape.groupName = `${name}`;
-        //         shape.props.draggable = this.state.draggable;
-        //         return shape;
-        //     });
-        //     const animationType = shapeProps.animationType;
-        //     const tweenType = shapeProps.tweenType;
-        //     const [nodeType, id] = ['Group', name];
-        //     const image = group ? group.image.concat(restShapes) : restShapes;
-        //     data = { name, nodeType, id, animationType, tweenType, image, layerUp: 0 };
-        // } else
-        //     data = { name, nodeType: 'Shape', image: shapes };
-        // action(data);
+    onSave({shapeName, saveOption, overwrite}) {
+        const { shapes, shapeProps, draggable } = this.state;
+        // console.log(shapeName, saveOption, overwrite)
+        let data;
+        if (saveOption === 'group') {
+            const group = shapes.filter(s => s.nodeType)[0];
+            const restShapes = shapes.filter(s => s.shapeType).map((shape) => {
+                shape.groupName = `${shapeName}`;
+                shape.props.draggable = draggable;
+                return {...shape};
+            });
+            const animationType = shapeProps.animationType;
+            const tweenType = shapeProps.tweenType;
+            const [nodeType, id] = ['Group', shapeName];
+            const image = group ? group.image.concat(restShapes) : restShapes;
+            data = { name: shapeName, nodeType, id, animationType, tweenType, image, layerUp: 0};
+        } else
+            data = { name: shapeName, nodeType: 'Shape', image: shapes.map(s => ({...s})) };
+        if (!overwrite)
+            return this.props.saveShape(data);
+        return this.props.overwriteShape({data, name})
     }
 
     chooseMode() {
@@ -558,4 +574,4 @@ DrawBox.defaultProps = {
     polygonPoints: 1,
 };
 
-export default DrawBox;
+export default connect(null, {saveShape})(DrawBox);

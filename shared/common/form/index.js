@@ -8,7 +8,7 @@ import SmartInput from './input/input';
 import SmartSelect from './smart-select/smart-select';
 
 import './form.scss';
-import { fromBits } from 'long';
+import deepCopy from './deep-copy';
 
 class SmartForm extends React.Component {
     static findInput(node) {
@@ -47,9 +47,9 @@ class SmartForm extends React.Component {
 
     constructor(props) {
         super(props);
-        this.initialValues = {...props.values};
+        this.initialValues = deepCopy(props.values);
         this.state = {
-            values: props.values,
+            values: deepCopy(props.values),
             errors: props.errors || SmartForm.resetErrors(props.values),
             isValidating: false,
             isSubmitting: false,
@@ -65,12 +65,6 @@ class SmartForm extends React.Component {
         this.refToForm = React.createRef();
     }
 
-    shouldComponentUpdate(props, newState) {
-        return !(newState.isValidating !== this.state.isValidating 
-            && newState.isSubmitting === this.state.isSubmitting
-            && JSON.stringify(newState.errors) === JSON.stringify(this.state.errors))
-    }
-
     componentWillUnmount() {
         // console.log('unmount')
     }
@@ -83,13 +77,14 @@ class SmartForm extends React.Component {
             Object.keys(error).forEach(key => {
                 error[key] = null;
             });
-            const newValues = {...values, [name]:[...values[name], child]};
-            const newErrors = {...errors, [name]:[...errors[name], error]};
+            const newValues = {...values, [name]:[...deepCopy(values[name]), child]};
+            const newErrors = {...errors, [name]:[...deepCopy(errors[name]), error]};
             return { values: newValues, errors: newErrors }
         });
     };
 
     removeChild(e, name, index) {
+        // need refactoring
         e.preventDefault();
         e.stopPropagation();
         this.setState(({values, errors}) => {
@@ -136,7 +131,7 @@ class SmartForm extends React.Component {
 
     handleOnChange(e, Name, index) {
         const {isSubmitting, isValidating, successfullySubmitted} = this.state;
-        if (isValidating || isSubmitting || successfullySubmitted)
+        if (isValidating || isSubmitting)
             return;
         const {name, value, type} = e.target;
         Name = Name || name;
@@ -145,18 +140,18 @@ class SmartForm extends React.Component {
         if (error && !isArray || isArray && error[index][name])
             this.handleOnBlur(e, Name, index);
         this.setState(state => {
-            const values = {...state.values};
+            const values = deepCopy(state.values);
             if (!(Name in values))
                 throw Error(`Form 'values' and input name: ${name} do not match or do not set appropriately`);
             if(type === 'checkbox') {
                 const newValue = values[Name] ? false : true;
-                return {values: {...values, [Name]: newValue}};
+                return {successfullySubmitted: false, values: {...values, [Name]: newValue}};
             }
             if (!Array.isArray(values[Name]))
-                return {values: {...values, [Name]: value}};
+                return {successfullySubmitted: false, values: {...values, [Name]: value}};
             else {
                 values[Name][index] = {...values[Name][index], [name]: value};
-                return {values}
+                return {successfullySubmitted: false, values}
             }
         })
     }
@@ -172,7 +167,7 @@ class SmartForm extends React.Component {
             return;
         const error = validationschema[name].validator(value);
         this.setState(state => {
-            const errors = {...state.errors};
+            const errors = deepCopy(state.errors);
             if (!(Name in errors))
                 throw new Error(`Form 'values' and input name: ${name} do not match or do not set appropriately`);
             if (!Array.isArray(errors[Name]))
@@ -184,11 +179,15 @@ class SmartForm extends React.Component {
         })
     }
 
-    validateField(key, value, errors, form) {
+    validateField(key, values, errors, form) {
         const {validationschema} = this.props;
         if (validationschema[key].required) {
+            const value = values[key];
+            if (typeof value === 'string') {
+                const valueToCheck = value.trim();
+                values[key] = valueToCheck;
+            }
             const error = validationschema[key].validator(value);
-            console.log(error)
             if (error) {
                 errors[key] = error;
                 form.invalid = true;
@@ -201,8 +200,10 @@ class SmartForm extends React.Component {
         value.forEach((v, i) => {
             const names = Object.keys(v);
             names.forEach(name => {
-                const valueToCheck = v[names[i]].trim();
-                value[i][name] = valueToCheck;
+                if (typeof value === 'string') {
+                    const valueToCheck = v[names[i]].trim();
+                    value[i][name] = valueToCheck;
+                }
                 if (validationschema[name].required) {
                     const error = validationschema[name].validator(valueToCheck);
                     if (error) {
@@ -216,17 +217,15 @@ class SmartForm extends React.Component {
 
     validateForm() {
         const form = {invalid: false};
-        const values = {...this.state.values};
-        const errors = {...this.state.errors};
+        const values = deepCopy(this.state.values);
+        const errors = deepCopy(this.state.errors);
         for (let key in values) {
             if (values.hasOwnProperty(key)) {
                 const value = values[key];
                 if (Array.isArray(value)) {
                     this.validateArrayOfFields(key, value, errors, form)
                 } else {
-                    const valueToCheck = value.trim();
-                    values[key] = valueToCheck;
-                    this.validateField(key, valueToCheck, errors, form)
+                    this.validateField(key, values, errors, form)
                 }
             }
         }
@@ -236,38 +235,37 @@ class SmartForm extends React.Component {
 
     validateAndFetch() {
         const {invalidForm, values} = this.validateForm();
-        console.log(invalidForm, values)
         if (invalidForm)
             return;
         this.setState({isValidating: false, isSubmitting: true})
         const fetchResult = this.props.submit.fetch(values);
+        console.log(fetchResult);
         if (fetchResult && !fetchResult.then) {
             this.setState({
                 isSubmitting: false,
                 successfullySubmitted: true,
                 values: this.initialValues,
             })
-            return this.props.submit.onResponse({status: 200, msg: "Successfuly submitted"});
-        } else if(fetchResult) {
-            this.setState({
-                isSubmitting: false,
+            console.log('1')
+            this.props.submit.onResponse({status: 200, msg: "Successfuly submitted"});
+        } else {
+            console.log('3')
+            fetchResult.then(res => {
+                this.setState({
+                    isSubmitting: false,
+                    successfullySubmitted: true,
+                    values: this.initialValues
+                });
+                this.props.submit.onResponse(res);                
+            }).catch(error => {
+                this.setState({isSubmitting: false});
+                this.props.submit.onResponse(error);
             })
         }
-        fetchResult.then(res => {
-            this.setState({
-                isSubmitting: false,
-                successfullySubmitted: true,
-                values: this.initialValues
-            });
-            this.props.submit.onResponse(res);                
-        }).catch(error => {
-            this.setState({isSubmitting: false});
-            this.props.submit.onResponse(error);
-        })
+        
     }
 
     handleSubmit(event) {
-        console.log('sub')
         if (event)
             event.preventDefault();
         const {isSubmitting, isValidating, successfullySubmitted} = this.state;
@@ -277,7 +275,7 @@ class SmartForm extends React.Component {
     }
     
     render() {
-        console.log(this.state)
+        console.log(this.state, this.initialValues);
         const { errors, values } = this.state;
         const propsForChildren = {
             values,

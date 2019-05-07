@@ -98,7 +98,7 @@ export const FunctionalControlsWrapper = props => {
 };
 
 const SelectControls = props => {
-    const {onChange, savedShapes = [''], shapeProps: {type, animationType, tweenType}} = props;
+    const {onChange, savedShapes = [{name: ''}], shapeProps: {type, animationType, tweenType}} = props;
     return (
         <div className="select-controls">
             <SmartSelect
@@ -152,11 +152,11 @@ const SaveForm = props => {
 
     const handleSave = ({shapeName, saveOption, confirmOverwrite}) => {
         if (!savedShapes.filter(s => s.name === shapeName).length) {
-            onSave({shapeName, saveOption})
+            onSave({shapeName, saveOption, overwrite: false})
             return true;
         } 
         if (confirmOverwrite) {
-            overwriteShape(shapeName)
+            onSave({shapeName, saveOption, overwrite: true})
             return true;
         }
         setTooltip(true);
@@ -197,14 +197,13 @@ const SaveForm = props => {
                         <p className="tooltip-massage">
                             Image with name you entered already exist. 
                             Please click confirm to overwrite image
-                            or click cancel and change name.
+                            or change name.
                         </p>
                         <div className="tooltip-footer">
                             <button
                                 onClick={() => setTooltip(false)}
                                 className="btn btn-small btn-filled"
-                            >
-                                Cancel
+                            >Close
                             </button>
                         </div>
                     </div>

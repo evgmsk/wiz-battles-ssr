@@ -13,6 +13,7 @@ exports.jwtOptions = {
     issuer:  'wiz-battles',
     subject:  'wiz-batles-token',
     audience: "Client_Identity", // this should be provided by client
+    expiresIn: '1h'
 };
 
 exports.jwtPrivetKey = 'saefdht#segfs$sfse';

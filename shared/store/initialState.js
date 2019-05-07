@@ -1,7 +1,7 @@
 /**
  * project smartWizBattle
  */
-export const initialStateStart = (userName = '', savedShapes = [''], token = null, lang = 'en') => ({
+export const initialStateStart = (userName = '', savedShapes = [], token = null, lang = 'en') => ({
     app: {
         userName,
         savedShapes,
