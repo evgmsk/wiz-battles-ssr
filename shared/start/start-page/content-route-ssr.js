@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-// import loadable from '@loadable/component';
+import loadable from '@loadable/component';
 
 import { MainRoutes } from '../../common/constants/constants';
 
@@ -13,13 +13,13 @@ import LogPage from '../login/login-page';
 
 // webpackChunkName: "about"  webpackChunkName: "logpage"
 
-/*const Home = loadable(() => import(/!* webpackPreload: true *!/ '../home/home-page'));
+// const Home = loadable(() => import(/* webpackPreload: true */ '../home/home-page'));
 
-const About = loadable(() => import( '../about/about'));
+// const About = loadable(() => import( '../about/about'));
 
-const DrawBox = loadable(() => import( '../draw-box/draw-box'));
+// const DrawBox = loadable(() => import( '../draw-box/draw-box'));
 
-const LogPage = loadable(() => import( '../login/login-page'));*/
+// const LogPage = loadable(() => import( '../login/login-page'));/**/
 
 const StartPageRoute = () => (
     <Switch>

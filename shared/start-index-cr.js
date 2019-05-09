@@ -1,21 +1,14 @@
-/**
- * project new-wiz-bat
- */
 import React from 'react';
 import  ReactDom, { render } from 'react-dom';
 import { BrowserRouter }  from 'react-router-dom'
 import 'typeface-roboto';
 import {Provider} from 'react-redux';
 
-// import './GameFunctions/TaskGenerators/langaugeTaskGenerator';
-/*import { onSaveMonster } from '../src/actions/actions/gameDataActions';
- import Monsters from './data/monsters.json';*/
-/*import AppContainer from './Containers/appContainer';*/
 import Test from './start/login/testLogin'
 import StartPage from './start/start-page-cr'
 import storeFactory from './store/index';
 import {initialStateStart} from './store/initialState';
-import {authenticateUser} from './store/actions/appActions';
+import {authenticateUser, checkSavedImages} from './store/actions/appActions';
 
 import './assets/favicon.ico'
 
@@ -23,6 +16,11 @@ import '../shared/scss/reset.scss';
 
 const store = storeFactory(window, initialStateStart());
 store.dispatch(authenticateUser());
+
+const storage = JSON.parse(localStorage.getItem('wiz-battles')) || {};
+const savedShapes = storage.savedShapes || [];
+if (savedShapes.length)
+    store.dispatch(checkSavedImages(savedShapes));
 
 const target = document.getElementById('root');
 

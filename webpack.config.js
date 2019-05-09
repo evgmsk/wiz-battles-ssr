@@ -44,7 +44,7 @@ const plugins = [new webpack.DefinePlugin({
     'process.env.SSR': JSON.stringify(SSR)
 })];
 
-if (env === 'devCR' || prodCR) { // client render
+if (!SSR) { // client render
     plugins.push(
         new HtmlWebpackPlugin({
             template: paths.template,

@@ -1,6 +1,7 @@
 const actionTypes = {
     // app
     SAVE_USER_NAME: 'SAVE_USER_NAME',
+    CHECK_SAVED_IMAGES: 'CHECK_SAVED_IMAGES',
     LOGOUT: 'LOGOUT',
     SET_LANGUAGE: 'SET_LANGUAGE',
     SAVE_SHAPE: 'SAVE_SHAPE',

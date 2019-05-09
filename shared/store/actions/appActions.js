@@ -10,6 +10,13 @@ export const saveUserName = payload => {
     };
 };
 
+export const checkSavedImages = payload => {
+    return {
+        type: AT.CHECK_SAVED_IMAGES,
+        payload,
+    }
+}
+
 export const saveShape = payload => {
     return {
         type: AT.SAVE_SHAPE,

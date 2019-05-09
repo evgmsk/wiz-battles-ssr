@@ -16,6 +16,16 @@
   cursor: pointer;
   opacity: 1;
   transition: all .3s;
+  &:hover {
+    border-color: darken($color, 15%);
+    .nav-dropdown-button__center-line {
+      background: darken($color, 15%);
+      &:after,
+      &:before {
+        background: darken($color, 15%);
+      }
+    } 
+  }
   .nav-dropdown-button__center-line {
     display: block;
     position: relative;
