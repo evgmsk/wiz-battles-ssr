@@ -71,6 +71,7 @@
     border: 1px solid #205f02;
     border-radius: 3px;
     .smart-input {
+      padding: 0 .5rem 0 0;
       font-size: 1.2rem;
       margin: 0;
       @include smart-input_likeplaceholder-transform(());
@@ -100,11 +101,7 @@
         white-space: nowrap;
         padding: 0 .5rem;
         width:100%;
-        // margin: 0 auto .4rem;
       }
-    }
-    .smart-select {
-      padding: 0 .5rem 0 0;
     }
     button {
       background: none;
@@ -179,23 +176,15 @@
       margin: 0;
     }
   }
-  @media (min-width: 893px) {
+  @media (min-width: 895px) {
     .functional-controls {
       order: 1;
     }
     .save-form-wrapper {
       order: 0;
     }
-    // & .select-controls {
-    //   display: block;
-    //   width: 14rem;
-    //   .smart-select {
-    //     width: 100%;
-    //   }
-    // }
   }
 }
-
 form.input-wrapper {
   border: solid 1px #acacac;
 }
