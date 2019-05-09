@@ -1,6 +1,3 @@
-/**
- * project new-wiz-bat
- */
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import uuid from 'uuid';
@@ -34,6 +31,11 @@ export function signUp(req, res, next) {
 
 export function login(req, res, next) {
     const { password, email } = req.body;
+    if (!password || !email) {
+        res.status(422);
+        res.statusMessage('Empty email or password sent');
+        res.end();
+    }
     const users = db.collection("users");
     const user = users.doc(email);
     return user.get().then(doc => {

@@ -1,22 +1,17 @@
-/**
- * project match-match-r-r
- */
 import { takeLatest, put } from 'redux-saga/effects';
 import ActionTypes from '../actions/actionTypes';
 import axios from 'axios';
 
 function* workerCheckRefreshToken(action) {
-
-    const Storage = localStorage && localStorage['wiz-battles'];
-    if (Storage) {
+    let storage = localStorage.getItem('wiz-battles');
+    storage = storage &&  JSON.parse(storage);
+    const refreshToken = storage && storage.refreshToken;
+    if (refreshToken) {
         try {
-            const refreshToken = JSON.parse(Storage).refreshToken;
-            if (refreshToken) {
-                const { data } = yield axios.post('/refresh-token', {token: refreshToken});
-                yield put({ type: ActionTypes.SAVE_REFRESH_TOKEN, payload: data.refreshToken });
-                yield put({ type: ActionTypes.SAVE_USER_NAME, payload: data.userName });
-                yield put({ type: ActionTypes.SAVE_TOKEN, payload: data.token})
-            }
+            const { data } = yield axios.post('/refresh-token', {token: refreshToken});
+            yield put({ type: ActionTypes.SAVE_REFRESH_TOKEN, payload: data.refreshToken });
+            yield put({ type: ActionTypes.SAVE_USER_NAME, payload: data.userName });
+            yield put({ type: ActionTypes.SAVE_TOKEN, payload: data.token}); 
         } catch (err) {
             console.log(err)
         }
@@ -24,23 +19,37 @@ function* workerCheckRefreshToken(action) {
 }
 
 function* workerShape(action) {
-    if (action.type === 'SAVE_SHAPE') {
-        const storage = localStorage.getItem('wiz-battles');
-        console.log(storage);
+    let storage = localStorage.getItem('wiz-battles');
+    storage = storage ? JSON.parse(storage) : {};
+    storage.savedShapes = storage.savedShapes || [];
+    if (action.type === ActionTypes.SAVE_SHAPE) {
+        storage.savedShapes.push(action.payload)
+    } else if (action.type ===ActionTypes.OVERWRITE_SHAPE) {
+        storage.savedShapes.forEach(s => {
+            if (s.name === action.payload.name) {
+                s.image = action.payload.image
+            }
+            return s
+        })
     }
+    yield localStorage.setItem('wiz-battles', JSON.stringify(storage));
 }
 
 function* workerSaveRefreshToken(action) {
+    const storage = JSON.parse(localStorage.getItem('wiz-battles'));
+    storage.refreshToken = action.payload;
     try {
-        localStorage.setItem('wiz-battles', JSON.stringify({'refreshToken': action.payload}));
+        localStorage.setItem('wiz-battles', JSON.stringify(storage));
     } catch (err) {
         console.log(err);
     }
 }
 
 function* workerLogout() {
+    const storage = JSON.parse(localStorage.getItem('wiz-battles'));
+    storage.refreshToken = null;
     try {
-        localStorage.setItem('wiz-battles', JSON.stringify({}));
+        localStorage.setItem('wiz-battles', JSON.stringify(storage));
         yield put({ type: ActionTypes.SAVE_USER_NAME, payload: ''});
         yield put({ type: ActionTypes.SAVE_TOKEN, payload: null});
     } catch (err) {

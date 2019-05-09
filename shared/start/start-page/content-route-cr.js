@@ -10,12 +10,12 @@ import DrawBox from '../shared/initial/draw-box/draw-box';
 import Home from '../shared/initial/home/home-page';
 import About from '../shared/initial/about/about';
 import LogPage from '../shared/initial/login/login-page';*/
-
+/*webpackPreload: true *//*webpackPreload: true */
  const Home = lazy(() => import(/*webpackPreload: true */ '../home/home-page'));
 
- const About = lazy(() => import(/*webpackPreload: true */ '../about/about'));
+ const About = lazy(() => import( '../about/about'));
 
- const DrawBox = lazy(() => import(/*webpackPreload: true */ '../draw-box/draw-box'));
+ const DrawBox = lazy(() => import( '../draw-box/draw-box'));
 
  const LogPage = lazy(() => import(/*webpackPreload: true */ '../login/login-page'));
 
@@ -29,5 +29,5 @@ const StartPageRouteCl = () => (
         </Switch>
     </Suspense>
 );
-
+ 
 export default StartPageRouteCl;

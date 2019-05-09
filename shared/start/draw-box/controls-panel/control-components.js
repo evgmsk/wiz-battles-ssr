@@ -45,6 +45,7 @@ export const Layers = ({onClick}) => {
     )
 } 
 
+
 export const FunctionalControlsWrapper = props => {
     const {draggable, animate, drawing} = props;
     return (
@@ -151,6 +152,7 @@ const SaveForm = props => {
     const values = {shapeName: '', saveOption: 'shape', confirmOverwrite: false};
 
     const handleSave = ({shapeName, saveOption, confirmOverwrite}) => {
+        console.log(confirmOverwrite)
         if (!savedShapes.filter(s => s.name === shapeName).length) {
             onSave({shapeName, saveOption, overwrite: false})
             return true;
@@ -196,7 +198,7 @@ const SaveForm = props => {
                 && <div className="overwrite-tooltip">
                         <p className="tooltip-massage">
                             Image with name you entered already exist. 
-                            Please click confirm to overwrite image
+                            Please check overwrite option to overwrite image
                             or change name.
                         </p>
                         <div className="tooltip-footer">
@@ -225,7 +227,7 @@ const SaveForm = props => {
                                     placeholder="Enter image name"
                                     labelStyle="like-placeholder"
                                     inputStyle="underlined"
-                                    labelText="Image name"
+                                    labelText="Save image"
                                     {...restProps}
                                     value={props.values.shapeName}
                                     error={props.errors.shapeName}
@@ -253,6 +255,7 @@ const SaveForm = props => {
                                         type="checkbox"
                                         name="confirmOverwrite"
                                         value={values.confirmOverwrite}
+                                        checked={values.confirmOverwrite}
                                         labelText="Allow overwriting"
                                         {...restProps}
                                     /> 
@@ -378,3 +381,17 @@ export const ShapeControlsWrapper = props => {
         </div>
     )
 };
+
+export default class ControlsPanel extends React.Component {
+    shouldComponentUpdate (props) {
+        return this.props.shouldUpdate;
+    }
+
+    render() {
+        return (
+            <div className={this.props.className}>
+                {this.props.children}
+            </div>
+        );
+    }
+}

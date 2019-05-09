@@ -1,9 +1,11 @@
 export default function deepCopy(obj) {
     if(typeof obj !== 'object')
         return obj;
-    const newObj = {};
+    let newObj = {};
+    if (Array.isArray(obj))
+        newObj = [];
     for(let prop in obj) {
-        if (obj.hasOwnproperty(prop)) {
+        if (obj.hasOwnProperty(prop)) {
             const value = obj[prop];
             if (typeof value !== 'object') {
                 newObj[prop] = value;

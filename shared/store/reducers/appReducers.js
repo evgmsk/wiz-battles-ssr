@@ -3,16 +3,24 @@
  */
 import AT from '../actions/actionTypes';
 
+
 const shapes = (state = [], action) => {
     switch (action.type) {
         case (AT.SAVE_SHAPE):
             return [...state, action.payload];
         case (AT.OVERWRITE_SHAPE):
-            return [...state.filter(sh => sh.name !== action.payload.name), action.payload];
+            console.log(action, state)
+            return [...state.map(s => {
+                if (s.name === action.payload.name) {
+                    s.image = action.payload.image;
+                }
+                return s;
+            })];
         default:
             return state;
     }
 };
+
 
 const app = (state = {}, action) => {
     switch (action.type) {
@@ -21,6 +29,11 @@ const app = (state = {}, action) => {
                 ...state,
                 userName: action.payload
             };
+        case (AT.CHECK_SAVED_IMAGES):
+            return {
+                ...state,
+                savedShapes: action.payload
+            }
         case (AT.SAVE_SHAPE):
             return {
                 ...state,

@@ -5,14 +5,15 @@ import React from 'react';
 import {connect} from 'react-redux';
 import { Stage, Layer } from 'react-konva';
 import {last, mean} from 'lodash';
-import {
+import ControlsPanel, {
     ShapeControlsWrapper,
     FunctionalControlsWrapper,
     SaveShapeForm,
     SelectControlsContainer,
 } from './controls-panel/control-components';
 
-import {saveShape} from '../../store/actions/appActions';
+import Spinner from '../../common/spinner/spinner';
+import {saveShape, overwriteShape} from '../../store/actions/appActions';
 import ShapeClass from '../../common/shape-classes/shape-class';
 import { oddIndexes, evenIndexes } from '../../common/helper-functions/indexFilters';
 import {deepCopy, idGen} from '../../common/helper-functions/';
@@ -30,7 +31,7 @@ class DrawBox extends React.Component {
         this.hero = React.createRef();
         this.sh = React.createRef();
         this.state = {
-            stageProps: {width: window.innerWidth * .8, height: window.innerHeight - 400, scaleX: 1, scaleY: 1},
+            stageProps: {width: 300, height: 200, scaleX: 1, scaleY: 1},
             shapes: [],
             linePath: [],
             lineType: props.lineType,
@@ -42,9 +43,7 @@ class DrawBox extends React.Component {
             animate: false,
             draggable: true,
             polygonPoints: props.polygonPoints,
-            categories: [
-                { key: 'шейп', value: 'shapes', action: props.saveShape },
-            ],
+            shouldUpdate: true,
         };
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
@@ -71,9 +70,7 @@ class DrawBox extends React.Component {
         this.setState(({ stageProps, initial }) => {
             const container = this.container.current;
             const [width, height] = [container.offsetWidth  - 10, container.offsetHeight  - 10];
-
             const [scaleX, scaleY] = [width / initial.width, height / initial.height];
-            console.log('resize', width, scaleX);
             return {stageProps: {...stageProps, width, height, scaleX, scaleY }};
         });
     }
@@ -83,7 +80,7 @@ class DrawBox extends React.Component {
         const [width, height] = [container.offsetWidth - 10, container.offsetHeight - 10];
         this.setState(({ stageProps }) => ({
             stageProps: {...stageProps, width, height},
-             initial:{...stageProps, width, height}
+            initial: {...stageProps, width, height},
             }));
     }
 
@@ -149,8 +146,9 @@ class DrawBox extends React.Component {
             return;
         }
         if (e.evt.button === 1) {
-            return this.setState(({polygonPoints}) => ({polygonPoints: polygonPoints + 1}))
+            return this.setState(({polygonPoints}) => ({polygonPoints: polygonPoints + 1}));
         }
+        this.setState({shouldUpdate: true})
         if (e.evt.button === 0) {
             if (this.state.linePath.length)
             this.finishLineDrawing();
@@ -161,9 +159,8 @@ class DrawBox extends React.Component {
 
     onMouseMove(e) {
         e.cancelBubble = true;
-        
         if (!this.state.mouseDown || !this.state.drawing)
-            return;
+            return;        
         const {layerX, layerY}= e.evt;
         const shape = last(this.state.shapes);
         if (shape && shape.shapeType === 'Line') {
@@ -190,44 +187,43 @@ class DrawBox extends React.Component {
                 shapes: [...shapes, shape],
                 linePath: newLinePath,
                 mouseDown: true,
+                shouldUpdate: false,
             })
         });
     }
 
     drawLine(x, y) {
-        this.setState(({ shapes, linePath, shapeProps:{type}, polygonPoints }) => {
-            const newLinePath = [...linePath];
-            const newShapes = [...shapes];
+        this.setState(({ shapes, shapeProps:{type}, polygonPoints }) => {
+            const linePath = [...this.state.linePath];
+            const newShapes = deepCopy(shapes);
             if (type !== 'Line-polygon' || linePath.length <= polygonPoints * 2) {
-                newLinePath.push(x);
-                newLinePath.push(y);
+                linePath.push(x);
+                linePath.push(y);
             } else {
-                newLinePath[linePath.length - 2] = x;
-                newLinePath[linePath.length - 1] = y;
+                linePath[linePath.length - 2] = x;
+                linePath[linePath.length - 1] = y;
             }
-            newShapes[shapes.length - 1].props.points = newLinePath;
-            return ({ shapes: newShapes, linePath: newLinePath });
+            newShapes[shapes.length - 1].props.points = linePath;
+            return ({ shapes: newShapes, linePath });
         });
     }
 
     finishLineDrawing() {
-        this.setState(({ shapes, linePath }) => {
-            let selectedShape = null;
-            const newShapes = [...shapes];
-            const shape = newShapes.pop();
-            if (linePath.length > 2) {
+        this.setState(state => {
+            const shapes = deepCopy(state.shapes);
+            const shape = shapes.pop();
+            if (state.linePath.length > 2) {
                 const { points } = shape.props;
                 const [x, y] = [mean(evenIndexes(points)), mean(oddIndexes(points))];
                 shape.props.x = x;
                 shape.props.y = y;
                 shape.props.offsetX = x;
                 shape.props.offsetY = y;
-                newShapes.push(shape);
-                selectedShape = shape;
-            }
+                shapes.push(shape);
+            } 
             return ({
-                shapes: newShapes,
-                selectedShape,
+                shapes,
+                selectedShape: shapes[shapes.length - 1],
                 mouseDown: false,
                 linePath: [],
                 polygonPoints: 1,
@@ -261,7 +257,7 @@ class DrawBox extends React.Component {
                 default:
                     break;
             }
-            return ({ shapes: [...shapes, shape], mouseDown: true});
+            return ({ shapes: [...shapes, shape], mouseDown: true, shouldUpdate: false});
         });        
     }
 
@@ -307,7 +303,7 @@ class DrawBox extends React.Component {
                 const [offsetX, offsetY] = [shape.props.width / 2, shape.props.height / 2];
                 shape.props = { ...shape.props, offsetX, offsetY };
             }
-            return ({shapes: newShapes, selectedShape: shape, mouseDown: false, polygonPoints: 1});
+            return ({shapes: newShapes, selectedShape: shape, mouseDown: false, polygonPoints: 1 });
         });       
     }
 
@@ -339,10 +335,7 @@ class DrawBox extends React.Component {
                     return s;
                 });
                 return ({shapes: shapes.concat(shapesToAdd)});
-            })
-            
-            console.log(value.image, shapesToAdd);
-
+            })  
         }
         if (name === 'select-shape') {
             if (/Line/.test(value))
@@ -396,11 +389,10 @@ class DrawBox extends React.Component {
 
     onSave({shapeName, saveOption, overwrite}) {
         const { shapes, shapeProps, draggable } = this.state;
-        // console.log(shapeName, saveOption, overwrite)
         let data;
         if (saveOption === 'group') {
-            const group = shapes.filter(s => s.nodeType)[0];
-            const restShapes = shapes.filter(s => s.shapeType).map((shape) => {
+            const group = deepCopy(shapes).filter(s => s.nodeType)[0];
+            const restShapes = deepCopy(shapes).filter(s => s.shapeType).map((shape) => {
                 shape.groupName = `${shapeName}`;
                 shape.props.draggable = draggable;
                 return {...shape};
@@ -414,7 +406,7 @@ class DrawBox extends React.Component {
             data = { name: shapeName, nodeType: 'Shape', image: shapes.map(s => ({...s})) };
         if (!overwrite)
             return this.props.saveShape(data);
-        return this.props.overwriteShape({data, name})
+        return this.props.overwriteShape(data);
     }
 
     chooseMode() {
@@ -466,9 +458,8 @@ class DrawBox extends React.Component {
     }
     
     render() {
-        const { shapeProps, stageProps, selectedShape, shapes, drawing, animate, draggable } = this.state;
+        const { dataLoaded, shapeProps, stageProps, selectedShape, shapes, drawing, animate, draggable } = this.state;
         const {stage, layer, undo, changeLayer, chooseMode, setDraggable, startAnimation, onSave} = this;
-        
         const selectControlProps = {
             onChange: this.onChangeSelect,
             shapeProps,
@@ -528,31 +519,28 @@ class DrawBox extends React.Component {
             return acc;
         }, []);
         console.log(this.state);
-        console.log(this.props);
         return (
-            <section className="draw-box page">
-                <h2>Создай своего монстра</h2>
-                <div className={stageClassName} ref={this.container}>
-                    <Stage className="draw-stage" ref={stage} {...StageProps}>
-                        <Layer ref={layer}>
-                            { Images }
-                        </Layer>
-                    </Stage>
-                </div>
-                <div className="draw-box__controls">
-                    <ShapeControlsWrapper {...shapeControlProps} />
-                    <SaveShapeForm {...saveFormProps} />
-                    <SelectControlsContainer {...selectControlProps} /> 
-                    <FunctionalControlsWrapper {...functionalControlProps} />
-                </div>
-            </section>
+                <section className="draw-box page">
+                    <h2>Создай своего монстра</h2>
+                    <div className={stageClassName} ref={this.container}>
+                        <Stage className="draw-stage" ref={stage} {...StageProps}>
+                            <Layer ref={layer}>
+                                { Images }
+                            </Layer>
+                        </Stage>
+                    </div>
+                    <ControlsPanel className="draw-box__controls" shouldUpdate={this.state.shouldUpdate}>
+                        <ShapeControlsWrapper {...shapeControlProps} />
+                        <SaveShapeForm {...saveFormProps} />
+                        <SelectControlsContainer {...selectControlProps} /> 
+                        <FunctionalControlsWrapper {...functionalControlProps} />
+                    </ ControlsPanel>
+                </section>
         );
     }
 }
 
 DrawBox.defaultProps = {
-    saveShape: f => f,
-    overwriteShape: f => f,
     shapeProps: {
         type: 'Line-simple',
         strokeWidth: 2,
@@ -574,4 +562,4 @@ DrawBox.defaultProps = {
     polygonPoints: 1,
 };
 
-export default connect(null, {saveShape})(DrawBox);
+export default connect(null, {saveShape, overwriteShape})(DrawBox);

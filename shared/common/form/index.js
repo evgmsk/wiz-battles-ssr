@@ -50,7 +50,7 @@ class SmartForm extends React.Component {
         this.initialValues = deepCopy(props.values);
         this.state = {
             values: deepCopy(props.values),
-            errors: props.errors || SmartForm.resetErrors(props.values),
+            errors: deepCopy(props.errors) || SmartForm.resetErrors(props.values),
             isValidating: false,
             isSubmitting: false,
             successfullySubmitted: false,
@@ -69,33 +69,49 @@ class SmartForm extends React.Component {
         // console.log('unmount')
     }
 
-    addChild(e, name, child) {
+    addChild({e, name, child}) {
+        if (name === undefined || child === undefined) {
+            throw new Error('Invalid arguments passed to SmartForm addChild. Func expect named arguments "name" and "child"')
+        }
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         e.preventDefault();
         e.stopPropagation();
-        this.setState(({ values, errors }) => {
+        this.setState(state => {
+            let values = deepCopy(state.values);
+            let errors = deepCopy(state.errors);
             const error = {...child};
             Object.keys(error).forEach(key => {
                 error[key] = null;
             });
-            const newValues = {...values, [name]:[...deepCopy(values[name]), child]};
-            const newErrors = {...errors, [name]:[...deepCopy(errors[name]), error]};
+            values = {...values, [name]:[...values[name], child]};
+            errors = {...errors, [name]:[...errors[name], error]};
             return { values: newValues, errors: newErrors }
         });
     };
 
-    removeChild(e, name, index) {
+    removeChild({e, name, index}) {
+        if (name === undefined || index === undefined) {
+            throw new Error('Invalid arguments passed to SmartForm removeChild. Func expect named arguments "name" and "index"')
+        }
         // need refactoring
-        e.preventDefault();
-        e.stopPropagation();
-        this.setState(({values, errors}) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        this.setState(state => {
+            let values = deepCopy(state.values);
+            let errors = deepCopy(state.errors);
             if (values[name].length > 1) {
-                const newValues = {
+                values = {
                     ...values,
                     [name]: values[name].filter((item, i) => i.toString() !== index.toString())};
-                const newErrors = {
+                errors = {
                     ...errors,
                     [name]: errors[name].filter((item, i) => i.toString() !== index.toString())};
-                return { values: newValues, errors: newErrors }
+                return { values, errors }
             }
         });
     };
@@ -239,17 +255,15 @@ class SmartForm extends React.Component {
             return;
         this.setState({isValidating: false, isSubmitting: true})
         const fetchResult = this.props.submit.fetch(values);
-        console.log(fetchResult);
-        if (fetchResult && !fetchResult.then) {
+        
+        if (!fetchResult || (fetchResult && !fetchResult.then)) {
             this.setState({
                 isSubmitting: false,
                 successfullySubmitted: true,
                 values: this.initialValues,
             })
-            console.log('1')
             this.props.submit.onResponse({status: 200, msg: "Successfuly submitted"});
-        } else {
-            console.log('3')
+        } else if (fetchResult && typeof fetchResult.then === 'function') {
             fetchResult.then(res => {
                 this.setState({
                     isSubmitting: false,
@@ -262,7 +276,6 @@ class SmartForm extends React.Component {
                 this.props.submit.onResponse(error);
             })
         }
-        
     }
 
     handleSubmit(event) {

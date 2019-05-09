@@ -60,11 +60,23 @@
     order:-1;
   }
   .save-form-wrapper {
+    position: relative;
     order: 4;
+    .overwrite-tooltip {
+      position: absolute;
+      z-index: 100;
+      background: #ededed;
+      color: #444444;
+      padding: .4rem;
+      border: 1px solid #444444;
+      border-radius: 3px;
+      button {
+        color:#888888;
+      }
+    }
   }
   .save-shape-form {
     width: auto;
-    // max-width: 15rem;
     margin: .2rem;
     color: #205f02;
     @include smart-flex(column, flex-start, flex-start);

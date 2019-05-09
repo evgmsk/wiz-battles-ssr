@@ -150,10 +150,12 @@ const LoginForm = (props) => {
                                             argsForHandlers={['emails', i]}
                                             {...restProps}
                                         />
-                                        <button type="button" className="btn btn-primary btn-outlined" onClick={e => addChild(e, 'emails', {name: '', email: ''})}>
+                                        <button type="button" className="btn btn-primary btn-outlined" onClick={e => 
+                                            addChild({e, name: 'emails', child: {name: '', email: ''}})}>
                                             Add email
                                         </button>
-                                        <button type="button" className="btn btn-primary" onClick={e => removeChild(e, 'emails', i)}>
+                                        <button type="button" className="btn btn-primary" onClick={e => 
+                                            removeChild({e, name: 'emails', index: i})}>
                                             X
                                         </button>
                                     </div>
