@@ -71,10 +71,9 @@ export const CustomLogin = connect(state => ({userName: state.app.userName}),{lo
     }
 );
 
-export const Login = props => {
+export const Login = connect(state => ({userName: state.app.userName}, {logout}))(props => {
     const {
         path = MainRoutes.login.path,
-        icon = Icons.login,
         className = 'nav-menu-item',
         userName,
         logout,
@@ -83,20 +82,32 @@ export const Login = props => {
     return (
         <React.Fragment>
             {userName
-                ?   <div className={`${className} external-item`} onClick={logout} >
-                        <FaSignOutAlt className="nav-icon"/>
-                    </div>
-                :   <NavItem
-                        to={path}
+                ?   <BtnWT
+                        variant="down-left"
                         className={`${className} external-item`}
-                        icon={Icons.login}
+                        onClick={logout}
+                        tooltip={`Click to logout`} 
                     >
-                        {children || <T keys={'nav_menu.login'} />}
-                    </NavItem>
+                        <FaSignOutAlt className="nav-icon"/>
+                    </BtnWT>
+                :   <BtnWT
+                        variant="down-left"
+                        className={`${className} external-item`}
+                        onClick={f => f}
+                        tooltip={`Click to signin or signup.`} 
+                    >
+                        <NavItem
+                            to={path}
+                            className={`${className} external-item`}
+                        >
+                            <FaSignInAlt className="nav-icon"/>
+                        </NavItem>
+                    </BtnWT>
+                    
             }
         </React.Fragment>
     )
-};
+});
 
 const MainNavRoutes = props => {
     const {routes, className} = props;

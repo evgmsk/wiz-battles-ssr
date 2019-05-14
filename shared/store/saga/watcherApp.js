@@ -9,6 +9,7 @@ function* workerCheckRefreshToken(action) {
     if (refreshToken) {
         try {
             const { data } = yield axios.post('/refresh-token', {token: refreshToken});
+            console.log(data)
             yield put({ type: ActionTypes.SAVE_REFRESH_TOKEN, payload: data.refreshToken });
             yield put({ type: ActionTypes.SAVE_USER_NAME, payload: data.userName });
             yield put({ type: ActionTypes.SAVE_TOKEN, payload: data.token}); 

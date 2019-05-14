@@ -11,15 +11,16 @@ export const initialStateStart = (userName = '', savedShapes = [], token = null,
 });
 
 export const initialStateGame = (
-    gameData = {
+    game = {
+        name: '',
+        token: '',
+        battle: false,
         musicVolume: 0.1,
         soundsVolume: 1,
-        resetHero: true,
-        currentLocation: {},
-        startBattle: false,
     },
-    hero = {
-        name: '',
+    gameData = {
+        currentLocation: {},
+        nickName: '',
         image: '',
         items: [],
         level: 1,
@@ -31,10 +32,10 @@ export const initialStateGame = (
         battlesWin: 0,
         spells: [],
         subjectLevels: {math: 0, lang: 0}
-    }) => ({ gameData, hero });
+    }) => ({ gameData, game });
 
-export const initialStateBattle = {
-    battle: {
+export const initialStateBattle = ({
+    battle = {
         pvp: false,
         difficulty: 'easy',
         subject: 'random',
@@ -44,7 +45,7 @@ export const initialStateBattle = {
         task: null,
         solution: null,
     },
-    player: {
+    player = {
         nickname: '',
         health: 100,
         spell: null,
@@ -53,7 +54,7 @@ export const initialStateBattle = {
         baseDamage: 30,
         experience: 0,
     },
-    opponent: {
+    opponent = {
         nickName: '',
         health: 100,
         level: 1,
@@ -62,4 +63,4 @@ export const initialStateBattle = {
         baseDamage: 30,
         experience: 0,
     },
-};
+}) => ({battle, player, opponent});

@@ -1,7 +1,3 @@
-/**
- * project new-wiz-bat
- */
-
-export default function expire() {
-    return Date.now() + 7*24*3600*10000;
+export default function expire(d = 7, h = 24, s = 3600, ms = 1000) {
+    return Date.now() + d*h*s*ms;
 }
