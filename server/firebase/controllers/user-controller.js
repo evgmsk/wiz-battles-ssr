@@ -33,7 +33,7 @@ export function signUp(req, res, next) {
 
 export function login(req, res, next) {
     const { password, email } = req.body;
-    const doc = updateTok(email);
+    const doc = updateTok('email');
     console.log('Doc', doc)
     if (!password || !email) {
         res.status(422);
