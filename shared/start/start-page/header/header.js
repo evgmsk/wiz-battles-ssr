@@ -5,6 +5,7 @@ import NavMenu, {Login} from '../nav-nenu/nav-menu';
 import {Langs} from '../../../common/constants/constants';
 import {Logo, LoginModal} from './header-components';
 import DuoLanguageSwitcher from './lang-menu';
+//import {Login} from '../nav-nenu/nav-menu';
 
 import './header.scss';
 
@@ -16,7 +17,7 @@ const Header = props => {
                 <NavMenu />
                 <div className="header__right-bar">
                     <DuoLanguageSwitcher langs={Langs} />
-                    <LoginModal withoutHeader withoutFooter fade />
+                    <Login />
                 </div>
             </div>
         </header>

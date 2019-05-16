@@ -27,7 +27,7 @@ const app = express();
 const index = mode === 'devCR';
 
 app.use((req, res, next) => {
-    console.log('logger', req.url, req.body, req.method, req.query, req.params);
+    console.log('logger', req.url, req.body, req.method, req.query);
     return next();
 });
 

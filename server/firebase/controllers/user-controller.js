@@ -1,24 +1,26 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
 import uuid from 'uuid';
 
-import { db } from '../firebase';
-import expire from '../../../shared/common/helper-functions/expiration';
-
-import {jwtOptions, jwtPrivetKey} from '../../../config/server-conf';
+import {Jwt} from '../../jwt';
+import { db, usersRef } from '../firebase';
+import {initialStateGame} from '../../../shared/store/initialState';
+import {expire} from '../../../shared/common/helper-functions';
+import updateTok from '../../services/user';
 
 export function signUp(req, res, next) {
     const user = req.body;
-    const checkQwery = db.collection("users").doc(user.email);
-    checkQwery.get().then(doc => {
+    const userRef = usersRef.doc(user.email);
+    userRef.get().then(doc => {
         if (doc.exists) {
             res.status(403);
             // res.statusMessage = "email_used";
             res.end();
         }
     });
+    const gameData = initialStateGame();
     user.password = bcrypt.hashSync(user.password, 10);
-    db.collection("users").doc(user.email).set({...user})
+    userRef.set({user, ...gameData})
         .then(docRef => {
             console.log("Document written with ID: ", docRef.id);
             res.end();
@@ -31,54 +33,52 @@ export function signUp(req, res, next) {
 
 export function login(req, res, next) {
     const { password, email } = req.body;
+    const doc = updateTok('email');
+    console.log('Doc', doc)
     if (!password || !email) {
         res.status(422);
         res.statusMessage('Empty email or password sent');
         res.end();
     }
-    const users = db.collection("users");
-    const user = users.doc(email);
-    return user.get().then(doc => {
-        if (doc.exists) {
-            const userData = doc.data();
-            if (bcrypt.compareSync(password, userData.password)) {
-                const token = jwt.sign(userData, jwtPrivetKey, jwtOptions);
-                const refreshToken = uuid();
-                const expiration = expire();
-                user.set({...userData, refreshToken, expiration});
-                res.json({userName: userData.name, token, refreshToken})
-            } else {
-                res.status(422);
-                res.statusMessage = "invalid_password";
-                res.end();
-            }
-        } else {
+    const user = usersRef.doc(email);
+    user.get().then(doc => {
+        if (!doc.exists) {
             res.status(422);
             res.statusMessage = "invalid_email";
-            res.end();
+            return res.end();
         }
+        const userData = doc.data();
+        if (bcrypt.compareSync(password, userData.user.password)) {
+            const token = Jwt.sign(userData.user);
+            const refreshToken = uuid();
+            const expireIn = expire();
+            user.set({...userData, refreshToken, expireIn});
+            res.json({userName: userData.user.name, token, refreshToken})
+        } else {
+            res.status(422);
+            res.statusMessage = "invalid_password";
+            res.end();
+        } 
     }).catch(error => next(error));
 }
 
 export function checkRefreshToken (req, res, next) {
     const { token } = req.body;
-    const users = db.collection("users");
-    users.where("refreshToken", "==", token).get().then(snapshot => {
-        console.log('exist?', snapshot.docs.length);
-        if (snapshot.docs.length) {
-            const userData = snapshot.docs[0].data();
-            console.log(userData, Date.now(), userData.expiration, Date.now() < userData.expiration);
-            if (Date.now() < userData.expiration) {
-                const token = jwt.sign(userData, jwtPrivetKey, jwtOptions);
-                const refreshToken = uuid();
-                const expiration = expire();
-                users.doc(userData.email).set({...userData, refreshToken, expiration});
-                return res.json({userName: userData.name, token, refreshToken})
-            } else {
-                res.status(401);
-                res.statusMessage = "invalid_token";
-                res.end();
-            }
+    usersRef.where("refreshToken", "==", token).get().then(snapshot => {
+        if (!snapshot.docs.length) {
+            res.status(401);
+            res.statusMessage = "invalid_token";
+            return res.end();
+        }
+        const userData = snapshot.docs[0].data();
+        const userName = userData.user.name;
+        // console.log(userData, userName, Date.now() < userData.expireIn);
+        if (Date.now() < userData.expireIn) {
+            const token = Jwt.sign(userData);
+            const refreshToken = uuid();
+            const expireIn = expire();
+            usersRef.doc(userData.user.email).set({...userData, refreshToken, expireIn});
+            return res.json({userName, token, refreshToken});
         } else {
             res.status(401);
             res.statusMessage = "invalid_token";

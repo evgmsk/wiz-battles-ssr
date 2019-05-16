@@ -34,7 +34,10 @@ class FormsWrapper extends React.Component {
                     resMsg: funcT({keys: "res_messages.success_signin"}),
                     submitFail: false
                 });
-                setTimeout(() =>  {this.setState({resMsg: ''}); this.props.toggle()}, 1000);
+                setTimeout(() =>  {
+                        this.setState({resMsg: ''});
+                        this.props.toggle && this.props.toggle();
+                    }, 1000);
                
                 const data = res.data;
                 saveUserName(data.userName);
