@@ -1,0 +1,46 @@
+@import "../../../Scss/constants";
+
+.hero-stats-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: $life;
+  padding: 10rem;
+  color: $ice;
+  font: $font-main;
+  h2 {
+    text-align: center;
+    font-size: 3rem;
+  }
+  .hero-stats-table {
+    position: relative;
+    margin: 0 auto;
+    @include flex(space-between, space-around, column);
+    .stats-row {
+      margin: 2rem 0;
+      border-bottom: solid 2px $ice;
+      @include flex(space-between, center)
+    }
+    @media (min-width: 900px) {
+      width: 50%;
+    }
+  }
+  button {
+    font: $font-main;
+    font-size: 3rem;
+    position: relative;
+    margin: 3rem 1rem 0;
+    background: #db6400;
+    border: 0;
+    padding: 1rem 2rem;
+    border-radius: 2rem;
+    color: $ice;
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      color: #DB6400;
+      background: $ice;
+    }
+  }
+}

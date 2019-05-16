@@ -1,0 +1,53 @@
+@import "../../../Scss/constants";
+
+.game-menu {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  @include flex(space-between, center, column);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  .game-menu-button {
+    width: 240px;
+    height: 50px;
+    border: solid 3px $game-menu-border;
+    background: $game-menu-btn;
+    color:$game-menu-border;
+    border-radius: 25px;
+    font: 2rem/1 Rubik, Helvetica, 'sans-serif';
+    font-weight: 700;
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      border: solid 3px $game-menu-btn;
+      background: $game-menu-border;
+      color: $game-menu-btn;
+    }
+  }
+  .drop-game-menu {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.5s;
+    &.hidden {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .drop-game-menu-wrapper {
+      width: 240px;
+      height: 40px;
+      //padding: 0 0.5rem;
+      @include flex(space-around, center);
+      background: $game-menu-btn;
+      border: solid 3px $game-menu-border;
+      border-radius: 25px;
+    }
+    svg {
+      width: 2.4rem;
+      height: 2.4rem;
+      color: $game-menu-border;
+    }
+  }
+
+}

@@ -1,0 +1,176 @@
+@import '../../../Scss/_constants';
+
+.task-section {
+  position: absolute;
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient($task-section, lighten($task-section, 10%));
+  opacity: 0;
+  padding: 5rem;
+  z-index: 100;
+  &.active {
+    opacity: 1;
+    transition: opacity .8s;
+  }
+  &.active .task-wrapper {
+    opacity: 0.8;
+    transition: opacity .8s;
+  }
+  .task-wrapper {
+    position: relative;
+    border-radius: 2rem;
+    box-sizing: border-box;
+    padding: 1rem;
+    @extend %inset-shadow;
+    background: $task-wrapper;
+    min-height: calc(100vh - 10rem);
+    opacity: 0;
+    transition: opacity .8s;
+    @media (max-width: 760px) {
+      min-height: calc(100vh - 10rem);
+    }
+    .task-background {
+      min-height: calc(100vh - 12rem);
+      background-size: 25rem;
+      background: $task-panel;
+      box-sizing: border-box;
+      position: relative;
+      padding: 4rem;
+      @include flex(space-around, center, column);
+      border-radius: 1.5rem;
+      @extend %inset-shadow;
+      @media (max-width: 760px) {
+        min-height: calc(100vh - 12rem);
+      }
+    }
+  }
+}
+.task-description {
+  min-width: 200px;
+  font: $font-main;
+  color: $input-text-color;
+  @include flex(center, center, column);
+  .sound-description {
+    margin: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .task-title {
+    font: 2.6rem/1 'Calibri', 'sans-serif';
+    margin: 5px auto 20px;
+    text-align: center;
+  }
+  .task-comment {
+    font: 2rem/1 'Helvetica', 'sans-serif';
+    text-align: justify;
+    max-width: 60rem;
+  }
+  svg {
+    font-size: 40px;
+    color: $task-text-color;
+    order: -1;
+  }
+}
+.task-expression {
+  @include flex();
+  min-width: 200px;
+  font: 4rem/1 'Arail', 'serif';
+  color: $task-text-color;
+  .sound-expression {
+    margin: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    svg {
+      font-size: 40px;
+      color: $task-text-color;
+      &:hover {
+        color: $task-section;
+      }
+    }
+  }
+}
+.solution-effect {
+  position: absolute;
+  min-height: 5rem;
+  z-index: -1;
+  transform: translate(-50%, -50%);
+  font: 0/1 'Calibri', 'sans-serif';
+  visibility: hidden;
+  border-radius: 20px;
+  padding: 2rem;
+  &.correct {
+    visibility: visible;
+    transform: translateX(0px);
+    background: $life;
+    color: $ice;
+    border: solid 5px $ice;
+    z-index: 101;
+    font-size: 5rem;
+    transition: font-size 1s;
+  }
+  &.fail {
+    visibility: visible;
+    background: $bg-popup;
+    color: $ice;
+    z-index: 101;
+    transform: translateX(0px);
+    font-size: 5rem;
+    transition: font-size 1s;
+  }
+}
+.possible-answer {
+  font: 1.5rem/1 'Helvetica', 'sans-serif';
+  color: $task-text-color;
+  margin: 10px;
+}
+.answers-to-select {
+  visibility: hidden;
+  &.shown {
+    visibility: visible;
+    input,
+    label {
+      font: 1.5rem/1 'Helvetica', 'sans-serif';
+      color: $task-text-color;
+      margin: 10px;
+    }
+  }
+}
+.answer-input-wrapper {
+  @include flex (space-around, space-between, column);
+  input {
+    margin: 10px;
+    border-radius: 3px;
+    padding: 5px 10px;
+    min-height: 2rem;
+    outline: none;
+
+    &::placeholder {
+      font: 1.8rem/1 'Helvetica', 'sans-serif';
+      color: $task-text-color
+    }
+    &:last-of-type {
+      font: 2rem/1 'Amaranth', 'Helvetica', 'sans-serif';
+      color: #fefefe;
+      background: $task-text-color;
+      cursor: pointer;
+      &:hover,
+      &:focus {
+        background: $task-section;
+      }
+    }
+  }
+}
+.show-radio {
+  font: 2rem/1 'Amaranth', 'Helvetica', 'sans-serif';
+  color: #fefefe;
+  background: $task-text-color;
+  margin-bottom: 20px;
+  padding: 5px;
+  cursor: pointer;
+  &:hover,
+  &:focus {
+    background: $task-section;
+  }
+}

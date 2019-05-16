@@ -1,0 +1,124 @@
+@import "../../../../Scss/_constants";
+
+.left-battle-bar,
+.right-battle-bar {
+  position: absolute;
+  top:40px;
+  @include flex(center, center, column);
+  width: calc(#{$progress-bar-width} + 30px);
+  z-index: 20;
+  font: 2.4rem/1 Calibri, 'sans-serif';
+  font-weight: 700;
+  .bar-name {
+    color: $experience;
+  }
+  .bar-level {
+    margin: 20px 0 0;
+    @include flex(space-around);
+    color: $experience;
+    p {
+      margin: 0 0.5rem;
+    }
+  }
+  .health-box,
+  .experience-box {
+    margin: 20px 0 0;
+  }
+  .health-progress,
+  .experience-progress {
+    position: relative;
+    width: $progress-bar-width;
+    height: $progress-bar-height;
+    border-radius: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
+    .experience-bar,
+    .health-bar {
+      position: absolute;
+      top:-2px;
+      height: $progress-bar-height;
+      border-radius: 10px;
+    }
+  }
+  .experience-progress {
+    border: solid 2px $experience;
+    background-color: darken($experience, 40%);
+    .experience-bar {
+      background: $experience;
+    }
+  }
+  .health-progress {
+    background-color: darken($health, 25%);
+    border: solid 2px $health;
+    .health-bar {
+      background: $health;
+    }
+  }
+  .health-value,
+  .experience-value {
+    min-width: 30px;
+    font: 20px/1 'Arial', 'sans-serif';
+  }
+}
+.left-battle-bar {
+  align-items: flex-start;
+  left: 40px;
+  .health-box,
+  .experience-box {
+    @include flex(space-around, center);
+    span {
+      order: 1;
+      margin-left: 10px;
+    }
+  }
+  .health-value {
+    color: $health;
+  }
+  .experience-value {
+    color: $experience;
+  }
+  .experience-bar,
+  .health-bar {
+    left: 0;
+  }
+}
+.right-battle-bar {
+  align-items: flex-end;
+  right: 40px;
+  .bar-level {
+    p:last-of-type {
+      order: -1;
+    }
+  }
+  .health-box,
+  .experience-box {
+    @include flex(space-around, center);
+    span {
+      order: -1;
+      margin-right: 10px;
+    }
+  }
+  .health-value {
+    color: $health;
+  }
+  .experience-value {
+    color: $experience;
+  }
+  .experience-bar,
+  .health-bar {
+    right: 0;
+  }
+}
+
+@for $i from 0 to 101 {
+  .health-bar.health-#{$i} {
+    width: calc(#{$i} * #{$progress-bar-width} / 100);
+    transition:  width 1.5s;
+  }
+}
+@for $i from 0 to 101 {
+  .experience-bar.experience-#{$i} {
+    width: calc(#{$i} * #{$progress-bar-width} / 100);
+    transition:  width 1.5s;
+  }
+}

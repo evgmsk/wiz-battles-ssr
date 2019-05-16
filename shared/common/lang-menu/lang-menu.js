@@ -31,7 +31,7 @@ DuoLanguageSwitch.propTypes = {
     lang: PropTypes.string.isRequired,
     setLanguage: PropTypes.func.isRequired,
     langs: PropTypes.array.isRequired,
-}
+};
 
 export const LanguageSwitcher = props => {
     //to do

@@ -1,0 +1,74 @@
+@import "../../../Scss/constants";
+
+.heroes-menu-wrapper {
+  background: #ecf4f6;
+  height: 100%;
+  @include flex(space-around, center, column);
+  h2 {
+    font: 4rem/1 'Rubik', Helvetica, 'sans-serif';
+    color: $game-menu-border;
+    text-align: center;
+  }
+  .heroes-menu-menu {
+    width: 300px;
+    @include flex(space-around, center, column);
+    margin: 0 auto 100px;
+  }
+  .hero-input-wrapper {
+    margin: 20px auto;
+    width: 100%;
+    @include flex(space-between, center);
+    color: #887f4e;
+    font: 2rem/1 Rubik, 'sans-serif';
+    input {
+      height: 3rem;
+      width: 150px;
+    }
+    [type='text'] {
+      border: solid 2px $game-menu-border;
+      padding: 0 0.5rem;
+      border-radius: 3rem;
+      &::placeholder {
+        color: $game-menu-border;
+      }
+    }
+    [type='button'] {
+      background: $game-menu-border;
+      color: #ffffff;
+      width: 162px;
+      height: 3.4rem;
+      font: 2.2rem/1 'Rubik', Helvetica, 'sans-serif';
+      border: solid 2px $game-menu-border;
+      border-radius: 3rem;
+      cursor: pointer;
+      &:focus,
+      &:hover {
+        background: #ffffff;
+        color: $game-menu-border;
+      }
+    }
+  }
+  [type="submit"] {
+    background: #ffffff;
+    color: $game-menu-border;
+    border: solid 3px$game-menu-border;
+    width: 100%;
+    margin-top: 20px;
+    padding: 1rem 2rem;
+    border-radius: 4rem;
+    font: 2.4rem/1 'Rubik', Helvetica, 'sans-serif';
+    font-weight: 700;
+    cursor: pointer;
+    &:focus,
+    &:hover {
+      color: #ffffff;
+      border: solid 3px $game-menu-border;
+      background: $game-menu-border;
+    }
+  }
+}
+.heroes-wrapper{
+  @include flex(center, center);
+  width: 90%;
+  max-width: 900px;
+}
