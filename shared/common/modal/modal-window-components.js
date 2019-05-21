@@ -1,7 +1,3 @@
-/**
- * project new-wiz-bat
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 

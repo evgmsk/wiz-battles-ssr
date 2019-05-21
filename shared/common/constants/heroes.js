@@ -5,7 +5,7 @@ import KateImage from '../../assets/images/heroes/kate.png';
 import AntonImage from '../../assets/images/heroes/anton.png';
 import VasyaImage from '../../assets/images/heroes/vasya.png';
 
-export const Heroes = {
+const Heroes = {
     Anton,
     Katya,
     Vasya,
@@ -284,3 +284,5 @@ export const Vasya = {
     frameRate: 4,
     frameIndex: 0,
 };
+
+export default Heroes;

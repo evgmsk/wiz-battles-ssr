@@ -1,6 +1,3 @@
-/**
- * project new-wiz-bat
- */
 import React from 'react';
 
 import Register from '../reg-form/reg-form';
@@ -44,11 +41,10 @@ export class FormsContainer extends React.Component {
     }
 
     render() {
-        const {onResponse, forgotPassword, action} = this.props;
-        // const submitButtonValue = action === 'login' ? 'Submit / login' : 'Submit / signup';
-        const regFormProps = { onResponse, className:"reg-form" };
-        const resetFromProps = { onResponse, className:"reset-form-wrapper" };
-        const logFormProps = { onResponse, className:"log-form", forgotPassword };
+        const {submitRegForm, submitLogForm, submitResetForm, forgotPassword, action} = this.props;
+        const regFormProps = { submitHandler: submitRegForm, className:"reg-form" };
+        const resetFromProps = { submitHandler: submitResetForm, className:"reset-form-wrapper" };
+        const logFormProps = { submitHandler: submitLogForm, className:"log-form", forgotPassword };
         const ResetForm = <WithTransition jsx Component={ResetPassword} inProp={action === 'reset'} {...resetFromProps} />;
         const RegForm = <WithTransition jsx Component={Register} inProp={action === 'signup'} {...regFormProps} />;
         const LoginFrom = <WithTransition jsx Component={Login} inProp={action === 'login'} {...logFormProps}/>;

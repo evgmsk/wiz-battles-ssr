@@ -1,8 +1,5 @@
-/**
- * project smartWizBattle
- */
 export const initialStateStart = (userName = '', savedShapes = [], token = null, lang = 'en') => ({
-    app: {
+    user: {
         userName,
         savedShapes,
         token,
@@ -10,42 +7,40 @@ export const initialStateStart = (userName = '', savedShapes = [], token = null,
     }
 });
 
-export const initialStateGame = (
-    game = {
-        name: '',
-        token: '',
-        battle: false,
-        musicVolume: 0.1,
-        soundsVolume: 1,
-    },
-    gameData = {
-        currentLocation: {},
-        nickName: '',
-        image: '',
-        items: [],
-        level: 1,
-        experience: 0,
-        health: 100,
-        taskResolved: 0,
-        taskFailed: 0,
-        battlesLost: 0,
-        battlesWin: 0,
-        spells: [],
-        subjectLevels: {math: 0, lang: 0}
-    }) => ({ gameData, game });
+export const initGame =  {
+    battle: false,
+    musicVolume: 0.1,
+    soundsVolume: 1,
+    currentLocation: {},
+    pvp: false,
+    difficulty: 'easy',
+    subject: 'random',
+    timeLimit: false,
+};
 
-export const initialStateBattle = ({
-    battle = {
-        pvp: false,
-        difficulty: 'easy',
-        subject: 'random',
-        timeLimit: false,
+export const initHero = {
+    nickName: '',
+    image: '',
+    items: [],
+    level: 1,
+    experience: 0,
+    health: 100,
+    taskResolved: 0,
+    taskFailed: 0,
+    battlesLost: 0,
+    battlesWin: 0,
+    spells: [],
+    subjectLevels: {math: 0, lang: 0}
+}
+
+export const initBattleState = {
+    battle: {
         playerMove: true,
         scene: {},
         task: null,
         solution: null,
     },
-    player = {
+    player: {
         nickname: '',
         health: 100,
         spell: null,
@@ -54,7 +49,7 @@ export const initialStateBattle = ({
         baseDamage: 30,
         experience: 0,
     },
-    opponent = {
+    opponent: {
         nickName: '',
         health: 100,
         level: 1,
@@ -62,5 +57,13 @@ export const initialStateBattle = ({
         image: {},
         baseDamage: 30,
         experience: 0,
-    },
-}) => ({battle, player, opponent});
+    }
+}
+
+export const initialStateGame = (args) => {
+    let {game, hero, battle} = args || {};
+    hero = hero || initHero;
+    game = game || initGame;
+    battle = battle || initBattleState;
+    return {game, hero, ...battle};
+};    

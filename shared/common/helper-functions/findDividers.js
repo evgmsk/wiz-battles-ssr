@@ -1,7 +1,3 @@
-/**
- * project WizBattle.
- */
-
 const findDividers = (num, res = [1], i = 2) => {
     if (num === 1)
         return res;

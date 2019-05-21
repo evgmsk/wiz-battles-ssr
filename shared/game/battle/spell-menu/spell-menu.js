@@ -1,14 +1,10 @@
-/**
- * project WizBattle
- */
+
 import React from 'react';
 import {TiLeaf as Life, TiWeatherSnow as Ice, TiWeatherShower as Water } from 'react-icons/ti';
 import {FaFire as Fire} from 'react-icons/fa';
-// import Ice from 'react-icons/lib/ti/weather-snow';
-// import Water from 'react-icons/lib/ti/weather-shower';
-import { Spells } from '../../../ConstsData/constants';
-import onSound from '../../../HelperFunctions/speaker';
-import './spellsMenu.scss';
+import { Spells } from '../../../../ConstsData/constants';
+import onSound from '../../../../HelperFunctions/speaker';
+import './selectSpell.scss';
 
 class SpellSelector extends React.Component {
     constructor(props) {
@@ -21,16 +17,16 @@ class SpellSelector extends React.Component {
         };
     }
     componentDidMount() {
-        this.onSound('Выбирите заклинание');
-        // this.onSound('Выбирите заклинание');
+        onSound('Выбирите заклинание');
     }
     onClick(e, data) {
         e.stopPropagation();
         e.preventDefault();
+        const volume = this.props.soundsVolume;
         const spellCase = data === 'life' ? 'Эта магия исцеляет' : 'Эта магия наносит урон';
         const sound = `Вы выбрали магию ${Spells[data]}. ${spellCase}`;
         this.setState({ spell: data });
-        this.onSound(sound);
+        onSound(sound, 'ru-RU', 1, volume);
     }
     onConfirm(e) {
         e.stopPropagation();
@@ -39,24 +35,7 @@ class SpellSelector extends React.Component {
         if (spell)
             this.props.onSelectSpell(this.state.spell);
         else
-            this.onSound('вы не выбрали заклинание');
-    }
-    onSound(text, volume = 1) {
-        const synth = window.speechSynthesis;
-        const voices = synth.getVoices();
-        const voice = voices.filter(x => x.lang === 'ru-RU')[0];
-        console.log(text, voice);
-        const speak = () => {
-            if (text !== '') {
-                const utterThis = new SpeechSynthesisUtterance(text);
-                utterThis.voice = voices.length === 20 ? voices[16] : voices[voice];
-                utterThis.rate = 1;
-                utterThis.pitch = 1;
-                utterThis.volume = volume;
-                synth.speak(utterThis);
-            }
-        };
-        speak();
+            onSound('вы не выбрали заклинание', 'ru-RU', 1);
     }
     render() {
         const selectSpell = this.onClick;

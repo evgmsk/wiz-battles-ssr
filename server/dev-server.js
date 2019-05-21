@@ -10,26 +10,17 @@ const favicon = require('serve-favicon');
 const { SC, dbConnect } = require('../config/server-conf');
 const paths = require('../config/paths');
 const config = require('../webpack.config');
-import freePort from './free-port'; // helper function to find unused port
+const freePort = require('./free-port');
+const serverStore = require('./middleware/createAndAttachStore');
+const verify = require('./middleware/verifyAndAttachUser');
+const userRouter = require('./routes/user-firebase');
 
-// const lang = require('./routes/lang');
-import userRouter from './routes/users-firebase';
-
-//console.log(data)
-//const shapes = JSON.parse(data);
-// global.React = React;
-const mode = process.env.NODE_ENV;
-// console.log(mode ,'drgdrgd')
+const mode = process.env.NODE_ENV; 
 
 const compiler = webpack(config);
 const app = express();
 
 const index = mode === 'devCR';
-
-app.use((req, res, next) => {
-    console.log('logger', req.url, req.body, req.method, req.query);
-    return next();
-});
 
 app.use(devMiddleware(compiler, {
     stats: 'minimal',
@@ -43,6 +34,13 @@ app.use(hotMiddleware(compiler, {
 }));
 
 app.use(parser.json());
+app.use((req, res, next) => {
+    console.log('logger', req.url, req.body, req.method, req.query);
+    return next();
+});
+
+app.use(serverStore);
+app.use(verify);
 
 app.use(parser.urlencoded({ extended: true}));
 app.use(function(req, res, next) {
@@ -50,6 +48,8 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
+app.use(userRouter);
 
 if (!index) {
     const start = require('./routes/home');
@@ -60,7 +60,7 @@ if (!index) {
     app.use(start);
 }
 
-app.use(userRouter);
+
 
 // Wrap for the 'App.listen' which takes unused port from 'freePort'
 const listen = (port) => {
@@ -75,6 +75,5 @@ const listen = (port) => {
         console.log(`Listening at ${url}`);
     });
 };
-
 
 freePort(SC.port).then(listen, err => console.log(err));

@@ -4,17 +4,21 @@ import { StaticRouter } from 'react-router-dom';
 import React from "react";
 import ignoreStyles from 'ignore-styles';
 import {Provider} from 'react-redux';
-import { ChunkExtractor } from '@loadable/server';
+// rsimport { ChunkExtractor } from '@loadable/server';
+import uuid from 'uuid';
 // console.log(ChunkExtractor);
 
 import {verifyUser, Jwt} from '../jwt';
-import {expires} from '../../shared/common/helper-functions';
+// import {expire} from '../../shared/common/helper-functions';
 import {usersRef} from '../firebase/firebase';
-import paths from '../../config/paths';
+import {initialStateStart, initialStateGame} from '../../shared/store/initialState'
+import {createPage, updateAndSend} from '../services/user';
 import storeFactory from '../../shared/store';
-import {initialStateStart, initialStateGame} from '../../shared/store/initialState';
 import template from '../htmlTemplate';
 import StartPage from '../../shared/start/start-page';
+import {updateUser} from '../../shared/store/actions/userActions';
+import {updateGame} from '../../shared/store/actions/gameActions';
+import {updateHero} from '../../shared/store/actions/heroActions';
 
 const GameUI = require('../../shared/game/gameUI/gameUI');
 
@@ -22,33 +26,33 @@ global.React = React;
 
 exports.game = (req, res) => {
     const User = verifyUser(req);
-    console.log('user', User);
+    console.log('game','user', User);
     if (!User) {
-        return
-    }
-    // const statsFile = path.resolve(`../${paths.prodPath}/loadable-stats.json`);
-    // const extractor = new ChunkExtractor({ statsFile });
-    const userRef = usersRef.doc(User.user.email);
-    userRef.get().then(doc => {
-        if (!doc.exists) {
-            throw new Error(`User with ${User.user.email} was not found`)
-        }
-        const userData = doc.data();
-        const {game, gameData, user: {name}} = userData;
-        const expireIn = expire();
-        user.set({...userData, refreshToken, expireIn});
-        const token = Jwt.sign(User);
-        const initialState = {game: {...game, name, token}, gameData}
-        const store = storeFactory(null, initialState);
-        const redux_state = store.getState();
-        console.log('game');
-        const jsx = ( <Provider store={store}><div>Game</div> </Provider> );
-       // const scriptTags = extractor.getScriptTags();
-        const reactDom = renderToString(jsx);
-        const Html = template(reactDom, redux_state, ["./css/game.css"], ["./js/game.js"], "wiz-battle-game");
-        res.send(Html);
-    })
-    
+        createPage(req, res);
+    } else {
+        const {lang, name, email} = User;
+        const tokenPayload = {name, email, lang};
+        // const statsFile = path.resolve(`../${paths.prodPath}/loadable-stats.json`);
+        // const extractor = new ChunkExtractor({ statsFile });
+        const userRef = usersRef.doc(email);
+        updateAndSend(userRef);
+        userRef.get().then(doc => {
+            if (!doc.exists) {
+                throw new Error(`User with ${email} was not found`)
+            }
+            const {game, hero} = doc.data();
+            req.store.dispatch(updateGame(game));
+            req.store.dispatch(updateHero(hero));
+            const token = Jwt.sign(tokenPayload);
+            let {user} = initialStateStart();
+            user = {...user, token, lang: tokenPayload.lang, userName: tokenPayload.name};
+            console.log(user);
+            req.store.dispatch(updateUser(user));
+            createPage(req, res);
+        }).catch(e => {
+            console.log(e);
+        })
+    } 
 };
 
 exports.start = (req, res) => {

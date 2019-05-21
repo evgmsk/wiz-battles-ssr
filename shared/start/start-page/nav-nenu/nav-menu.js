@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 // import PropTypes from 'prop-types';
 
-import {logout} from '../../../store/actions/appActions';
+import {logout} from '../../../store/actions/userActions';
 import BtnWT from '../../../common/btn-with-tooltip/btn';
 import { MainRoutes } from '../../../common/constants/constants';
 import NavItem, {SpecialLink} from './nav-item';
@@ -30,7 +30,7 @@ const Icons = {
 };
 
 const Game = props => {
-    const {app: {userName, token}, icon, ...restProps} = props;
+    const {user: {userName, token}, icon, ...restProps} = props;
     if (!userName)
         return null;
     let href = props.href || MainRoutes.game.path;
@@ -38,18 +38,18 @@ const Game = props => {
     return (
         <SpecialLink href={href} {...restProps}>
             <T keys={'nav_menu.game'} />
-        {icon && <FaGamepad className="nav-icon" />}
-    </SpecialLink>
+            {icon && <FaGamepad className="nav-icon" />}
+        </SpecialLink>
     )
 };
 
 Game.propTypes = {
-    app: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
 }
 
-export const GameConnected = connect(state => ({app: state.app}))(Game);
+export const GameConnected = connect(state => ({user: state.user}))(Game);
 
-export const CustomLogin = connect(state => ({userName: state.app.userName}),{logout})(
+export const CustomLogin = connect(state => ({userName: state.user.userName}),{logout})(
     ({className = 'nav-menu-item', userName, logout, toggle}) => {
         return (
             <BtnWT
@@ -71,7 +71,7 @@ export const CustomLogin = connect(state => ({userName: state.app.userName}),{lo
     }
 );
 
-export const Login = connect(state => ({userName: state.app.userName}, {logout}))(props => {
+export const Login = connect(state => ({userName: state.user.userName}), {logout})(props => {
     const {
         path = MainRoutes.login.path,
         className = 'nav-menu-item',

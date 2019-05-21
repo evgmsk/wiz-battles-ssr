@@ -3,21 +3,23 @@
  */
 import { Layer, Stage, Image } from 'react-konva';
 import React from 'react';
+
 import BGBattle from '../../images/scenes/battle_scene_0.jpg';
 import GameBg from '../../images/GameBackgrounds/game_map_0.jpg';
 import Music from '../../sounds/forest.mp3';
 import {
     definePlayer,
     defineAIOpponent,
-} from '../../GameFunctions/battleFunctions';
-import BattleContainer from '../../Containers/battleContainer';
-import HeroesHallContainer from '../../Containers/menuHeroesContainer';
-import Spinner from '../OnloadDataSpinner/SpinnerUI';
-import HeroAchievements from './HeroAchievements/Achievements';
-import GameMenu from '../../Containers/gameMenuContainer';
-import onMusicEnd from '../../HelperFunctions/onMusicEnd';
-import ModalWindow from '../ModalWindow/ModalWindow';
-import './game.scss';
+} from '../common/game-functions';
+
+import Battle from './battle/battle';
+// import HeroesHallContainer from '../../Containers/menuHeroesContainer';
+// import Spinner from '../OnloadDataSpinner/SpinnerUI';
+// import HeroAchievements from './HeroAchievements/Achievements';
+// import GameMenu from '../../Containers/gameMenuContainer';
+// import onMusicEnd from '../../HelperFunctions/onMusicEnd';
+// import ModalWindow from '../ModalWindow/ModalWindow';
+// import './game.scss';
 
 class Game extends React.Component {
     constructor(props) {
@@ -27,12 +29,12 @@ class Game extends React.Component {
         this.container = React.createRef();
         this.hero = React.createRef();
         this.opponent = React.createRef();
-        const [width, height] = [window.innerWidth * 0.8, window.innerHeight * 0.6];
-        const [initialWidth, initialHeight] = [...[width, height]];
+        const [] = [100, 100];
         this.state = {
             showSpinner: true,
-            stageProps: { width, height, initialWidth, initialHeight, scaleX: 1, scaleY: 1 },
+            stageProps: { width, height, scaleX: 1, scaleY: 1 },
             showHeroData: false,
+            initialSize: {initialWidth: 100, initialHeight: 100}
         };
         this.newBattle = this.newBattle.bind(this);
         this.showStats = this.showStats.bind(this);
@@ -77,19 +79,17 @@ class Game extends React.Component {
     canvasGameResize(e) {
         e.cancelBubble = true;
         const container = this.container.current;
-        const { initialWidth, initialHeight } = this.state.stageProps;
+        const { initialWidth, initialHeight } = this.state.initialSize;
         const [width, height] = [container.offsetWidth, container.offsetHeight];
         const [scaleX, scaleY] = [width / initialWidth, height / initialHeight];
-        const stageProps = { width, height, initialWidth, initialHeight, scaleX, scaleY };
+        const stageProps = { width, height, scaleX, scaleY };
         this.setState({ stageProps });
     }
+
     setInitialSize() {
         const container = this.container.current;
-        const [width, height] = [container.offsetWidth, container.offsetHeight];
-        const [initialWidth, initialHeight] = [...[width, height]];
-        let { stageProps } = this.state;
-        stageProps = { ...stageProps, width, height, initialWidth, initialHeight };
-        this.setState({ stageProps });
+        const [initialWidth, initialHeight] = [container.offsetWidth, container.offsetHeight];
+        this.setState(({initialSize}) => ({initialSize: {initialWidth, initialHeight}}))
     }
     mountMap() {
         const image = new window.Image();

@@ -1,6 +1,3 @@
-/**
- * project WizBattle
- */
 import AT from '../actions/actionTypes';
 
 
@@ -22,7 +19,7 @@ const shapes = (state = [], action) => {
 };
 
 
-const app = (state = {}, action) => {
+const user = (state = {}, action) => {
     switch (action.type) {
         case (AT.SAVE_USER_NAME):
             return {
@@ -59,4 +56,4 @@ const app = (state = {}, action) => {
     }
 };
 
-export default app;
+export default user;

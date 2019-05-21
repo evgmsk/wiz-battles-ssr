@@ -1,6 +1,3 @@
-/**
- * project WizBattle.
- */
 import AT from './actionTypes';
 
 export const saveImage = payload => {
@@ -87,5 +84,12 @@ export const setTaskFailed = payload => {
     return {
         type: AT.SET_TASKS_FAILED,
         payload,
+    };
+};
+
+export const updateHero = payload => {
+    return {
+        type: AT.UPDATE_HERO,
+        payload
     };
 };

@@ -9,34 +9,12 @@ import validators from '../../../common/validators';
 import SmartForm, { SmartInput } from '../../../common/form/index';
 import {funcT} from '../../../translator'
 
-const SpecifiedInput = props => {
-    const [shown, setShown] = useState(false);
-    let {type, ...restProps } = props;
-    const onClick = e => setShown(!shown);
-    type = shown ? 'text' : type;
-
-    return  <div className="reg-form-wrapper">
-        <SmartInput type={type} {...restProps} />
-        <span className="password-eye" onClick={onClick}>{
-            shown ? <FaEyeSlash/> : <FaEye/>
-        }</span>
-    </div>
-};
-
-const ResetForm = ({ className, onResponse = f => f }) => {
+const ResetForm = ({ className, submitHandler }) => {
     const values = {
         email: "",
     };
     const validationSchema = {
         email: validators.email,
-    };
-
-    const submitHandler = {
-        fetch: data => {
-            const {repeatPassword, ...Data} = data;
-            return axios.post('/reset-password', Data)
-        },
-        onResponse: onResponse,
     };
 
     return (

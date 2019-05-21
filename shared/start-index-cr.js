@@ -8,7 +8,7 @@ import Test from './start/login/testLogin'
 import StartPage from './start/start-page-cr'
 import storeFactory from './store/index';
 import {initialStateStart} from './store/initialState';
-import {authenticateUser, checkSavedImages} from './store/actions/appActions';
+import {authenticateUser, checkSavedImages} from './store/actions/userActions';
 
 import './assets/favicon.ico'
 

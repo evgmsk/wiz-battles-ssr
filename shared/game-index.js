@@ -1,29 +1,32 @@
-/**
- * project new-wiz-bat
- */
 import React from 'react';
-import ReactDOM from 'react-dom';
+import  ReactDom, { hydrate, render } from 'react-dom';
+import 'typeface-roboto';
+import {Provider} from 'react-redux';
 
+import storeFactory from './store/index';
+import {initialStateGame} from './store/initialState';
 import './assets/favicon.ico'
-/*import AppContainer from './Containers/appContainer';
-import storeFactory from './Store';*/
-// import LoginForm from './login/Login';
 
-// import './reset.scss';
-// import './GameFunctions/TaskGenerators/langaugeTaskGenerator';
-/*import { onSaveMonster } from '../src/actions/actions/gameDataActions';
-import Monsters from './data/monsters.json';*/
+import '../shared/scss/reset.scss';
 
-/*
-const store = storeFactory();
+const SSR = process.env.SSR;
 
-const shapes = Object.values(Monsters);
+import GamePage from './game/gamePage';
 
-if (shapes.length)
-    shapes.forEach(s => store.dispatch(onSaveMonster(s)));
-// console.log(store.getState());
-*/
+const initialState = SSR ? window.REDUX_DATA : initialStateGame();
+console.log(window.REDUX_DATA)
+
+const store = storeFactory(window, initialState);
+
+window.REDUX_DATA = null;
+
+// store.dispatch(authenticateUser());
 
 const target = document.getElementById('root');
 
-// ReactDOM.render(<LoginForm />, target);
+const renderMethod = (SSR && !module.hot) ? hydrate : render;
+renderMethod(
+    <Provider store={store}>
+            <GamePage />
+    </Provider>
+    , target);

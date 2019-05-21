@@ -9,17 +9,23 @@ const Jwt = {
 };
 
 function verify(req) {
-    const {query, body, header} = req;
-    console.log(query, body, header);
-    const token = query.token || body['access-token'] || header['access-token']
+    const {query, body, headers} = req;
+    let token = (
+        (query && query.token) 
+        || (body && body['access-token'])
+        || (body && body['token'])
+        || headers['x-access-token'] 
+        || headers['autorization'])
     if (!token) {
         return false;
     }
-   
-    return Jwt.verify(token);
-
-    
-    
+    try {
+        token = token.replace('Bearer ', '').replace('bearer-', '');  
+        return Jwt.verify(token);  
+    } catch (e) {
+        console.warn(e);
+        return false;
+    }
 }
 
 exports.verifyUser = verify;

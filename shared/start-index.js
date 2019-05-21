@@ -7,7 +7,7 @@ import  ReactDom, { hydrate, render } from 'react-dom';
 import { BrowserRouter }  from 'react-router-dom'
 import 'typeface-roboto';
 import {Provider} from 'react-redux';
-import {authenticateUser} from './store/actions/appActions';
+import {authenticateUser} from './store/actions/userActions';
 
 import storeFactory from './store/index';
 import {initialStateStart} from './store/initialState';
@@ -18,9 +18,8 @@ import '../shared/scss/reset.scss';
 const SSR = process.env.SSR;
 
 const { default: StartPage } = SSR ? require('./start/start-page') : require('./start/start-page-cr');
-console.log(SSR, StartPage);
-const initialState = SSR ? window.REDUX_DATA : initialStateStart();
 
+const initialState = SSR ? window.REDUX_DATA : initialStateStart();
 
 const store = storeFactory(window, initialState);
 

@@ -1,21 +1,5 @@
-/**
- * project new-wiz-bat
- */
 import AT from './actionTypes';
 
-export const setDifficulty = payload => {
-    return {
-        type: AT.SET_BATTLE_DIFFICULTY,
-        payload,
-    };
-};
-
-export const setPVP = payload => {
-    return {
-        type: AT.SET_PVP,
-        payload,
-    };
-};
 
 export const setScene = payload => {
     return {
@@ -38,91 +22,92 @@ export const setOpponentName = payload => {
     };
 };
 
-export const setTimeLimit = payload => {
+export const setPlayerMove = payload => {
+    return ({
+        type: AT.SET_PLAYER_MOVE,
+        payload,
+    });
+};
+export const setPlayerLevel = payload => {
     return {
-        type: AT.SET_BATTLE_TIME_LIMIT,
+        type: AT.SET_PLAYER_LEVEL,
         payload,
     };
 };
-export const setPlayerMove = playerMove => {
-    return ({
-        type: AT.SET_PLAYER_MOVE,
-        playerMove,
-    });
-};
-export const setPlayerLevel = level => {
-    return {
-        type: AT.SET_PLAYER_LEVEL,
-        level,
-    };
-};
 
-export const setPlayerExperience = experience => {
+export const setPlayerExperience = payload => {
     return {
         type: AT.SET_PLAYER_EXPERIENCE,
-        experience,
+        payload,
     };
 };
 
-export const setOpponentExperience = experience => {
+export const setOpponentExperience = payload => {
     return {
         type: AT.SET_PLAYER_LEVEL,
-        experience,
+        payload,
     };
 };
 
-export const setPlayerSpell = spell => {
+export const setPlayerSpell = payload => {
     return ({
         type: AT.SET_PLAYER_SPELL,
-        spell,
+        payload,
     });
 };
 
-export const setOpponentSpell = spell => {
+export const setOpponentSpell = payload => {
     return ({
         type: AT.SET_OPPONENT_SPELL,
-        spell,
+        payload,
     });
 };
 
-export const setBattle = battle => {
+export const setBattle = payload => {
     return ({
         type: AT.SET_BATTLE,
-        battle,
+        payload,
     });
 };
 
-export const setOpponent = opponent => {
+export const setOpponent = payload => {
     return {
         type: AT.SET_OPPONENT,
-        opponent,
+        payload,
     };
 };
 
-export const setPlayer = player => {
+export const setPlayer = payload => {
     return {
         type: AT.SET_PLAYER,
         player,
     };
 };
 
-export const setOpponentHealth = health => {
+export const setOpponentHealth = payload => {
     return {
         type: AT.SET_OPPONENT_HEALTH,
         health,
     };
 };
 
-export const setPlayerHealth = health => {
+export const setPlayerHealth = payload => {
     return {
         type: AT.SET_PLAYER_HEALTH,
         health,
     };
 };
 
-export const setTask = task => {
+export const setTask = payload => {
     return {
         type: AT.SET_TASK,
         task,
+    };
+};
+
+export const setSolution = payload => {
+    return {
+        type: AT.SET_SOLUTION,
+        payload,
     };
 };

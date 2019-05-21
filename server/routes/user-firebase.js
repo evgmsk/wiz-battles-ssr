@@ -1,7 +1,6 @@
 import express from 'express';
-// import parser from 'body-parser';
 
-import {signUp, login , checkRefreshToken} from '../firebase/controllers/user-controller';
+import {signUp, login, checkRefreshToken, changeLang} from '../controllers/user-firebase';
 
 const userRouter = express.Router();
 
@@ -11,4 +10,6 @@ userRouter.post('/refresh-token', checkRefreshToken);
 
 userRouter.post('/login', login);
 
-export default userRouter;
+userRouter.post('/lang', changeLang);
+
+module.exports = userRouter;

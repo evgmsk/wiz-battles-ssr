@@ -1,11 +1,9 @@
 import React, {useEffect} from 'react';
 
 import NavMenu, {Login} from '../nav-nenu/nav-menu';
-// import { logout, setLanguage } from '../../../store/actions/appActions';
 import {Langs} from '../../../common/constants/constants';
-import {Logo, LoginModal} from './header-components';
+import {Logo} from './header-components';
 import DuoLanguageSwitcher from './lang-menu';
-//import {Login} from '../nav-nenu/nav-menu';
 
 import './header.scss';
 

@@ -1,6 +1,3 @@
-/**
- * project smartWizBattle
- */
 
 export const fetchForm = (email, password) => {
     return fetch('/login', {

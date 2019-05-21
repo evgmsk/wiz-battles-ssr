@@ -6,9 +6,10 @@ import PropTypes from 'prop-types';
 
 import SmartInput from './input/input';
 import SmartSelect from './smart-select/smart-select';
+import deepCopy from './deep-copy';
 
 import './form.scss';
-import deepCopy from './deep-copy';
+
 
 class SmartForm extends React.Component {
     static findInput(node) {
@@ -288,7 +289,7 @@ class SmartForm extends React.Component {
     }
     
     render() {
-        console.log(this.state, this.initialValues);
+        //console.log(this.state, this.props);
         const { errors, values } = this.state;
         const propsForChildren = {
             values,

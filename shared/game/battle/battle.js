@@ -4,23 +4,33 @@
 import React from 'react';
 import { Layer, Stage, Image } from 'react-konva';
 import _ from 'lodash';
-import BGBattle from '../../../images/scenes/battle_scene_0.jpg';
-import { resolveAttack, levelsGap, setOpponentImage } from '../../../GameFunctions/battleFunctions';
-import PlayerBar from './PlayerBar/PlayerBar';
-import Sprite from '../ShapeClasses/SpriteClass';
-import EffectClass from '../ShapeClasses/EffectClass';
-import Task from '../Task/Task';
-import { TaskGenerators, Heroes, Effects, Salutation, Timeouts } from '../../../ConstsData/constants';
-import SpellSelector from './SpellMenu/selectSpell';
-import Spinner from '../../OnloadDataSpinner/SpinnerUI';
-import ShapeClass from '../ShapeClasses/ShapeClass';
-import BattleMusic from '../../../sounds/didier_julia-melodiya-iz-mul-tfil-ma-priklyucheniya-papirusa.mp3';
-import onMusicEnd from '../../../HelperFunctions/onMusicEnd';
-import { pause, waiter } from '../../../HelperFunctions/pause';
+
+import BGBattle from '../../assets/images/scenes/images/scenes/battle_scene_0.jpg';
+import {
+    resolveAttack,
+    levelsGap,
+    setOpponentImage
+} from '../../common/game-functions/battleFunctions';
+import PlayerBar from './player-bar/player-bar';
+import ShapeClass from '../../common/shape-classes/shape-class';
+import EffectClass from '../../common/shape-classes/effect-class';
+import Sprite from '../../common/shape-classes/sprite-class';
+import Task from './task/Task';
+import {
+    TaskGenerators,
+    Effects,
+    Salutation,
+} from '../../common/constants/game-constants';
+import Heroes from '../../common/constants/heroes';
+import SpellSelector from './spell-menu/spell-menu';
+import Spinner from '../../common/spinner/spinner';
+// import BattleMusic from '../../sounds/didier_julia-melodiya-iz-mul-tfil-ma-priklyucheniya-papirusa.mp3';
+import { onMusicEnd, pause, waiter  } from '../../common/helper-functions';
 import './battle.scss';
 
 const TGA = Object.values(TaskGenerators);
 const Length = TGA.length;
+const Timeouts = {};
 
 class Battle extends React.Component {
     constructor(props) {
@@ -35,8 +45,6 @@ class Battle extends React.Component {
         this.opponent = React.createRef();
         this.opponentBar = React.createRef();
         this.playerBar = React.createRef();
-        const [width, height] = [window.innerWidth * 0.8, window.innerHeight * 0.6];
-        const [initialWidth, initialHeight] = [...[width, height]];
         const { player, opponent } = props.battle;
         this.state = {
             initial: {
@@ -46,8 +54,9 @@ class Battle extends React.Component {
             heroAnimation: 'idle',
             showSpinner: true,
             showSpellMenu: false,
-            stageProps: { width, height, initialWidth, initialHeight, scaleX: 1, scaleY: 1 },
+            stageProps: { width: 300, height: 300, scaleX: 1, scaleY: 1 },
             spellShapes: [],
+            initialSize: {initialWidth: 100, initialHeight: 100}
         };
         this.canvasResize = this.canvasResize.bind(this);
         this.onSelectSpell = this.onSelectSpell.bind(this);
@@ -83,19 +92,20 @@ class Battle extends React.Component {
     canvasResize(e) {
         e.cancelBubble = true;
         const container = this.container.current;
-        const { initialWidth, initialHeight } = this.state.stageProps;
+        const { initialWidth, initialHeight } = this.state.initialSize;
         const [width, height] = [container.offsetWidth, container.offsetHeight];
         const [scaleX, scaleY] = [width / initialWidth, height / initialHeight];
-        const stageProps = { width, height, initialWidth, initialHeight, scaleX, scaleY };
+        const stageProps = { width, height, scaleX, scaleY };
         this.setState({ stageProps });
     }
+
     setInitialSize() {
         const container = this.container.current;
-        const [width, height] = [container.offsetWidth, container.offsetHeight];
-        const [initialWidth, initialHeight] = [...[width, height]];
-        let { stageProps } = this.state;
-        stageProps = { ...stageProps, width, height, initialWidth, initialHeight };
-        this.setState({ stageProps });
+        const [initialWidth, initialHeight] = [container.offsetWidth, container.offsetHeight];;
+        this.setState(({ stageProps, initialSize }) => ({
+            stageProps: {...stageProps, width: initialWidth, height: initialHeight},
+            initialSize: {initialHeight, initialWidth}
+        }));
     }
     mountScene() {
         const image = new window.Image();

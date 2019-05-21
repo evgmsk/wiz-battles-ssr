@@ -79,13 +79,11 @@
     left-underlined: .5rem
   );
   $argsMap: map-merge($defaultValues, $args);
-  @debug $argsMap;
   $top: map-get($argsMap, top);
   $height: map-get($argsMap, height);
   $font-size: $height * map-get($argsMap, ratio);
   $transY: transY(map-get($argsMap, height), map-get($argsMap, translateY));
   $resize: map-get($argsMap, label-resize);
-  @debug $resize; 
   $font-top: calc(#{$font-size} - #{$resize});
   &.like-placeholder {
     .smart-input__label {
@@ -248,7 +246,6 @@
   }
   @else if($case == 'error') {
     &.invalid-input {
-      @debug $color;
       &.underlined .smart-input__input {
       border: $width solid transparent;
       border-bottom-color: $color;
@@ -261,7 +258,6 @@
       }
       &.like-placeholder {
         .smart-input__label {
-          @debug $color;
           color: $color;
         }
         .smart-input__input:hover + .smart-input__label,

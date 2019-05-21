@@ -1,4 +1,4 @@
-@import 'mixin';
+@import 'btn';
 
 form[name=smart-form] {
   @include smart-form();

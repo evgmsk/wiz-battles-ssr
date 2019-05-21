@@ -19,7 +19,7 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
 
     const i18nLang = new Language(defaultLanguage, path);
 
-    return function translate(props) {
+    function translate(props) {
         let source;
         let string = i18nLang.langSource;
         let {keys, insertions = []} = props;
@@ -56,7 +56,11 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
             return insertions.reduce((acc, ins) => acc.replace('{{}}', ins), string)
         }
         return string;
-    }
+    };
+    
+    translate.source = i18nLang;
+
+    return translate;
 }
 
 export default translator;

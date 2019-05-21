@@ -1,8 +1,4 @@
-/**
- * project wiz-battles
- */
-
-export const pause = async time => new Promise((resolve) => {
+export const pause = time => new Promise((resolve) => {
     setTimeout(resolve, time);
 });
 

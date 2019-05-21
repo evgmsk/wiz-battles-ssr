@@ -1,6 +1,3 @@
-/**
- * project WizBattle
- */
 import React from 'react';
 import {connect} from 'react-redux';
 import { Stage, Layer } from 'react-konva';
@@ -13,7 +10,7 @@ import ControlsPanel, {
 } from './controls-panel/control-components';
 
 import Spinner from '../../common/spinner/spinner';
-import {saveShape, overwriteShape} from '../../store/actions/appActions';
+import {saveShape, overwriteShape} from '../../store/actions/userActions';
 import ShapeClass from '../../common/shape-classes/shape-class';
 import { oddIndexes, evenIndexes } from '../../common/helper-functions/indexFilters';
 import {deepCopy, idGen} from '../../common/helper-functions/';

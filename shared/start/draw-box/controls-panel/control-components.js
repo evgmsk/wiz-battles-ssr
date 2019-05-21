@@ -1,6 +1,3 @@
-/**
- * project wiz-battles-ssr
- */
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import {
@@ -10,7 +7,7 @@ import {
     FaDrawPolygon as Draw,
     // FaEdit,
     FaLock,
-    FaUnlock,
+    FaUnlock, // FaArchive,
     FaArrowUp as ArrowUp,
     FaArrowDown as ArrowDown,
     // FaHandPaper,
@@ -18,7 +15,6 @@ import {
     FaFillDrip,
     FaExpand,
     FaSave,
-    // FaArchive,
     FaPalette,
     FaAsterisk,
 } from 'react-icons/fa';
@@ -28,7 +24,7 @@ import {
     FiLayers,
 } from 'react-icons/fi';
 
-import {saveShape, overwriteShape} from '../../../store/actions/appActions';
+import {saveShape, overwriteShape} from '../../../store/actions/userActions';
 import { ShapeTypes } from '../../../common/constants/constants';
 import { AnimationTypes, TweenTypes } from '../../../common/constants/game-constants';
 import ShapePropsControl from './control-inputs';
@@ -143,7 +139,7 @@ const SelectControls = props => {
 };
 
 export const SelectControlsContainer = connect(state => 
-    ({savedShapes: state.app.savedShapes}))(SelectControls)
+    ({savedShapes: state.user.savedShapes}))(SelectControls)
 
 
 const SaveForm = props => {
@@ -274,7 +270,7 @@ const SaveForm = props => {
 };
 
 export const SaveShapeForm = connect(state => 
-    ({savedShapes: state.app.savedShapes}), {saveShape, overwriteShape})(SaveForm);
+    ({savedShapes: state.user.savedShapes}), {saveShape, overwriteShape})(SaveForm);
 
 export const ShapeControlsWrapper = props => {
     const [input, setInput] = useState('stroke-color');

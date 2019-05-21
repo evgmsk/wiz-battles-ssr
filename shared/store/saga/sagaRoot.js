@@ -3,10 +3,10 @@
  */
 import { all } from 'redux-saga/effects';
 
-import watcherApp from './watcherApp';
+import watcherUser from './watcherUser';
 
 export default function* sagaRoot(store) {
     yield all([
-        watcherApp(),
+        watcherUser(),
     ]);
 }

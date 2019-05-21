@@ -1,6 +1,3 @@
-/**
- * project WizBattle
- */
 import net from 'net';
 
 // helper function to find unused port
@@ -17,4 +14,4 @@ const freePortPromise = (port) => new Promise((resolve, reject) => {
         .listen(port);
 });
 
-export default freePortPromise;
+module.exports = freePortPromise;

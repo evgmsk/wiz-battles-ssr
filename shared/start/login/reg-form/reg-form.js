@@ -1,9 +1,5 @@
-/**
- * project new-wiz-bat
- */
 import React, {useState, useEffect } from 'react';
 import {FaEye, FaEyeSlash } from 'react-icons/fa';
-import axios from 'axios';
 
 import validators from '../../../common/validators';
 import SmartForm, { SmartInput } from '../../../common/form/index';
@@ -23,13 +19,7 @@ const SpecifiedInput = props => {
             </div>
 };
 
-const RegForm = ({ className, onResponse = f => f }) => {
-    const [inProp, setInProp] = useState(false);
-    useEffect(() => {
-        if (!inProp) {
-            setInProp(true)
-        }
-    });
+const RegForm = ({ className, submitHandler }) => {
     const password = {};
     const values = {
         email: "",
@@ -56,15 +46,6 @@ const RegForm = ({ className, onResponse = f => f }) => {
             },
             required: true,
         },
-    };
-
-    const submitHandler = {
-        fetch: data => {
-            const {repeatPassword, ...Data} = data;
-            // console.log(data, data.name, data);
-            return axios.post('/signup', Data)
-        },
-        onResponse: onResponse,
     };
 
     return (
@@ -129,7 +110,7 @@ const RegForm = ({ className, onResponse = f => f }) => {
                                 {...restProps}
                             />
                             <button type="submit" className="btn  btn-filled btn-success btn-large">
-                                <T keys="log_forms_fields.login_button" />
+                                <T keys="log_forms_fields.signup_button" />
                             </button>
                         </React.Fragment>
                     )

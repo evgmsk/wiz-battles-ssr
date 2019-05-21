@@ -5,7 +5,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './nav-item.scss';
 
-const NavItem = (props) => {
+const NavItem = props => {
     const Icon = props.icon;
     return (
         <NavLink
@@ -19,9 +19,9 @@ const NavItem = (props) => {
 };
 
 export const SpecialLink = props => {
-    const {href, className, children} = props;
+    const {href, className, target, children} = props;
     return (
-        <a href={href} className={className || 'nav-menu-item'}>
+        <a href={href} className={className || 'nav-menu-item'} target={target || "_blank"}>
             {children}
         </a>
     )

@@ -2,9 +2,9 @@
  * project WizBattle
  */
 import React from 'react';
-import HealBar from './HealthBar';
-import ExperienceBar from './ExperienceBar';
-import './playerBar.scss';
+import HealBar from './health-bar';
+import ExperienceBar from './experience-bar';
+import './player-bar.scss';
 
 const BattlePanel = props => {
     // console.log(props);
