@@ -11,11 +11,10 @@ import storeFactory from '../../shared/store';
 import template from '../htmlTemplate';
 import {expire} from '../../shared/common/helper-functions';
 
-export function createPage(req, res, extractor) {
-    //const store = storeFactory(null, initialState);
-    console.log(req.store, 'ddgdrgrdgdrh');
-    const redux_state = req.store.getState();
-    const jsx = <Provider store={req.store}><div>Game</div> </Provider>;
+export function createPage(store, Page, res, extractor) {
+    console.log(Page, 'drh');
+    const redux_state = store.getState();
+    const jsx = <Provider store={store}><Page/></Provider>;
     // const scriptTags = extractor.getScriptTags();
     const reactDom = renderToString(jsx);
     const Html = template(reactDom, redux_state, ["./css/game.css"], ["./js/game.js"], "Wiz battles game");

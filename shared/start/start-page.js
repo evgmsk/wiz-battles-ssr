@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import Header from './start-page/header/header';
-import ContentRoute from './start-page/content-route-ssr';
+import Header from './header/header';
+import ContentRoute from './content-route-ssr';
 import Spinner from '../common/spinner/spinner';
 
 import './index.scss';

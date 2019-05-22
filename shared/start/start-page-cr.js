@@ -1,10 +1,7 @@
-/**
- * project new-wiz-bat
- */
 import React from 'react';
 
-import Header from './start-page/header/header';
-import ContentRoute from './start-page/content-route-cr';
+import Header from './header/header';
+import ContentRoute from './content-route-cr';
 
 import './index.scss';
 

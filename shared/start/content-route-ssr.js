@@ -3,13 +3,13 @@ import { Route, Switch } from 'react-router-dom';
 
 import loadable from '@loadable/component';
 
-import { MainRoutes } from '../../common/constants/constants';
+import { MainRoutes } from '../common/constants/constants';
 
 // import Spinner from '../../common/spinner/spinner';
-import DrawBox from '../draw-box/draw-box';
-import Home from '../home/home-page';
-import About from '../about/about';
-import LogPage from '../login/login-page';
+import DrawBox from './draw-box/draw-box';
+import Home from './home/home-page';
+import About from './about/about';
+import LogPage from './login/login-page';
 
 // webpackChunkName: "about"  webpackChunkName: "logpage"
 

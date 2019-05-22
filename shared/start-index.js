@@ -1,7 +1,3 @@
-/**
- * project new-wiz-bat
- */
-
 import React from 'react';
 import  ReactDom, { hydrate, render } from 'react-dom';
 import { BrowserRouter }  from 'react-router-dom'
@@ -13,7 +9,7 @@ import storeFactory from './store/index';
 import {initialStateStart} from './store/initialState';
 import './assets/favicon.ico'
 
-import '../shared/scss/reset.scss';
+import '../shared/assets/scss/reset.scss';
 
 const SSR = process.env.SSR;
 

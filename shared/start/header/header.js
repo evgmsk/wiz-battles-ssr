@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 
-import NavMenu, {Login} from '../nav-nenu/nav-menu';
-import {Langs} from '../../../common/constants/constants';
+import NavMenu, {Login} from './nav-nenu/nav-menu';
+import {Langs} from '../../common/constants/constants';
 import {Logo} from './header-components';
 import DuoLanguageSwitcher from './lang-menu';
 

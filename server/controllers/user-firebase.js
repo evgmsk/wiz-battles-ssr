@@ -85,10 +85,10 @@ export function checkRefreshToken (req, res, next) {
 }
 
 export function changeLang(req, res, next) {
-    const lang = req.body.lang;
-    if (req.user) {
+    const {userRef, body: {lang}} = req;
+    if (userRef) {
         try {
-            req.user.update({'user.lang': lang})
+            userRef.update({'user.lang': lang})
             res.end();
         } catch (e) {
             console.warn(e)

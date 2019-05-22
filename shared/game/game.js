@@ -1,12 +1,9 @@
-/**
- * project WizBattle
- */
 import { Layer, Stage, Image } from 'react-konva';
 import React from 'react';
 
-import BGBattle from '../../images/scenes/battle_scene_0.jpg';
-import GameBg from '../../images/GameBackgrounds/game_map_0.jpg';
-import Music from '../../sounds/forest.mp3';
+import BGBattle from '../assets/images/scenes/battle_scene_0.jpg';
+import GameBg from '../assets/images/GameBackgrounds/game_map_0.jpg';
+//import Music from '../assets/sounds/forest.mp3';
 import {
     definePlayer,
     defineAIOpponent,

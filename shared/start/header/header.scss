@@ -1,5 +1,5 @@
-@import "../../../scss/constants";
-$imgPath: '../../../assets/images';
+@import "../../assets/scss/constants";
+$imgPath: '../../assets/images';
 
 .header {
   background: url('#{$imgPath}/header_bg.jpg') no-repeat center;

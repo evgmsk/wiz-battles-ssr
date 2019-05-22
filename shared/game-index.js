@@ -7,7 +7,7 @@ import storeFactory from './store/index';
 import {initialStateGame} from './store/initialState';
 import './assets/favicon.ico'
 
-import '../shared/scss/reset.scss';
+import '../shared/assets/scss/reset.scss';
 
 const SSR = process.env.SSR;
 

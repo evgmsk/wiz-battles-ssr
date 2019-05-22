@@ -12,7 +12,7 @@ import {authenticateUser, checkSavedImages} from './store/actions/userActions';
 
 import './assets/favicon.ico'
 
-import '../shared/scss/reset.scss';
+import '../shared/assets/scss/reset.scss';
 
 const store = storeFactory(window, initialStateStart());
 store.dispatch(authenticateUser());

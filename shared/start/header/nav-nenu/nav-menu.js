@@ -16,7 +16,7 @@ import BtnWT from '../../../common/btn-with-tooltip/btn';
 import { MainRoutes } from '../../../common/constants/constants';
 import NavItem, {SpecialLink} from './nav-item';
 import T from '../../../translator';
-import NavDropDownButton from '../nav-dropdown-button/nav-dropdown-button';
+import NavDropDownButton from './nav-dropdown-button/nav-dropdown-button';
 
 import './nav-menu.scss';
 
@@ -36,7 +36,7 @@ const Game = props => {
     let href = props.href || MainRoutes.game.path;
     href = !token ? href : `${href}}?token=${token}`;
     return (
-        <SpecialLink href={href} {...restProps}>
+        <SpecialLink href={href} target="_top" {...restProps}>
             <T keys={'nav_menu.game'} />
             {icon && <FaGamepad className="nav-icon" />}
         </SpecialLink>
