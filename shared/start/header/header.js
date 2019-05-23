@@ -1,9 +1,8 @@
 import React, {useEffect} from 'react';
 
 import NavMenu, {Login} from './nav-nenu/nav-menu';
-import {Langs} from '../../common/constants/constants';
 import {Logo} from './header-components';
-import DuoLanguageSwitcher from './lang-menu';
+import DuoLanguageSwitcher from './lang-menu/lang-menu';
 
 import './header.scss';
 
@@ -14,7 +13,7 @@ const Header = props => {
                 <Logo>WB</Logo>
                 <NavMenu />
                 <div className="header__right-bar">
-                    <DuoLanguageSwitcher langs={Langs} />
+                    <DuoLanguageSwitcher />
                     <Login />
                 </div>
             </div>

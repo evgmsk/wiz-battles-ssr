@@ -11,7 +11,7 @@ import '../shared/assets/scss/reset.scss';
 
 const SSR = process.env.SSR;
 
-import GamePage from './game/gamePage';
+import GamePage from './game/game-page';
 
 const initialState = SSR ? window.REDUX_DATA : initialStateGame();
 console.log(window.REDUX_DATA)

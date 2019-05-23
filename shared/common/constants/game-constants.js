@@ -1,6 +1,3 @@
-/**
- * project new-wiz-bat
- */
 import {
     swingX,
     rotation,

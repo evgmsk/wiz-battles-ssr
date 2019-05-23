@@ -1,18 +1,50 @@
-/**
- * project WizBattle
- */
 import React from 'react';
-import { Heroes } from '../../../ConstsData/constants';
-import Hero from './Hero';
-import Spinner from '../../OnloadDataSpinner/SpinnerUI';
-import './heroesMenu.scss';
+import {connect} from 'react-redux';
+
+import Heroes from '../../common/constants/heroes';
+import {updateHero} from '../../store/actions/heroActions';
+import {updateGame} from '../../store/actions/gameActions';
+import Hero from './hero';
+import Spinner from '../../common/spinner/spinner';
+import SmartForm, {SmartInput} from '../../common/form';
+
+const HeroesMenu = props => {
+    const values = {
+        name: '',
+        difficulty: 'easy'
+    }
+    const validationSchema = {
+        name: {
+            validator: value => {
+                if (value && !value.trim()) {
+                    return {msg: "Enter correct name"}
+                }
+            },
+            require: false
+        },
+        difficulty: {
+            require: false,
+        } 
+    }
+    return (
+        <SmartForm 
+            validationschema={validationSchema}
+            values={values}
+            className={props.className}
+            submit
+        >
+            <SmartInput/>
+            <SmartInput/>
+        </SmartForm>
+    )
+}
+
+import './heroes-menu.scss';
 
 class HeroesHall extends React.Component {
     constructor(props) {
         super(props);
         this.container = React.createRef();
-        this.difficulty = React.createRef();
-        this.heroName = React.createRef();
         this.state = {
             showSpinner: true,
             chosen: 1,
@@ -92,31 +124,34 @@ class HeroesHall extends React.Component {
                         );
                     })}
                 </div>
-                <form className="heroes-menu-menu">
-                    <div className="hero-input-wrapper">
-                        <label htmlFor="heroName">Имя героя</label>
-                        <input
-                            type="text"
-                            id="heroName"
-                            ref={this.heroName}
-                            placeholder={this.props.nickName}
-                        />
-                    </div>
-                    <div className="hero-input-wrapper">
-                        <label htmlFor="task-diff">Задачи</label>
-                        <input
-                            type="button"
-                            ref={this.difficulty}
-                            id="task-diff"
-                            value={difficulty}
-                            onClick={this.defineDifficulty}
-                        />
-                    </div>
-                    <input type="submit" value="Сохpaнить" onClick={this.onSave} />
-                </form>
+                
             </div>
         );
     }
 }
 
-export default HeroesHall;
+export default connect(state => 
+    ({hero: state.hero, game: state.game}), {updateGame, updateHero})(HeroesHall);
+
+    // <form className="heroes-menu-menu">
+    //                 <div className="hero-input-wrapper">
+    //                     <label htmlFor="heroName">Имя героя</label>
+    //                     <input
+    //                         type="text"5
+    //                         id="heroName5"
+    //                         ref={this.he5roName}
+    //                         placeholder=5{this.props.nickName}
+    //                     />
+    //                 </div>
+    //                 <div className="hero-input-wrapper">
+    //                     <label htmlFor="task-diff">Задачи</label>
+    //                     <input
+    //                         type="button"
+    //                         ref={this.difficulty}
+    //                         id="task-diff"
+    //                         value={difficulty}
+    //                         onClick={this.defineDifficulty}
+    //                     />
+    //                 </div>
+    //                 <input type="submit" value="Сохpaнить" onClick={this.onSave} />
+    //             </form>

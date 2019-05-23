@@ -1,10 +1,7 @@
-/**
- * project WizBattle.
- */
 import { Layer, Stage } from 'react-konva';
 import React from 'react';
-import { Heroes } from '../../../ConstsData/constants';
-import SpriteClass from '../ShapeClasses/SpriteClass';
+import Heroes from '../../common/constants/heroes';
+import SpriteClass from '../../common/shape-classes/sprite-class';
 import './hero.scss';
 
 class Hero extends React.Component {
@@ -14,11 +11,9 @@ class Hero extends React.Component {
         this.layer = React.createRef();
         this.container = React.createRef();
         this.hero = React.createRef();
-        const [width, height] = [100, 100];
-        const [initialWidth, initialHeight] = [...[width, height]];
         this.state = {
             animation: 'idle',
-            stageProps: { width, height, initialWidth, initialHeight, scaleX: 1, scaleY: 1 },
+            stageProps: { width, height, initialWidth: 100, initialHeight: 100, scaleX: 1, scaleY: 1 },
         };
         this.canvasResize = this.canvasResize.bind(this);
     }
@@ -49,10 +44,9 @@ class Hero extends React.Component {
     setInitialSize() {
         const container = this.container.current;
         const [width, height] = [container.offsetWidth, container.offsetHeight];
-        const [initialWidth, initialHeight] = [...[width, height]];
-        let { stageProps } = this.state;
-        stageProps = { ...stageProps, width, height, initialWidth, initialHeight };
-        this.setState({ stageProps });
+        this.setState(({ stageProps }) => {
+            return {...stageProps, width, height, initialWidth: width, initialHeight: height}
+        });
     }
     prepareHero() {
         const hero = Heroes[this.props.heroName];

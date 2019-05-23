@@ -19,8 +19,7 @@ import StartPage from '../../shared/start/start-page';
 import {updateUser} from '../../shared/store/actions/userActions';
 import {updateGame} from '../../shared/store/actions/gameActions';
 import {updateHero} from '../../shared/store/actions/heroActions';
-
-import GameUI from '../../shared/game/gamePage';
+import GameUI from '../../shared/game/game-page';
 
 global.React = React;
 

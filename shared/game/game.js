@@ -1,17 +1,18 @@
 import { Layer, Stage, Image } from 'react-konva';
 import React from 'react';
+import {connect} from 'react-redux';
 
 import BGBattle from '../assets/images/scenes/battle_scene_0.jpg';
 import GameBg from '../assets/images/GameBackgrounds/game_map_0.jpg';
-//import Music from '../assets/sounds/forest.mp3';
+const Music = require( '../assets/sounds/forest.mp3');
 import {
     definePlayer,
     defineAIOpponent,
-} from '../common/game-functions';
+} from '../common/game-functions/battleFunctions';
 
-import Battle from './battle/battle';
-// import HeroesHallContainer from '../../Containers/menuHeroesContainer';
-// import Spinner from '../OnloadDataSpinner/SpinnerUI';
+// import Battle from './battle/battle';
+import HeroesHallContainer from './heroes-menu/heroes-menu';
+import Spinner from '../common/spinner/spinner';
 // import HeroAchievements from './HeroAchievements/Achievements';
 // import GameMenu from '../../Containers/gameMenuContainer';
 // import onMusicEnd from '../../HelperFunctions/onMusicEnd';
@@ -174,4 +175,4 @@ class Game extends React.Component {
     }
 }
 
-export default Game;
+export default connect(state => ({game: state.game}))(Game);

@@ -4,25 +4,27 @@ import {connect} from 'react-redux';
 // import Game from './game';
 import Modal from '../common/modal/modal-window';
 import {FormsWrapper} from '../start/login/forms-container/forms-container';
-// import {funcT} from '../translator';
+import LanguageSwitch from '../start/header/lang-menu/lang-menu';
 
-const FormsContainer = connect(state => ({lang: state.user.lang},{}))(FormsWrapper)
+import './game-page.scss';
 
-
+//
 const GamePage = props => {
     const {userName} = props;
-    console.log(props);
     return (
         <div className="game-page-wrapper">
             {userName 
                 ?   <div> Game </div> 
-                :   <Modal
-                        ModalContent={FormsContainer}
-                        withoutOpenButton
-                        withoutHeader
-                        withoutFooter
-                        fade
-                    />
+                :   <div className="game-login-modal">
+                        <LanguageSwitch />
+                        <Modal
+                            ModalContent={FormsWrapper}
+                            withoutOpenButton
+                            withoutHeader
+                            withoutFooter
+                            fade
+                        />
+                    </div>
             }
         </div>
     );

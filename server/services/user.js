@@ -12,7 +12,6 @@ import template from '../htmlTemplate';
 import {expire} from '../../shared/common/helper-functions';
 
 export function createPage(store, Page, res, extractor) {
-    console.log(Page, 'drh');
     const redux_state = store.getState();
     const jsx = <Provider store={store}><Page/></Provider>;
     // const scriptTags = extractor.getScriptTags();

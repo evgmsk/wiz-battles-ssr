@@ -1,10 +1,10 @@
-/**
- * project new-wiz-bat
- */
-
 import React from 'react';
+import {connect} from 'react-redux';
 
-import './lang-menu.scss';
+import {Langs} from '../../../common/constants/constants';
+import {setLanguage} from '../../../store/actions/userActions';
+
+import '../../../common/lang-menu/lang-menu.scss';
 
 export const DuoLanguageSwitcher = props => {
     const { lang, setLanguage, langs } = props;
@@ -18,6 +18,11 @@ export const DuoLanguageSwitcher = props => {
     };
     return <button className={`lang-setter lang-${lang}`} onClick={handleClick} />
 };
+
+export default connect(
+    state => ({lang : state.user.lang}),
+    {setLanguage}
+)(props => <DuoLanguageSwitcher langs={Langs} {...props} />);
 
 export const LanguageSwitcher = props => {
     //to do
