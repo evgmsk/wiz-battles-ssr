@@ -1,15 +1,8 @@
-/**
- * project WizBattle.
- */
 import KateImage from '../../assets/images/heroes/kate.png';
 import AntonImage from '../../assets/images/heroes/anton.png';
 import VasyaImage from '../../assets/images/heroes/vasya.png';
 
-const Heroes = {
-    Anton,
-    Katya,
-    Vasya,
-};
+export const pos = [100, 100];
 
 export const Katya = {
     shapeType: 'Sprite',
@@ -96,8 +89,8 @@ export const Katya = {
         ],
     },
     animation: 'idle',
-    x: window.innerWidth / 10,
-    y: window.innerHeight / 2,
+    x: pos[0],
+    y: pos[1],
     scale: { x: 0.7, y: 0.7 },
     frameRate: 4,
     frameIndex: 0,
@@ -187,8 +180,8 @@ export const Anton = {
         ],
     },
     animation: 'idle',
-    x: window.innerWidth / 10,
-    y: window.innerHeight / 2,
+    x: pos[0],
+    y: pos[1],
     scale: { x: 0.7, y: 0.7 },
     frameRate: 4,
     frameIndex: 0,
@@ -278,11 +271,18 @@ export const Vasya = {
         ],
     },
     animation: 'idle',
-    x: window.innerWidth / 10,
-    y: window.innerHeight / 2,
+    x: pos[0],
+    y: pos[1],
     scale: { x: 0.7, y: 0.7 },
     frameRate: 4,
     frameIndex: 0,
 };
 
+const Heroes = {
+    Anton,
+    Katya,
+    Vasya,
+};
+
+console.log(Heroes);
 export default Heroes;

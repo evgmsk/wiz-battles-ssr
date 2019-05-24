@@ -1,6 +1,6 @@
 import { Layer, Stage } from 'react-konva';
 import React from 'react';
-import Heroes from '../../common/constants/heroes';
+import Heroes from '../../assets/data/heroes';
 import SpriteClass from '../../common/shape-classes/sprite-class';
 import './hero.scss';
 
@@ -12,24 +12,28 @@ class Hero extends React.Component {
         this.container = React.createRef();
         this.hero = React.createRef();
         this.state = {
-            animation: 'idle',
-            stageProps: { width, height, initialWidth: 100, initialHeight: 100, scaleX: 1, scaleY: 1 },
+            stageProps: { width: 100, height: 100, initialWidth: 100, initialHeight: 100, scaleX: 1, scaleY: 1 },
+            heroProps: Heroes[props.heroName]
         };
+        console.log(Heroes, Heroes[props.heroName])
         this.canvasResize = this.canvasResize.bind(this);
     }
     componentDidMount() {
         window.addEventListener('resize', this.canvasResize);
         this.setInitialSize();
-        this.animateHero();
+        this.setHeroProps();
     }
     componentWillUnmount() {
         window.removeEventListener('resize', this.canvasResize);
     }
     componentDidUpdate(prevProps) {
         const { className, animation } = this.props;
+       
         if ((className !== prevProps.className)
             || animation !== prevProps.animation) {
-            this.animateHero();
+            this.resetAnimation();
+            // console.log(className, animation, (className !== prevProps.className)
+            // || animation !== prevProps.animation, this.props.heroName, this.defineAnimation())
         }
     }
     canvasResize(e) {
@@ -45,40 +49,51 @@ class Hero extends React.Component {
         const container = this.container.current;
         const [width, height] = [container.offsetWidth, container.offsetHeight];
         this.setState(({ stageProps }) => {
-            return {...stageProps, width, height, initialWidth: width, initialHeight: height}
+            return {stageProps: {
+                            ...stageProps,
+                            width, height,
+                            initialWidth: width,
+                            initialHeight: height
+                        }
+                    }
         });
     }
-    prepareHero() {
-        const hero = Heroes[this.props.heroName];
-        const { width, height } = this.state.stageProps;
-        const animation = this.props.animation || this.state.animation;
-        hero.animation = animation;
-        hero.x = 0;
-        hero.y = 0;
-        if (animation === 'playAll')
-            hero.frameRate = 8;
-        hero.scale = { x: width / 300, y: height / 300 };
-        return hero;
-    }
-    animateHero() {
+    defineAnimation() {
         const { animation, className } = this.props;
         if (animation)
-            this.setState({ animation });
+            return animation;
         else if (className === 'hero-wrapper')
-            this.setState({ animation: 'idle' });
+            return 'idle';
         else
-            this.setState({ animation: 'playAll' });
+            return 'playAll';
     }
-
+    resetAnimation() {
+        const animation = this.defineAnimation();
+        console.log(animation, this.props.heroName)
+        this.setState(({heroProps}) => ({heroProps: {...heroProps, animation}}));
+    }
+    setHeroProps(pos = [0,0], frameRate = 8, scaleDivider = [150, 150]) {
+        const heroProps = Heroes[this.props.heroName];
+        const { width, height } = this.state.stageProps;
+        const animation = this.defineAnimation();
+        heroProps.animation = animation;
+        heroProps.x = pos[0];
+        heroProps.y = pos[1];
+        if (animation === 'playAll')
+        heroProps.frameRate = frameRate;
+        heroProps.scale = { x: width / scaleDivider[0], y: height / scaleDivider[1] };
+        console.log(heroProps, 'ffse')
+        this.setState({heroProps});
+    }
     render() {
-        const { stageProps } = this.state;
-        const hero = this.prepareHero();
-        const { heroName, onLoad, ...containerProps } = this.props;
+        const { stageProps, heroProps } = this.state;
+        const { onLoad, heroName, ...containerProps } = this.props;
+        console.log(this.props, stageProps)
         return (
-            <button ref={this.container} {...containerProps}>
+            <button ref={this.container} {...containerProps} >
                 <Stage ref={this.stage} {...stageProps}>
                     <Layer ref={this.layer}>
-                        <SpriteClass onLoad={onLoad} ref={this.hero} {...hero} />
+                        <SpriteClass onLoad={onLoad} ref={this.hero} {...heroProps} />
                     </Layer>
                 </Stage>
             </button>

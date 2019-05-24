@@ -57,7 +57,6 @@ export const saveToken = payload => {
 };
 
 export const saveRefreshToken = payload => {
-    console.log(payload);
     return {
         type: AT.SAVE_REFRESH_TOKEN,
         payload,
@@ -80,6 +79,7 @@ export const authenticateUser = () => {
 };
 
 export const updateUser = payload => {
+    console.log(payload);
     return {
         type: AT.UPDATE_USER,
         payload

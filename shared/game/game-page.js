@@ -2,30 +2,31 @@ import React, {useState} from 'react';
 import {connect} from 'react-redux';
 
 // import Game from './game';
-import Modal from '../common/modal/modal-window';
-import {FormsWrapper} from '../start/login/forms-container/forms-container';
-import LanguageSwitch from '../start/header/lang-menu/lang-menu';
+
+import GameSignin from './game-signin';
+import HeroesMenu from './heroes-menu/heroes-menu';
 
 import './game-page.scss';
 
-//
+const GameOptions = ({oldHero, imageName, close}) => {
+    return (
+        oldHero && imageName 
+        ? <div>Game {imageName}</div> 
+        : <HeroesMenu close={close} />
+    )
+}
 const GamePage = props => {
-    const {userName} = props;
+    const [oldHero, setOldHero] = useState(null)
+    const {userName, imageName = 'Katya'} = props;
     return (
         <div className="game-page-wrapper">
-            {userName 
-                ?   <div> Game </div> 
-                :   <div className="game-login-modal">
-                        <LanguageSwitch />
-                        <Modal
-                            ModalContent={FormsWrapper}
-                            withoutOpenButton
-                            withoutHeader
-                            withoutFooter
-                            fade
+            {userName && <GameOptions
+                            oldHero={oldHero}
+                            imageName={imageName}
+                            close={() => setOldHero(true)}
                         />
-                    </div>
             }
+            {!userName && <GameSignin />}
         </div>
     );
 };

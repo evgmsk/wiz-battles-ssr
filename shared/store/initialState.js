@@ -20,7 +20,7 @@ export const initGame =  {
 
 export const initHero = {
     nickName: '',
-    image: '',
+    imageName: '',
     items: [],
     level: 1,
     experience: 0,

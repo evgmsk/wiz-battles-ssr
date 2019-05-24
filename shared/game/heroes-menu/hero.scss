@@ -6,7 +6,7 @@
   box-sizing: border-box;
   display: none;
   border: solid 3px transparent;
-  &.active,
+  &.active-hero,
   &:focus {
     display: block;
     border-bottom: solid 3px $experience;
@@ -15,7 +15,7 @@
   }
   @media (min-width: 800px) {
     &,
-    &.active {
+    &.active-hero {
       display: block;
       width: 250px;
       height: 250px;
@@ -23,7 +23,7 @@
   }
   @media (min-width: 1600px) {
     &,
-    &.active {
+    &.active-hero {
       display: block;
       width: 300px;
       height: 300px;

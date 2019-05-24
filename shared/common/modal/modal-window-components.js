@@ -12,7 +12,12 @@ export const DefaultCloseButton = props => {
 };
 
 export const DefaultOpenButton = ({label, toggle, className}) => (
-    <button className={"open-modal-button" + (className && className)} onClick={toggle}>{label}</button>
+    <button 
+        className={`open-modal-button${className ? " " + className : ""}`}
+        onClick={toggle}
+    >
+        {label}
+    </button>
 );
 
 DefaultOpenButton.propTypes = {

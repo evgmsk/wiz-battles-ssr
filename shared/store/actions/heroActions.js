@@ -93,3 +93,10 @@ export const updateHero = payload => {
         payload
     };
 };
+
+// export const handleHeroSet = payload => {
+//     return {
+//         type: AT.HANDLE_HERO_SET,
+//         payload
+//     };
+// };

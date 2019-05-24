@@ -17,7 +17,6 @@ const shapes = (state = [], action) => {
     }
 };
 
-
 export const user = (state = {}, action) => {
     switch (action.type) {
         case AT.UPDATE_USER: 
@@ -115,14 +114,14 @@ export const hero = (state = {}, action) => {
             return {
                 ...action.payload
             };
-        case (AT.RESET_HERO):
-            return {
-                ...action.payload,
-            };
+        // case (AT.RESET_HERO):
+        //     return {
+        //         ...action.payload,
+        //     };
         case (AT.SET_HERO_IMAGE):
             return {
                 ...state,
-                image: action.payload,
+                imageName: action.payload,
             };
         case (AT.SET_HERO_NAME):
             return {

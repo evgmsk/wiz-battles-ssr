@@ -86,14 +86,15 @@ export class FormsWrapper extends React.Component {
                 return axios.post('/login', data)
             },
             onResponse: res => {
+                const {data, response} = res;
                 const {
                     saveRefreshToken,
                     updateUserWithSaga,
-                    location: {pathname},
+                    location,
                     history,
                     toggle,
                 } = this.props;
-                if (res.status < 300) {
+                if (data) {
                     this.setState({
                         resMsg: funcT({keys: "res_messages.success_signin"}),
                         submitFail: false
@@ -106,9 +107,12 @@ export class FormsWrapper extends React.Component {
                     const {refreshToken, token, userName, lang} = res.data;
                     updateUserWithSaga({token, lang, userName})
                     saveRefreshToken(refreshToken);
-                    if (pathname !== '/')
-                        setTimeout(() => history.push('/'), 1000);    
-                } else if (res.response.status < 500) {
+                    if (location && location.pathname !== '/') {
+                        
+                        setTimeout(() => history.push('/'), 1000);   
+                    }
+                         
+                } else if (response && response.status < 500) {
                     try {
                         const keys = `res_messages.${res.response.statusText.toString()}`;
                         this.setState({resMsg: funcT({keys}),  submitFail: true});

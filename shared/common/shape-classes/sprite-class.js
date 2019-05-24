@@ -1,6 +1,3 @@
-/**
- * project WizBattle.
- */
 import React from 'react';
 import { Sprite } from 'react-konva';
 

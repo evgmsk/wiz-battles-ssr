@@ -1,6 +1,3 @@
-/**
- * project WizBattle
- */
 import { MonstersNames } from '../constants/constants';
 
 export const levelsGap = level => Math.round(1.2 ** level) * 100;

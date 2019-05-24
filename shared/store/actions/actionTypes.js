@@ -17,6 +17,7 @@ const actionTypes = {
     SINGIN: 'SINGIN',
     SIGNUP: 'SIGNUP',
     // gameData
+    // HANDLE_HERO_SET: 'HANDLE_HERO_SET',
     UPDATE_HERO: 'UPDATE_HERO',
     SAVE_GAME_DATA: 'SAVE_GAME_DATA',
     CHANGE_LOCATION: 'CHANGE_LOCATION',

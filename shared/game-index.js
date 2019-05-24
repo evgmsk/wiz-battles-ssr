@@ -5,6 +5,7 @@ import {Provider} from 'react-redux';
 
 import storeFactory from './store/index';
 import {initialStateGame} from './store/initialState';
+import {authenticateUser} from './store/actions/userActions';
 import './assets/favicon.ico'
 
 import '../shared/assets/scss/reset.scss';
@@ -20,7 +21,7 @@ const store = storeFactory(window, initialState);
 
 window.REDUX_DATA = null;
 
-// store.dispatch(authenticateUser());
+store.dispatch(authenticateUser());
 
 const target = document.getElementById('root');
 
