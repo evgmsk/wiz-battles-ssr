@@ -81,7 +81,7 @@
     "ignore-styles": "^5.0.1",
     "konva": "latest",
     "mongodb": "^3.2.2",
-    "mongoose": "^5.4.22",
+    "mongoose": "^5.7.5",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^5.0.1",
