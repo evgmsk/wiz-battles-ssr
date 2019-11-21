@@ -100,8 +100,9 @@ export class FormsWrapper extends React.Component {
                         submitFail: false
                     });
                     setTimeout(() =>  {
-                            this.setState({resMsg: ''});
-                            toggle && toggle();
+                            toggle 
+                                ? toggle()
+                                : this.setState({resMsg: ''});   
                         }, 1000);
                    
                     const {refreshToken, token, userName, lang} = res.data;

@@ -1,4 +1,4 @@
-@import "../../../Scss/constants";
+@import "../../assets/scss/constants";
 
 .game-menu {
   position: absolute;
@@ -9,8 +9,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   .game-menu-button {
-    width: 240px;
-    height: 50px;
+    width: 22rem;
+    height: 4rem;
     border: solid 3px $game-menu-border;
     background: $game-menu-btn;
     color:$game-menu-border;

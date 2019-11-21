@@ -66,3 +66,10 @@ button {
 .display-none {
   display: none !important;
 }
+.flag-icon {
+  border-radius: 10rem;
+  border: 2px solid rgb(82, 122, 17);
+  &:hover, &:focus {
+    transform: scale(1.1);
+  }
+}
