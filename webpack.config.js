@@ -164,7 +164,8 @@ if (prodCR) {
 
 if (env === 'devCR') {
     entry = {
-        start: ['webpack-hot-middleware/client?path=/__webpack_hmr&reload=true', paths.startJsPathCr]
+        start: ['webpack-hot-middleware/client?path=/__webpack_hmr&reload=true', paths.startJsPathCr],
+        game: ['webpack-hot-middleware/client?path=/__webpack_hmr&reload=true', paths.gameJsPath]
     };
 }
 

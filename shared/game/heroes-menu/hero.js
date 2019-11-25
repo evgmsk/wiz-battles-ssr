@@ -28,14 +28,16 @@ class Hero extends React.Component {
     }
     componentDidUpdate(prevProps) {
         const { className, animation } = this.props;
-       
         if ((className !== prevProps.className)
             || animation !== prevProps.animation) {
             this.resetAnimation();
-            // console.log(className, animation, (className !== prevProps.className)
-            // || animation !== prevProps.animation, this.props.heroName, this.defineAnimation())
         }
     }
+    shouldComponentUpdate(props, state) {
+        //console.log(props, state, this.props, this.state)
+        return JSON.stringify(props) !== this.props || JSON.stringify(state) !== JSON.stringify(this.state)
+    }
+
     canvasResize(e) {
         e.cancelBubble = true;
         const container = this.container.current;
@@ -80,7 +82,7 @@ class Hero extends React.Component {
         heroProps.x = pos[0];
         heroProps.y = pos[1];
         if (animation === 'playAll')
-        heroProps.frameRate = frameRate;
+        heroProps.frameRate = 8;
         heroProps.scale = { x: width / scaleDivider[0], y: height / scaleDivider[1] };
         console.log(heroProps, 'ffse')
         this.setState({heroProps});
@@ -88,7 +90,6 @@ class Hero extends React.Component {
     render() {
         const { stageProps, heroProps } = this.state;
         const { onLoad, heroName, ...containerProps } = this.props;
-        console.log(this.props, stageProps)
         return (
             <button ref={this.container} {...containerProps} >
                 <Stage ref={this.stage} {...stageProps}>

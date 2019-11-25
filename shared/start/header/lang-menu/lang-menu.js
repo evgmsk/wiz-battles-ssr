@@ -5,6 +5,7 @@ import {Langs} from '../../../common/constants/constants';
 import {setLanguage} from '../../../store/actions/userActions';
 
 import '../../../common/lang-menu/lang-menu.scss';
+import '../../../../node_modules/flag-icon-css/css/flag-icon.min.css';
 
 export const DuoLanguageSwitcher = props => {
     const { lang, setLanguage, langs } = props;
@@ -16,7 +17,9 @@ export const DuoLanguageSwitcher = props => {
         }
         e.target.blur();
     };
-    return <button className={`lang-setter lang-${lang}`} onClick={handleClick} />
+    return <a href='#' className="" onClick={handleClick} role='button'>
+        <span className={`flag-icon flag-icon-${lang === 'en' ? 'gb' : lang} flag-icon-squared`}></span>
+    </a>
 };
 
 export default connect(

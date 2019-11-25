@@ -4,20 +4,19 @@ import {connect} from 'react-redux';
 
 import BGBattle from '../assets/images/scenes/battle_scene_0.jpg';
 import GameBg from '../assets/images/GameBackgrounds/game_map_0.jpg';
-const Music = require( '../assets/sounds/forest.mp3');
 import {
     definePlayer,
     defineAIOpponent,
 } from '../common/game-functions/battleFunctions';
-
+// import Music from '../assets/sounds/forest.mp3';
 // import Battle from './battle/battle';
-import HeroesHallContainer from './heroes-menu/heroes-menu';
+// import HeroesHallContainer from './heroes-menu/heroes-menu';
 import Spinner from '../common/spinner/spinner';
-// import HeroAchievements from './HeroAchievements/Achievements';
-// import GameMenu from '../../Containers/gameMenuContainer';
-// import onMusicEnd from '../../HelperFunctions/onMusicEnd';
+//import HeroAchievements from './HeroAchievements/Achievements';
+import GameMenu from './game-menu/GameMenu';
+import { onMusicEnd }from '../common/helper-functions';
 // import ModalWindow from '../ModalWindow/ModalWindow';
-// import './game.scss';
+import './game.scss';
 
 class Game extends React.Component {
     constructor(props) {
@@ -27,12 +26,11 @@ class Game extends React.Component {
         this.container = React.createRef();
         this.hero = React.createRef();
         this.opponent = React.createRef();
-        const [] = [100, 100];
         this.state = {
             showSpinner: true,
-            stageProps: { width, height, scaleX: 1, scaleY: 1 },
+            stageProps: { width: 100, height: 100, scaleX: 1, scaleY: 1 },
             showHeroData: false,
-            initialSize: {initialWidth: 100, initialHeight: 100}
+            initialSize: {initialWidth: 100, initialHeight: 100},
         };
         this.newBattle = this.newBattle.bind(this);
         this.showStats = this.showStats.bind(this);
@@ -87,7 +85,11 @@ class Game extends React.Component {
     setInitialSize() {
         const container = this.container.current;
         const [initialWidth, initialHeight] = [container.offsetWidth, container.offsetHeight];
-        this.setState(({initialSize}) => ({initialSize: {initialWidth, initialHeight}}))
+        this.setState(({initialSize, stageProps}) => 
+        ({
+            initialSize: {initialWidth, initialHeight},
+            stageProps: {...stageProps, width: initialWidth, height: initialHeight}
+        }))
     }
     mountMap() {
         const image = new window.Image();
@@ -98,7 +100,7 @@ class Game extends React.Component {
         };
     }
     setMusic() {
-        this.Music = new Audio(Music);
+        this.Music = new Audio(require('../assets/sounds///forest.mp3'));
         this.Music.volume = this.props.game.musicVolume;
         this.Music.addEventListener('ended', onMusicEnd, false);
         this.Music.play();
@@ -109,8 +111,6 @@ class Game extends React.Component {
         this.startBattle();
     }
     showStats(e, state = true) {
-        e.stopPropagation();
-        e.preventDefault();
         this.setState({ showHeroData: state });
     }
     defineScene() {
@@ -138,30 +138,27 @@ class Game extends React.Component {
     }
     defineComponentToRender() {
         const { stageProps, image, showHeroData, showSpinner } = this.state;
-        const { game, hero, resetHero } = this.props;
+        const { game, hero } = this.props;
         const ModalContentProps = { ...hero, onClick: e => this.showStats(e, false) };
         if (game.startBattle) {
             return <BattleContainer />;
         }
-        if (game.resetHero) {
-            return <HeroesHallContainer hero={hero} resetHero={resetHero} />;
-        }
         return (
-            <div className="game-screen" >
+            <div className="game-screen" ref={this.container}>
                 <Stage {...stageProps} ref={this.stage}>
                     <Layer ref={this.layer}>
                         <Image image={image} width={stageProps.width} height={stageProps.height} alt="" />
                     </Layer>
                 </Stage>
-                { showSpinner ? <Spinner /> : <span className="display-none" />}
-                { showHeroData
+                { showSpinner && <Spinner />}
+                {/* { showHeroData
                     ? <ModalWindow
                         ModalContent={HeroAchievements}
                         ModalContentProps={ModalContentProps}
                         onClick={e => this.showStats(e, false)}
-                    />
-                    : <GameMenu showStats={this.showStats} startBattle={this.startBattle} />
-                } ;
+                    />*/
+                    <GameMenu showStats={this.showStats} startBattle={this.startBattle} />
+                } ; }
             </div>
         );
     }

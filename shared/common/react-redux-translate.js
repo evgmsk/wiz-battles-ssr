@@ -30,7 +30,7 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
         if (!keys) {
             throw new Error('Property "keys" (path to value) is undefined')
         }
-        const Keys = (Array.isArray(keys) && keys) || (typeof keys === 'string' && keys.split('.'));
+        const Keys = (Array.isArray(keys) && keys) || (typeof keys === 'string' && keys.split('\.'));
         if (!Keys || !Keys.length)
             throw new Error("Invalid 'keys' property passed to react-redux-translate! 'Keys' must be array or string with keys and dots as delimiters");
         if (lang !== i18nLang.lang) {

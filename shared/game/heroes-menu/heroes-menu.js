@@ -5,9 +5,15 @@ import Heroes from '../../assets/data/heroes';
 import {updateHero} from '../../store/actions/heroActions';
 import {updateGame} from '../../store/actions/gameActions';
 import Hero from './hero';
+import T from '../../translator';
 import Spinner from '../../common/spinner/spinner';
 import SmartForm, {SmartInput} from '../../common/form';
-
+SmartForm.prototype.handleOnClick = function({target:{type, value}}) {
+    if (type === 'button') {
+        const Value = value !== 'easy' ? 'easy' : 'hard';
+        this.setState(({values}) => ({values: {...values, difficulty: Value}}));
+    }
+}
 
 import './heroes-menu.scss';
 
@@ -30,6 +36,7 @@ export const HeroMenu = props => {
             require: false,
         } 
     };
+  
     return (
         <SmartForm 
             className={props.className || 'hero-menu__form'}
@@ -49,18 +56,18 @@ export const HeroMenu = props => {
                             inputStyle="outlined"
                             labelStyle="like-placeholder"
                             placeholder="Hero name"
+                            labelText="Name"
                             value={values.name}
                             error={errors.name}
                             {...restProps}
                         />
                         <SmartInput
-                            type="text"
+                            type="button"
                             name="difficulty"
-                            inputStyle="outlined"
-                            labelStyle="like-placeholder"
                             value={values.difficulty}
                             {...restProps}
                         />
+                        <button type="submit"><T keys="hero_menu.submit" /></button>
                     </React.Fragment>
                     )
                 }
@@ -72,6 +79,11 @@ export const HeroMenu = props => {
 const HeroesHall = props => {
     const [active, setActive] = useState(1);
     const [chosen, setChosen] = useState(1);
+
+    const handleOnClick = (i, hero) => {
+        props.onClick(hero)
+        setChosen(i)
+    }
     
     const heroes = Object.keys(props.heroes);
     let imagesNumber = heroes.length;
@@ -88,7 +100,7 @@ const HeroesHall = props => {
                         onMouseEnter={() => setActive(i)}
                         onMouseLeave={() => setActive(chosen)}
                         onFocus={() => setActive(i)}
-                        onClick={() => setChosen(i)}
+                        onClick={() => handleOnClick(i, hero)}
                         onLoad={props.onLoad}
                     />
                 );
@@ -111,21 +123,25 @@ const HeroesPage = props => {
         };
     })();
     
-    const handleClick = hero => {
-        setHeroName(hero);
+    const handleClick = heroName => {
+        console.log(heroName)
+        setHeroName(heroName);
     }
 
     const submitHandler = {
         fetch: ({name, difficulty}) => {
             updateHero({...hero, imageName: heroName, nickName: name});
             updateGame({...game, difficulty});
+            close();
             return true;
         },
         onResponse: f => f,
     }
     return (
-        <div>
+        <div className={props.className || "heroes-menu-wrapper"}>
             <button className="heroes-menu__close" onClick={close}>&times;</button>
+            {spinner && <Spinner />}
+            <h2><T keys="hero_menu.title" /></h2>
             <HeroesHall onLoad={onLoadImage} onClick={handleClick} heroes={Heroes} />
             <HeroMenu submitHandler={submitHandler} />
         </div>

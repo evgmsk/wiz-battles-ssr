@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import './input.scss';
 
 const SmartInput = props => {
-    //console.log('props: ', props);
     const { addChild, removeChild, ...inputProps } = props;
     let {
         className,

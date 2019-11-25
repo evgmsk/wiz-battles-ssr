@@ -33,5 +33,9 @@
   "home_page": {
     "title": "Studies as unforgettable adventure",
     "developer": "Developer - Evgeni Moskvich"
+  },
+  "hero_menu": {
+    "title": "Choose hero",
+    "submit": "Save"
   }
 }
