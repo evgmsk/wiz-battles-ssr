@@ -69,7 +69,7 @@
   "dependencies": {
     "@loadable/component": "^5.13.2",
     "@loadable/server": "^5.13.2",
-    "axios": "^0.18.1",
+    "axios": "^0.20.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "latest",
     "config": "^3.3.2",
