@@ -31,7 +31,7 @@
     "forgot_password": "Forgot your password?"
   },
   "home_page": {
-    "title": "Studies as unforgettable adventure",
+    "title": "<span class='test-for-react-redux-translate'>Studies as unforgettable adventure</span>",
     "developer": "Developer - Evgeni Moskvich"
   },
   "hero_menu": {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import translate from 'react-redux-translate';
+import translate from './common/react-redux-translate';
 // import Trans from 'react-redux-translate';
 
 

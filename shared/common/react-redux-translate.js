@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 
 function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
@@ -12,7 +13,7 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
         }
 
         defineSource(lang) {
-            this.langSource = require(`../${this.path}${lang}.json`);
+            this.langSource = require(`../../${this.path}${lang}.json`);
             this.lang = lang;
         }
     }
@@ -20,15 +21,17 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
     const i18nLang = new Language(defaultLanguage, path);
 
     function translate(props) {
+        console.log(props)
         let source;
         let string = i18nLang.langSource;
-        let {keys, insertions = []} = props;
+        let {keys, insertions = [], jsx = false} = props;
         let lang = props[storeLanguageKey];
         if (!lang) {
-            throw new Error('Property "language" is undefined')
+           throw new Error('Property "language" is undefined')
         }
         if (!keys) {
-            throw new Error('Property "keys" (path to value) is undefined')
+           
+throw new Error('Property "keys" (path to value) is undefined')
         }
         const Keys = (Array.isArray(keys) && keys) || (typeof keys === 'string' && keys.split('\.'));
         if (!Keys || !Keys.length)
@@ -55,7 +58,12 @@ function translator (defaultLanguage, storeLanguageKey, path, log = 0) {
         if (insertions.length) {
             return insertions.reduce((acc, ins) => acc.replace('{{}}', ins), string)
         }
-        return string;
+        if (!/<\w+>\w?|\w+<\/\w+>/.test(string)) {
+            return string;
+        } else {
+            const res = props => <span dangerouslySetInnerHTML={{__html: props}} />
+            return res(string);
+        } 
     };
     
     translate.source = i18nLang;

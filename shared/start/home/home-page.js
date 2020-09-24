@@ -3,12 +3,14 @@
  */
 import React from 'react';
 import {FaGithubSquare as Git} from 'react-icons/fa';
-import T from '../../translator';
+import T, {funcT} from '../../translator';
 
 import './home-page.scss';
 
+const ss = props => <span>{props}</span>
 
 function HomePage(props) {
+    console.log(window.env)
     return (
         <section className="home-section page">
             <div className="home-img" />
